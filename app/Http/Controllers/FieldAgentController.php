@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use App\Models\FieldAgentSakhiHistory;
+use App\Services\ExportService;
 
 
 
@@ -20,6 +21,38 @@ class FieldAgentController extends Controller
 {
 
 
+
+public function export(
+        Request $request,
+        ExportService $exportService
+    ): RedirectResponse {
+        $admin = auth('admin')->user();
+
+        $filters = array_filter([
+            'search' => $request->input('search'),
+            'partner_id' => $request->input('partner_id'),
+            'status' => $request->input('status'),
+        ], fn ($value) => $value !== null && $value !== '');
+
+        $exportService->create($admin, [
+            'type' => 'field_agents',
+
+            'scope_type' => 'system',
+
+            'scope_id' => null,
+
+            'title' => 'Field Agents Export',
+
+            'filters' => $filters,
+        ]);
+
+        return redirect()
+            ->route('admin.field-agents.index')
+            ->with(
+                'status',
+                'Field agent export has been queued. You can download it from Downloads.'
+            );
+    }
 
     private function generateSakhiId(int $partnerId, int $partnerCenterId): string
     {

@@ -39,6 +39,9 @@ document.querySelectorAll('[data-react-app]').forEach((element) => {
 
                 canViewEventMasters:
                     element.dataset.canViewEventMasters === 'true',
+
+                canViewDownloads:
+                    element.dataset.canViewDownloads === 'true',
             }),
         );
 	}

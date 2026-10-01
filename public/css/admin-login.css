@@ -1,0 +1,1623 @@
+/* =========================================================
+   YOUTHHUB PARTNER — ADMIN LOGIN
+========================================================= */
+
+:root {
+    --yh-primary: #0969d9;
+    --yh-primary-dark: #0755b5;
+
+    --yh-navy-950: #031326;
+    --yh-navy-900: #061a32;
+
+    --yh-text-dark: #0c2345;
+    --yh-text: #263d5e;
+    --yh-text-muted: #71829c;
+
+    --yh-border: #dce5ef;
+}
+
+
+/* =========================================================
+   RESET / PAGE
+========================================================= */
+
+.yh-admin-login,
+.yh-admin-login * {
+    box-sizing: border-box;
+}
+
+.yh-admin-login {
+    min-height: 100vh;
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: minmax(480px, 42%) 1fr;
+
+    overflow: hidden;
+
+    font-family: "Inter", -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+}
+
+
+/* =========================================================
+   LEFT LOGIN
+========================================================= */
+
+.yh-login-section {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 20% 10%,
+            rgba(9, 105, 217, .06),
+            transparent 35%
+        ),
+        #f5f8fc;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px;
+}
+
+
+.yh-login-card {
+    width: 100%;
+    max-width: 500px;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.yh-brand {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 13px;
+
+    text-decoration: none;
+
+    margin-bottom: 55px;
+}
+
+
+.yh-brand-logo {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.yh-brand-logo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+}
+
+
+.yh-brand-name {
+    color: #0b2850;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    letter-spacing: -.6px;
+}
+
+
+.yh-brand-name strong {
+    display: block;
+
+    color: var(--yh-primary);
+
+    margin-top: 4px;
+}
+
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+.yh-login-heading {
+    margin-bottom: 35px;
+}
+
+
+.yh-admin-badge {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: var(--yh-primary);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 15px;
+}
+
+
+.yh-badge-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #13b76b;
+
+    box-shadow:
+        0 0 0 4px rgba(19, 183, 107, .12);
+}
+
+
+.yh-login-heading h1 {
+    margin: 0 0 13px;
+
+    color: var(--yh-text-dark);
+
+    font-size: clamp(34px, 4vw, 44px);
+    font-weight: 700;
+
+    line-height: 1.1;
+
+    letter-spacing: -1.7px;
+}
+
+
+.yh-login-heading h1 span {
+    color: var(--yh-primary);
+}
+
+
+.yh-login-heading p {
+    max-width: 420px;
+
+    margin: 0;
+
+    color: var(--yh-text-muted);
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.yh-login-error {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 22px;
+
+    padding: 13px 15px;
+
+    border: 1px solid #ffd0d0;
+
+    border-radius: 9px;
+
+    background: #fff1f1;
+
+    color: #b42318;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.yh-error-icon {
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #b42318;
+
+    color: #fff;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.yh-login-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 23px;
+}
+
+
+.yh-form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+.yh-form-group label {
+    color: #183253;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.yh-input-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+
+.yh-input-wrapper input {
+    width: 100%;
+    height: 58px;
+
+    padding: 0 52px 0 48px;
+
+    border: 1px solid var(--yh-border);
+    border-radius: 11px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, .9);
+
+    color: var(--yh-text-dark);
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+
+.yh-input-wrapper input::placeholder {
+    color: #a3b1c3;
+}
+
+
+.yh-input-wrapper input:hover {
+    border-color: #bdcad9;
+}
+
+
+.yh-input-wrapper input:focus {
+    border-color: var(--yh-primary);
+
+    background: #fff;
+
+    box-shadow:
+        0 0 0 4px rgba(9, 105, 217, .09);
+}
+
+
+.yh-input-icon {
+    position: absolute;
+
+    left: 16px;
+    top: 50%;
+
+    width: 19px;
+    height: 19px;
+
+    transform: translateY(-50%);
+
+    color: #7890ad;
+
+    pointer-events: none;
+}
+
+
+.yh-input-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+========================================================= */
+
+.yh-password-toggle {
+    position: absolute;
+
+    right: 14px;
+    top: 50%;
+
+    width: 34px;
+    height: 34px;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #7890ad;
+
+    cursor: pointer;
+}
+
+
+.yh-password-toggle:hover {
+    background: #edf3fa;
+
+    color: var(--yh-primary);
+}
+
+
+.yh-password-toggle svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+/* =========================================================
+   REMEMBER
+========================================================= */
+
+.yh-form-options {
+    margin-top: -4px;
+}
+
+
+.yh-remember {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: #61748e;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.yh-remember input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.yh-custom-checkbox {
+    position: relative;
+
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    border: 1.5px solid #bdcad8;
+    border-radius: 5px;
+
+    background: #fff;
+
+    transition: all .2s ease;
+}
+
+
+.yh-remember input:checked + .yh-custom-checkbox {
+    border-color: var(--yh-primary);
+
+    background: var(--yh-primary);
+}
+
+
+.yh-remember input:checked
++ .yh-custom-checkbox::after {
+    content: "";
+
+    position: absolute;
+
+    width: 8px;
+    height: 4px;
+
+    left: 4px;
+    top: 5px;
+
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+
+    transform: rotate(-45deg);
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+========================================================= */
+
+.yh-login-button {
+    width: 100%;
+    height: 59px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 18px;
+
+    border: 0;
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0877ed,
+            #075bc5
+        );
+
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(9, 105, 217, .2);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.yh-login-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 14px 30px rgba(9, 105, 217, .28);
+}
+
+
+.yh-login-button:active {
+    transform: translateY(0);
+}
+
+
+.yh-button-shield {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, .13);
+}
+
+
+.yh-button-shield svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+.yh-button-arrow {
+    margin-left: auto;
+
+    font-size: 22px;
+    font-weight: 400;
+
+    transition: transform .2s ease;
+}
+
+
+.yh-login-button:hover .yh-button-arrow {
+    transform: translateX(4px);
+}
+
+
+.yh-login-button.is-loading {
+    pointer-events: none;
+
+    opacity: .75;
+}
+
+
+/* =========================================================
+   SECURITY NOTICE
+========================================================= */
+
+.yh-security-notice {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 30px;
+    padding-top: 22px;
+
+    border-top: 1px solid #dce5ee;
+}
+
+
+.yh-security-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #edf4fc;
+
+    color: var(--yh-primary);
+}
+
+
+.yh-security-icon svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+.yh-security-notice > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.yh-security-notice strong {
+    color: #355273;
+
+    font-size: 11px;
+}
+
+
+.yh-security-notice span {
+    color: #8292a8;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.yh-login-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 35px;
+
+    color: #9aa8b8;
+
+    font-size: 10px;
+}
+
+
+.yh-footer-separator {
+    color: #c2ccd7;
+}
+
+
+/* =========================================================
+   RIGHT SECURITY PANEL
+========================================================= */
+
+.yh-security-panel {
+    position: relative;
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    padding: 48px 60px;
+
+    display: flex;
+    flex-direction: column;
+
+    color: #fff;
+
+    background:
+        radial-gradient(
+            circle at 75% 40%,
+            rgba(13, 122, 255, .20),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 25% 85%,
+            rgba(9, 91, 184, .15),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #071a31 0%,
+            #06203d 50%,
+            #031326 100%
+        );
+}
+
+
+.yh-security-panel::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(92, 167, 255, .04) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(92, 167, 255, .04) 1px,
+            transparent 1px
+        );
+
+    background-size: 60px 60px;
+
+    pointer-events: none;
+}
+
+
+.yh-security-panel::after {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    right: -250px;
+    bottom: -250px;
+
+    border: 1px solid rgba(60, 150, 255, .12);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 60px rgba(60, 150, 255, .02),
+        0 0 0 120px rgba(60, 150, 255, .015);
+}
+
+
+/* =========================================================
+   GLOW
+========================================================= */
+
+.yh-security-glow {
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(70px);
+
+    pointer-events: none;
+}
+
+
+.yh-security-glow-one {
+    width: 350px;
+    height: 350px;
+
+    top: 20%;
+    right: 15%;
+
+    background: rgba(18, 124, 255, .10);
+}
+
+
+.yh-security-glow-two {
+    width: 250px;
+    height: 250px;
+
+    bottom: 10%;
+    left: 5%;
+
+    background: rgba(0, 110, 255, .08);
+}
+
+
+/* =========================================================
+   SECURITY TOP
+========================================================= */
+
+.yh-security-top {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.yh-portal-code {
+    color: #82b9f5;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 4px;
+}
+
+
+.yh-live-status {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: #7e9cbd;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+}
+
+
+.yh-live-status > span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #19c47a;
+
+    box-shadow:
+        0 0 0 4px rgba(25, 196, 122, .1);
+}
+
+
+/* =========================================================
+   SECURITY CONTENT
+========================================================= */
+
+.yh-security-content {
+    position: relative;
+    z-index: 2;
+
+    max-width: 780px;
+
+    margin: auto 0;
+
+    padding-left: 5%;
+}
+
+
+.yh-security-label {
+    margin-bottom: 19px;
+
+    color: #63aafa;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 4px;
+}
+
+
+.yh-security-content h2 {
+    margin: 0 0 22px;
+
+    color: #fff;
+
+    font-size: clamp(42px, 4.5vw, 68px);
+    font-weight: 700;
+
+    line-height: 1.03;
+
+    letter-spacing: -3px;
+}
+
+
+.yh-security-content h2 span {
+    color: #64adff;
+}
+
+
+.yh-security-content > p {
+    max-width: 470px;
+
+    margin: 0 0 30px;
+
+    color: #91abc9;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   SHIELD
+========================================================= */
+
+.yh-shield-container {
+    position: relative;
+
+    width: 260px;
+    height: 250px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: 30px;
+}
+
+
+.yh-shield-ring {
+    position: absolute;
+
+    border: 1px solid rgba(55, 155, 255, .18);
+
+    border-radius: 50%;
+
+    transform: rotateX(65deg);
+}
+
+
+.yh-shield-ring-one {
+    width: 260px;
+    height: 90px;
+}
+
+
+.yh-shield-ring-two {
+    width: 190px;
+    height: 65px;
+
+    border-color: rgba(55, 155, 255, .27);
+}
+
+
+.yh-shield {
+    width: 160px;
+    height: 180px;
+
+    color: #3da0ff;
+
+    filter:
+        drop-shadow(0 0 20px rgba(0, 139, 255, .35))
+        drop-shadow(0 0 50px rgba(0, 100, 255, .12));
+}
+
+
+.yh-shield svg {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.yh-security-features {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(100px, 1fr));
+
+    max-width: 660px;
+
+    margin-top: 10px;
+}
+
+
+.yh-feature {
+    min-height: 75px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 18px;
+
+    border-right: 1px solid rgba(126, 177, 228, .12);
+}
+
+
+.yh-feature:first-child {
+    padding-left: 0;
+}
+
+
+.yh-feature:last-child {
+    border-right: none;
+}
+
+
+.yh-feature-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    color: #2992ff;
+}
+
+
+.yh-feature-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+
+.yh-feature span {
+    color: #8ba6c4;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   SECURITY BOTTOM
+========================================================= */
+
+.yh-security-bottom {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+
+.yh-bottom-brand {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.yh-bottom-brand strong {
+    color: #a6cfff;
+
+    font-size: 14px;
+}
+
+
+.yh-bottom-brand span {
+    color: #5d7d9f;
+
+    font-size: 11px;
+}
+
+
+.yh-bottom-message {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 5px;
+
+    color: #6384a8;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .yh-admin-login {
+        grid-template-columns:
+            minmax(420px, 45%) 1fr;
+    }
+
+    .yh-login-section {
+        padding: 35px;
+    }
+
+    .yh-security-panel {
+        padding: 40px;
+    }
+
+    .yh-security-content {
+        padding-left: 0;
+    }
+
+    .yh-security-content h2 {
+        font-size: 48px;
+    }
+
+    .yh-security-features {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 10px;
+    }
+
+    .yh-feature {
+        border-right: none;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .yh-admin-login {
+        display: block;
+
+        min-height: 100vh;
+    }
+
+    .yh-security-panel {
+        display: none;
+    }
+
+    .yh-login-section {
+        min-height: 100vh;
+
+        padding: 30px 20px;
+    }
+
+    .yh-login-card {
+        max-width: 500px;
+    }
+
+    .yh-brand {
+        margin-bottom: 45px;
+    }
+
+    .yh-login-heading h1 {
+        font-size: 36px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .yh-login-section {
+        padding: 24px 18px;
+    }
+
+    .yh-brand-logo {
+        width: 45px;
+        height: 45px;
+    }
+
+    .yh-brand-name {
+        font-size: 19px;
+    }
+
+    .yh-login-heading {
+        margin-bottom: 28px;
+    }
+
+    .yh-login-heading h1 {
+        font-size: 32px;
+
+        letter-spacing: -1.2px;
+    }
+
+    .yh-login-form {
+        gap: 19px;
+    }
+
+    .yh-input-wrapper input {
+        height: 55px;
+    }
+
+    .yh-login-button {
+        height: 56px;
+    }
+
+    .yh-security-notice {
+        margin-top: 25px;
+    }
+
+    .yh-login-footer {
+        flex-direction: column;
+
+        gap: 5px;
+
+        margin-top: 30px;
+    }
+
+    .yh-footer-separator {
+        display: none;
+    }
+}
+
+
+
+/* =========================================
+   PREMIUM FLOATING SECURITY SHIELD
+   ========================================= */
+
+.yh-shield-container {
+    position: relative;
+    width: 150px;
+    height: 175px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    perspective: 800px;
+}
+
+
+/* Main shield */
+.yh-shield {
+    position: relative;
+    z-index: 5;
+
+    width: 110px;
+
+    color: #ffffff;
+
+    transform-origin: center bottom;
+
+    animation:
+        yhShieldFloat 3.6s cubic-bezier(.45, .05, .55, .95) infinite;
+}
+
+
+/* SVG */
+.yh-shield svg {
+    display: block;
+    width: 100%;
+    height: auto;
+
+    filter:
+        drop-shadow(0 12px 18px rgba(0, 0, 0, .20))
+        drop-shadow(0 0 12px rgba(255, 255, 255, .12));
+}
+
+
+/* =========================================
+   FLOATING MOTION
+   ========================================= */
+
+@keyframes yhShieldFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    20% {
+        transform: translateY(-7px) scale(1.01);
+    }
+
+    45% {
+        transform: translateY(-16px) scale(1.025);
+    }
+
+    65% {
+        transform: translateY(-8px) scale(1.01);
+    }
+
+    82% {
+        transform: translateY(0) scale(.985);
+    }
+
+    88% {
+        transform: translateY(2px) scale(.97);
+    }
+
+    92% {
+        transform: translateY(-1px) scale(1.01);
+    }
+}
+
+
+/* =========================================
+   OUTER RINGS
+   ========================================= */
+
+.yh-shield-ring {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    border: 1px solid rgba(255, 255, 255, .12);
+
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+
+.yh-shield-ring-one {
+    width: 135px;
+    height: 135px;
+
+    animation: yhRingRotate 12s linear infinite;
+}
+
+
+.yh-shield-ring-two {
+    width: 155px;
+    height: 155px;
+
+    border-style: dashed;
+    opacity: .45;
+
+    animation: yhRingRotateReverse 18s linear infinite;
+}
+
+
+@keyframes yhRingRotate {
+
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+
+@keyframes yhRingRotateReverse {
+
+    from {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+}
+
+
+/* =========================================
+   POWER LANDING EFFECT
+   ========================================= */
+
+.yh-power-impact {
+    position: absolute;
+
+    left: 50%;
+    bottom: 8px;
+
+    width: 90px;
+    height: 25px;
+
+    transform: translateX(-50%);
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* Main power glow */
+
+.yh-power-impact::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 5px;
+
+    width: 30px;
+    height: 8px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, .8);
+
+    filter: blur(7px);
+
+    animation: yhPowerGlow 3.6s ease-in-out infinite;
+}
+
+
+/* Expanding shockwave */
+
+.yh-power-impact::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 4px;
+
+    width: 12px;
+    height: 7px;
+
+    border: 1px solid rgba(255, 255, 255, .7);
+
+    border-radius: 50%;
+
+    transform: translateX(-50%) scale(.2);
+
+    opacity: 0;
+
+    animation: yhPowerRipple 3.6s ease-out infinite;
+}
+
+
+/* Small energy particles */
+
+.yh-power-impact span {
+    position: absolute;
+
+    left: 50%;
+    bottom: 5px;
+
+    width: 3px;
+    height: 3px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    box-shadow:
+        0 0 8px rgba(255, 255, 255, .9);
+
+    opacity: 0;
+}
+
+
+.yh-power-impact span:nth-child(1) {
+    animation: yhSparkOne 3.6s ease-out infinite;
+}
+
+.yh-power-impact span:nth-child(2) {
+    animation: yhSparkTwo 3.6s ease-out infinite;
+}
+
+.yh-power-impact span:nth-child(3) {
+    animation: yhSparkThree 3.6s ease-out infinite;
+}
+
+
+/* =========================================
+   GLOW
+   ========================================= */
+
+@keyframes yhPowerGlow {
+
+    0%,
+    72%,
+    100% {
+        transform: translateX(-50%) scale(.5);
+        opacity: .1;
+    }
+
+    82% {
+        transform: translateX(-50%) scale(1);
+        opacity: .9;
+    }
+
+    90% {
+        transform: translateX(-50%) scale(1.8);
+        opacity: .25;
+    }
+}
+
+
+/* =========================================
+   RIPPLE
+   ========================================= */
+
+@keyframes yhPowerRipple {
+
+    0%,
+    74% {
+        transform: translateX(-50%) scale(.2);
+        opacity: 0;
+    }
+
+    80% {
+        transform: translateX(-50%) scale(.7);
+        opacity: .9;
+    }
+
+    94% {
+        transform: translateX(-50%) scale(3.8);
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* =========================================
+   ENERGY SPARKS
+   ========================================= */
+
+@keyframes yhSparkOne {
+
+    0%,
+    76% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+
+    82% {
+        opacity: 1;
+    }
+
+    94% {
+        opacity: 0;
+        transform: translate(-28px, -7px);
+    }
+}
+
+
+@keyframes yhSparkTwo {
+
+    0%,
+    76% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+
+    82% {
+        opacity: 1;
+    }
+
+    94% {
+        opacity: 0;
+        transform: translate(30px, -9px);
+    }
+}
+
+
+@keyframes yhSparkThree {
+
+    0%,
+    76% {
+        opacity: 0;
+        transform: translate(0, 0);
+    }
+
+    82% {
+        opacity: 1;
+    }
+
+    94% {
+        opacity: 0;
+        transform: translate(5px, -16px);
+    }
+}
+
+
+/* =========================================
+   HOVER / TOUCH
+   ========================================= */
+
+.yh-shield-container:hover .yh-shield {
+    animation-duration: 2.2s;
+}
+
+
+.yh-shield-container:hover .yh-shield-ring-one {
+    animation-duration: 6s;
+}
+
+
+.yh-shield-container:hover .yh-shield-ring-two {
+    animation-duration: 9s;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 576px) {
+
+    .yh-shield-container {
+        width: 135px;
+        height: 160px;
+    }
+
+    .yh-shield {
+        width: 100px;
+    }
+
+    .yh-shield-ring-one {
+        width: 125px;
+        height: 125px;
+    }
+
+    .yh-shield-ring-two {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+
+/* =========================================
+   ACCESSIBILITY
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .yh-shield,
+    .yh-shield-ring,
+    .yh-power-impact::before,
+    .yh-power-impact::after,
+    .yh-power-impact span {
+        animation: none !important;
+    }
+}

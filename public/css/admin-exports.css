@@ -1,0 +1,1425 @@
+/* ============================================================
+EXPORT / DOWNLOAD CENTER
+============================================================ */
+
+.admin-exports-page {
+min-height: 100vh;
+background: #f6f8fc;
+color: #10233f;
+}
+
+/* ============================================================
+HEADER
+============================================================ */
+
+.admin-exports-header {
+min-height: 76px;
+padding: 0 42px;
+
+
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+background: #ffffff;
+border-bottom: 1px solid #e7ebf2;
+
+
+}
+
+.admin-exports-header-actions {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.admin-back-link {
+color: #51627a;
+text-decoration: none;
+font-size: 14px;
+font-weight: 600;
+}
+
+.admin-back-link span {
+margin-right: 7px;
+}
+
+.export-signout {
+padding: 8px 7px;
+
+
+border: 0;
+background: transparent;
+
+color: #65758b;
+
+cursor: pointer;
+
+font-size: 13px;
+font-weight: 600;
+
+
+}
+
+.export-signout:hover {
+color: #bd4c58;
+}
+
+/* ============================================================
+CONTENT
+============================================================ */
+
+.admin-exports-content {
+max-width: 1540px;
+margin: auto;
+padding: 42px;
+}
+
+.admin-exports-title {
+margin-bottom: 30px;
+}
+
+.export-eyebrow {
+margin: 0 0 7px;
+
+
+color: #5575a5;
+
+font-size: 11px;
+font-weight: 800;
+
+letter-spacing: .14em;
+
+
+}
+
+.admin-exports-title h1 {
+margin: 0;
+
+
+color: #10233f;
+
+font-size: clamp(30px, 3vw, 42px);
+line-height: 1.1;
+
+letter-spacing: -.04em;
+
+
+}
+
+.admin-exports-title p:last-child {
+margin: 10px 0 0;
+
+
+color: #718097;
+
+font-size: 14px;
+
+
+}
+
+/* ============================================================
+ALERT
+============================================================ */
+
+.export-alert {
+padding: 13px 16px;
+margin-bottom: 22px;
+
+
+display: flex;
+align-items: center;
+
+gap: 10px;
+
+border-radius: 10px;
+
+font-size: 13px;
+font-weight: 600;
+
+
+}
+
+.export-alert-success {
+color: #155f42;
+background: #edf9f3;
+
+
+border: 1px solid #d2eee1;
+
+
+}
+
+/* ============================================================
+KPI
+============================================================ */
+
+.export-kpi-grid {
+display: grid;
+
+
+grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+gap: 16px;
+
+margin-bottom: 16px;
+
+
+}
+
+.export-kpi-card {
+min-height: 138px;
+
+
+padding: 22px;
+
+display: flex;
+gap: 16px;
+align-items: flex-start;
+
+background: #ffffff;
+
+border: 1px solid #e5eaf1;
+border-radius: 16px;
+
+box-shadow:
+    0 5px 20px rgba(22, 42, 72, .035);
+
+transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+
+
+}
+
+.export-kpi-card:hover {
+transform: translateY(-2px);
+
+
+box-shadow:
+    0 12px 28px rgba(22, 42, 72, .08);
+
+
+}
+
+.export-kpi-icon {
+width: 43px;
+height: 43px;
+
+
+flex: 0 0 43px;
+
+display: grid;
+place-items: center;
+
+border-radius: 12px;
+
+color: #173f72;
+background: #edf3fa;
+
+font-size: 18px;
+font-weight: 800;
+
+
+}
+
+.export-kpi-content span {
+display: block;
+
+
+color: #75849a;
+
+font-size: 11px;
+font-weight: 700;
+
+letter-spacing: .05em;
+text-transform: uppercase;
+
+
+}
+
+.export-kpi-content strong {
+display: block;
+
+
+margin: 6px 0 5px;
+
+color: #122946;
+
+font-size: 28px;
+
+letter-spacing: -.035em;
+
+
+}
+
+.export-kpi-content small {
+color: #8290a3;
+
+
+font-size: 11px;
+
+
+}
+
+.export-kpi-content small.positive {
+color: #16805a;
+}
+
+.export-kpi-content small.negative {
+color: #c04a4a;
+}
+
+.export-kpi-card-warning .export-kpi-icon {
+color: #946500;
+background: #fff7e4;
+}
+
+/* ============================================================
+SECONDARY STATS
+============================================================ */
+
+.export-secondary-stats {
+display: grid;
+
+
+grid-template-columns:
+    repeat(4, 1fr);
+
+margin-bottom: 20px;
+
+background: #ffffff;
+
+border: 1px solid #e5eaf1;
+border-radius: 14px;
+
+overflow: hidden;
+
+
+}
+
+.export-secondary-stats > div {
+padding: 15px 20px;
+
+
+border-right: 1px solid #edf0f5;
+
+
+}
+
+.export-secondary-stats > div:last-child {
+border-right: 0;
+}
+
+.export-secondary-stats span {
+display: block;
+
+
+margin-bottom: 3px;
+
+color: #8491a4;
+
+font-size: 11px;
+font-weight: 700;
+
+text-transform: uppercase;
+
+
+}
+
+.export-secondary-stats strong {
+color: #1b304d;
+
+
+font-size: 18px;
+
+
+}
+
+/* ============================================================
+ANALYTICS
+============================================================ */
+
+.export-analytics-grid {
+display: grid;
+
+
+grid-template-columns:
+    1.7fr 1fr;
+
+gap: 16px;
+
+margin-bottom: 22px;
+
+
+}
+
+.export-analytics-card {
+min-height: 260px;
+
+
+padding: 23px;
+
+background: #ffffff;
+
+border: 1px solid #e5eaf1;
+border-radius: 16px;
+
+box-shadow:
+    0 5px 20px rgba(22, 42, 72, .035);
+
+
+}
+
+.export-card-heading {
+display: flex;
+
+
+justify-content: space-between;
+align-items: flex-start;
+
+
+}
+
+.export-card-heading > div > span {
+color: #8794a8;
+
+
+font-size: 10px;
+font-weight: 800;
+
+letter-spacing: .12em;
+
+
+}
+
+.export-card-heading h2 {
+margin: 5px 0 0;
+
+
+color: #18304f;
+
+font-size: 17px;
+
+
+}
+
+.export-card-total {
+color: #123e73;
+
+
+font-size: 20px;
+font-weight: 800;
+
+
+}
+
+/* ============================================================
+BAR CHART
+============================================================ */
+
+.export-chart {
+height: 170px;
+
+
+margin-top: 24px;
+
+display: flex;
+align-items: stretch;
+justify-content: space-around;
+
+gap: 14px;
+
+
+}
+
+.export-chart-column {
+flex: 1;
+
+
+display: flex;
+flex-direction: column;
+align-items: center;
+
+
+}
+
+.export-chart-value {
+height: 20px;
+
+
+color: #708096;
+
+font-size: 10px;
+font-weight: 700;
+
+
+}
+
+.export-chart-track {
+position: relative;
+
+
+width: 18px;
+flex: 1;
+
+margin: 5px 0 8px;
+
+display: flex;
+align-items: flex-end;
+
+background: #edf2f7;
+
+border-radius: 20px;
+
+overflow: hidden;
+
+
+}
+
+.export-chart-bar {
+width: 100%;
+
+
+min-height: 5px;
+
+background: #174d87;
+
+border-radius: 20px;
+
+transition: height .4s ease;
+
+
+}
+
+.export-chart-column > span {
+color: #8491a4;
+
+
+font-size: 10px;
+font-weight: 700;
+
+
+}
+
+.export-chart-empty {
+width: 100%;
+height: 100%;
+
+
+display: grid;
+place-items: center;
+
+color: #8794a6;
+
+font-size: 12px;
+
+
+}
+
+/* ============================================================
+EXPORT TYPE DISTRIBUTION
+============================================================ */
+
+.export-type-card {
+overflow: hidden;
+}
+
+.export-type-list {
+display: grid;
+
+
+gap: 15px;
+
+margin-top: 24px;
+
+
+}
+
+.export-type-row {
+display: grid;
+
+
+gap: 7px;
+
+
+}
+
+.export-type-info {
+display: flex;
+
+
+align-items: center;
+justify-content: space-between;
+
+
+}
+
+.export-type-info strong {
+color: #3a506c;
+
+
+font-size: 11px;
+
+
+}
+
+.export-type-info span {
+color: #7c899b;
+
+
+font-size: 11px;
+font-weight: 700;
+
+
+}
+
+.export-type-progress {
+height: 6px;
+
+
+background: #edf2f7;
+
+border-radius: 20px;
+
+overflow: hidden;
+
+
+}
+
+.export-type-progress div {
+height: 100%;
+
+
+background: #174d87;
+
+border-radius: 20px;
+
+transition: width .4s ease;
+
+
+}
+
+.export-type-empty {
+padding: 25px 0;
+
+
+color: #8794a6;
+
+font-size: 12px;
+
+text-align: center;
+
+
+}
+
+/* ============================================================
+TABLE PANEL
+============================================================ */
+
+.export-table-panel {
+background: #ffffff;
+
+
+border: 1px solid #e4e9f0;
+border-radius: 16px;
+
+overflow: hidden;
+
+box-shadow:
+    0 5px 20px rgba(22, 42, 72, .035);
+
+
+}
+
+.export-table-heading {
+padding: 22px 24px;
+
+
+display: flex;
+
+justify-content: space-between;
+align-items: center;
+
+
+}
+
+.export-table-heading > div > span {
+color: #8794a8;
+
+
+font-size: 10px;
+font-weight: 800;
+
+letter-spacing: .12em;
+
+
+}
+
+.export-table-heading h2 {
+margin: 5px 0 0;
+
+
+color: #19314f;
+
+font-size: 19px;
+
+
+}
+
+.export-result-count {
+color: #7b899c;
+
+
+font-size: 12px;
+
+
+}
+
+/* ============================================================
+FILTERS
+============================================================ */
+
+.export-filters {
+padding: 15px 20px;
+
+
+display: grid;
+
+grid-template-columns:
+    minmax(220px, 2fr)
+    repeat(3, minmax(130px, 1fr));
+
+gap: 9px;
+
+background: #f8fafc;
+
+border-top: 1px solid #edf0f4;
+border-bottom: 1px solid #e7ebf1;
+
+
+}
+
+.export-search {
+position: relative;
+}
+
+.export-search > span {
+position: absolute;
+
+
+left: 12px;
+top: 50%;
+
+transform: translateY(-50%);
+
+color: #8b98aa;
+
+pointer-events: none;
+
+
+}
+
+.export-search input {
+padding-left: 34px !important;
+}
+
+.export-filters input,
+.export-filters select {
+width: 100%;
+min-height: 39px;
+
+
+padding: 0 11px;
+
+border: 1px solid #dce3ec;
+border-radius: 8px;
+
+background: #ffffff;
+
+color: #314762;
+
+font: inherit;
+font-size: 12px;
+
+outline: none;
+
+transition:
+    border-color .15s ease,
+    box-shadow .15s ease;
+
+
+}
+
+.export-filters input:focus,
+.export-filters select:focus {
+border-color: #7293b9;
+
+
+box-shadow:
+    0 0 0 3px rgba(52, 102, 156, .08);
+
+
+}
+
+.export-filter-actions {
+grid-column: 1 / -1;
+
+
+display: flex;
+
+justify-content: flex-end;
+
+gap: 10px;
+
+padding-top: 3px;
+
+
+}
+
+/* ============================================================
+BUTTONS
+============================================================ */
+
+.export-btn {
+min-height: 42px;
+
+
+padding: 0 17px;
+
+display: inline-flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 8px;
+
+border-radius: 10px;
+
+border: 1px solid transparent;
+
+font-size: 13px;
+font-weight: 700;
+
+text-decoration: none;
+
+cursor: pointer;
+
+transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background .18s ease;
+
+
+}
+
+.export-btn:hover {
+transform: translateY(-1px);
+}
+
+.export-btn-primary {
+color: #ffffff;
+
+
+background: #123e73;
+
+box-shadow:
+    0 5px 14px rgba(18, 62, 115, .16);
+
+
+}
+
+.export-btn-primary:hover {
+background: #0d315d;
+}
+
+.export-clear-btn {
+min-height: 42px;
+
+
+padding: 0 15px;
+
+display: inline-flex;
+align-items: center;
+
+color: #63738a;
+
+font-size: 12px;
+font-weight: 700;
+
+text-decoration: none;
+
+
+}
+
+.export-clear-btn:hover {
+color: #174d87;
+}
+
+/* ============================================================
+TABLE
+============================================================ */
+
+.export-table-wrap {
+overflow-x: auto;
+}
+
+.export-table {
+width: 100%;
+
+
+min-width: 1150px;
+
+border-collapse: collapse;
+
+
+}
+
+.export-table th {
+padding: 13px 14px;
+
+
+background: #fbfcfe;
+
+color: #8793a4;
+
+border-bottom: 1px solid #e7ebf1;
+
+font-size: 10px;
+font-weight: 800;
+
+letter-spacing: .06em;
+
+text-align: left;
+
+text-transform: uppercase;
+
+white-space: nowrap;
+
+
+}
+
+.export-table td {
+padding: 14px;
+
+
+border-bottom: 1px solid #edf0f4;
+
+color: #53647a;
+
+font-size: 12px;
+
+vertical-align: middle;
+
+
+}
+
+.export-table tbody tr {
+transition: background .15s ease;
+}
+
+.export-table tbody tr:hover {
+background: #fafcff;
+}
+
+/* ============================================================
+FILE
+============================================================ */
+
+.export-file {
+display: flex;
+
+
+align-items: center;
+
+gap: 12px;
+
+min-width: 260px;
+
+
+}
+
+.export-file-icon {
+width: 38px;
+height: 38px;
+
+
+flex: 0 0 38px;
+
+display: inline-flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 10px;
+
+background: #edf7f1;
+color: #197044;
+
+font-size: 10px;
+font-weight: 900;
+
+letter-spacing: .04em;
+
+
+}
+
+.export-file strong {
+display: block;
+
+
+color: #1d334a;
+
+font-size: 13px;
+
+
+}
+
+.export-file small {
+display: block;
+
+
+max-width: 250px;
+
+margin-top: 3px;
+
+color: #8996a5;
+
+font-size: 10px;
+
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+
+
+}
+
+/* ============================================================
+TYPE
+============================================================ */
+
+.export-type-badge {
+display: inline-flex;
+
+
+padding: 5px 8px;
+
+color: #536b87;
+background: #f2f5f8;
+
+border-radius: 6px;
+
+font-size: 10px;
+font-weight: 700;
+
+white-space: nowrap;
+
+
+}
+
+/* ============================================================
+SCOPE
+============================================================ */
+
+.export-scope strong {
+display: block;
+
+
+color: #3a506c;
+
+font-size: 11px;
+
+
+}
+
+.export-scope small {
+display: block;
+
+
+margin-top: 3px;
+
+color: #8a97a8;
+
+font-size: 10px;
+
+
+}
+
+/* ============================================================
+RECORDS
+============================================================ */
+
+.export-record-count {
+color: #304967;
+
+
+font-size: 12px;
+
+font-variant-numeric: tabular-nums;
+
+
+}
+
+/* ============================================================
+REQUESTED
+============================================================ */
+
+.export-requested strong {
+display: block;
+
+
+color: #465b75;
+
+font-size: 11px;
+
+
+}
+
+.export-requested small {
+display: block;
+
+
+margin-top: 3px;
+
+color: #8a97a8;
+
+font-size: 10px;
+
+
+}
+
+/* ============================================================
+STATUS
+============================================================ */
+
+.export-status {
+display: inline-flex;
+
+
+align-items: center;
+
+gap: 7px;
+
+padding: 6px 10px;
+
+border-radius: 999px;
+
+font-size: 11px;
+font-weight: 800;
+
+white-space: nowrap;
+
+
+}
+
+.export-status > span {
+width: 7px;
+height: 7px;
+
+
+border-radius: 50%;
+
+background: currentColor;
+
+
+}
+
+.export-status--queued {
+color: #8a6414;
+background: #fff8df;
+}
+
+.export-status--processing {
+color: #175a9b;
+background: #edf6ff;
+}
+
+.export-status--completed {
+color: #187044;
+background: #edf9f2;
+}
+
+.export-status--failed {
+color: #b42318;
+background: #fff0ef;
+}
+
+.export-error-preview {
+display: block;
+
+
+max-width: 170px;
+
+margin-top: 5px;
+
+color: #b42318;
+
+font-size: 9px;
+
+line-height: 1.4;
+
+
+}
+
+/* ============================================================
+DOWNLOAD
+============================================================ */
+
+.export-download-btn {
+display: inline-flex;
+
+
+align-items: center;
+justify-content: center;
+
+gap: 6px;
+
+padding: 8px 13px;
+
+border-radius: 8px;
+
+background: #174d87;
+color: #ffffff;
+
+text-decoration: none;
+
+font-size: 12px;
+font-weight: 700;
+
+white-space: nowrap;
+
+transition:
+    background .18s ease,
+    transform .18s ease;
+
+
+}
+
+.export-download-btn:hover {
+background: #103b69;
+
+
+transform: translateY(-1px);
+
+
+}
+
+.export-waiting {
+color: #8492a3;
+
+
+font-size: 12px;
+font-weight: 600;
+
+
+}
+
+.export-export-failed {
+color: #9a5360;
+
+
+font-size: 12px;
+font-weight: 700;
+
+
+}
+
+/* ============================================================
+EMPTY
+============================================================ */
+
+.export-empty {
+height: 220px;
+
+
+text-align: center !important;
+
+
+}
+
+.export-empty div {
+display: grid;
+
+
+gap: 5px;
+
+
+}
+
+.export-empty strong {
+color: #41546d;
+}
+
+.export-empty span {
+color: #8794a6;
+
+
+font-size: 11px;
+
+
+}
+
+/* ============================================================
+FOOTER
+============================================================ */
+
+.export-table-footer {
+padding: 16px 20px;
+
+
+display: flex;
+
+align-items: center;
+justify-content: space-between;
+
+color: #8290a2;
+
+font-size: 11px;
+
+
+}
+
+.export-table-footer strong {
+color: #455a75;
+}
+
+/* ============================================================
+RESPONSIVE — 1200px
+============================================================ */
+
+@media (max-width: 1200px) {
+
+
+.export-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.export-analytics-grid {
+    grid-template-columns: 1fr;
+}
+
+.export-filters {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.export-search {
+    grid-column: 1 / -1;
+}
+
+
+}
+
+/* ============================================================
+RESPONSIVE — 768px
+============================================================ */
+
+@media (max-width: 768px) {
+
+
+.admin-exports-header {
+    padding: 15px 18px;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    flex-direction: column;
+}
+
+.admin-exports-content {
+    padding: 25px 16px;
+}
+
+.export-kpi-grid {
+    grid-template-columns: 1fr;
+}
+
+.export-secondary-stats {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.export-secondary-stats > div:nth-child(2) {
+    border-right: 0;
+}
+
+.export-secondary-stats > div:nth-child(-n+2) {
+    border-bottom: 1px solid #edf0f5;
+}
+
+.export-filters {
+    grid-template-columns: 1fr 1fr;
+}
+
+.export-search {
+    grid-column: 1 / -1;
+}
+
+.export-filter-actions {
+    justify-content: stretch;
+}
+
+.export-filter-actions .export-btn {
+    flex: 1;
+}
+
+.export-table-heading {
+    align-items: flex-start;
+
+    gap: 10px;
+
+    flex-direction: column;
+}
+
+.export-table-footer {
+    align-items: flex-start;
+
+    gap: 15px;
+
+    flex-direction: column;
+}
+
+
+}
+
+/* ============================================================
+RESPONSIVE — 480px
+============================================================ */
+
+@media (max-width: 480px) {
+
+
+.export-filters {
+    grid-template-columns: 1fr;
+}
+
+.export-search {
+    grid-column: auto;
+}
+
+.export-secondary-stats {
+    grid-template-columns: 1fr 1fr;
+}
+
+.export-secondary-stats > div {
+    border-right: 0;
+}
+
+.export-btn {
+    min-height: 39px;
+}
+
+.admin-exports-title h1 {
+    font-size: 30px;
+}
+
+.export-kpi-card {
+    padding: 18px;
+}
+
+.export-analytics-card {
+    padding: 18px;
+}
+
+
+}

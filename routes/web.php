@@ -19,6 +19,7 @@ use App\Http\Controllers\EventMasterController;
 use App\Http\Controllers\EventCategoryMasterController;
 use App\Http\Controllers\EventMasterTypeController;
 use App\Http\Controllers\Admin\EventTransactionController;
+use App\Http\Controllers\Admin\DownloadController;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -98,7 +99,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/field-agents/{fieldAgent}/edit', [FieldAgentController::class, 'edit'])->middleware('can:field_agents.update')->name('field-agents.edit');
         Route::put('/field-agents/{fieldAgent}', [FieldAgentController::class, 'update'])->middleware('can:field_agents.update')->name('field-agents.update');
         Route::delete('/field-agents/{fieldAgent}', [FieldAgentController::class, 'destroy'])->middleware('can:field_agents.delete')->name('field-agents.destroy');
-
+        Route::post('field-agents/export',[FieldAgentController::class, 'export'])->name('field-agents.export')->middleware('can:field_agents.export');
 
 
         Route::get('/learners', [LearnerController::class, 'index'])->middleware('can:learners.view')->name('learners.index');
@@ -107,6 +108,11 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/learners/{learner}/edit', [LearnerController::class, 'edit'])->middleware('can:learners.update')->name('learners.edit');
         Route::put('/learners/{learner}', [LearnerController::class, 'update'])->middleware('can:learners.update')->name('learners.update');
         Route::delete('/learners/{learner}', [LearnerController::class, 'destroy'])->middleware('can:learners.delete')->name('learners.destroy');
+        // Learner Export
+        Route::post('/learners/export', [LearnerController::class, 'export'])->name('learners.export');
+        Route::get('/learners/export/download/{export}',[LearnerController::class, 'downloadExport'])->name('learners.export.download');
+        Route::get('/downloads/{export}/status', [DownloadController::class, 'status'])->name('downloads.status');
+        Route::get('/learners/export/{export}/status', [LearnerController::class, 'exportStatus'])->name('learners.export.status');
 
 
         Route::get('/event-masters', [EventMasterController::class, 'index'])
@@ -132,7 +138,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::delete('/event-masters/{eventMaster}', [EventMasterController::class, 'destroy'])
             ->middleware('can:event_masters.delete')
             ->name('event-masters.destroy');
-       
+
         Route::get('/event-masters/categories/{eventMasterType}',[EventMasterController::class, 'categories'])
             ->middleware('can:event_masters.view')
             ->name('event-masters.categories');
@@ -214,6 +220,11 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         )->name('event-transactions.reject');
 
 
+
+        Route::get('/downloads', [DownloadController::class, 'index'])->name('downloads.index');
+        Route::get('/downloads/{export}/download', [DownloadController::class, 'download'])->name('downloads.download');
+        Route::get('/downloads/{export}/status', [DownloadController::class, 'status'])->name('downloads.status');
+        Route::get('/downloads/{export}/download', [DownloadController::class, 'download'])->name('downloads.download');
 });
 
 });

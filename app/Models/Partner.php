@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 #[Fillable(['partner_code', 'name', 'contact_number', 'email', 'status', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -32,5 +33,10 @@ class Partner extends Authenticatable
             EventTransaction::class,
             'partner_id'
         );
+    }
+
+    public function exports(): MorphMany
+    {
+        return $this->morphMany(Export::class, 'requested_by');
     }
 }

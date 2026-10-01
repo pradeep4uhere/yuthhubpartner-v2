@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 #[Fillable([
     'name',
@@ -60,5 +61,11 @@ class FieldAgent extends Authenticatable
             EventTransaction::class,
             'field_agent_id'
         );
+    }
+
+
+    public function exports(): MorphMany
+    {
+        return $this->morphMany(Export::class, 'requested_by');
     }
 }

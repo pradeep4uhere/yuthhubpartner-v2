@@ -27,7 +27,8 @@ import {
     ShieldCheck,
     UsersRound,
     X,
-    FolderTree
+    FolderTree,
+    Download
 } from 'lucide-react';
 
 const learners = [
@@ -41,6 +42,7 @@ const learners = [
 const navigation = [
     { label: 'Dashbaord', icon: LayoutDashboard, href: '#overview' },
     { label: 'Learners', icon: UsersRound, href: '/admin/learners' },
+    { label: 'Event Transactions', icon: FileCheck2, href: '/admin/event-transactions' },
 ];
 
 const monthlyOutcomes = [
@@ -103,6 +105,7 @@ export default function AdminDashboard({ adminName = 'Admin',
     canViewEventTypes = false,
     canViewEventCategories = false,
     canViewEventMasters = false,
+    canViewDownloads = false,
     }) {
 
     console.log({
@@ -158,7 +161,7 @@ export default function AdminDashboard({ adminName = 'Admin',
                 <div className="admin-org-switcher">
                     <span className="admin-org-switcher__badge">A</span>
                     <span className="admin-org-switcher__copy"><b>Administrator</b><small>Dashboard</small></span>
-                    <ChevronDown size={15} />
+                    <ChevronDown  size={15} />
                 </div>
 
                 <p className="admin-nav-label">WORKSPACE</p>
@@ -180,56 +183,66 @@ export default function AdminDashboard({ adminName = 'Admin',
                     ))}
                     {canManageAdmins && (
                         <a className="admin-nav__link" href="/admin/users">
-                            <ShieldCheck size={18} strokeWidth={1.8} />
+                            <ShieldCheck color='RED' size={18} strokeWidth={1.8} />
                             <span>Admin users</span>
                         </a>
                     )}
 
                     {canViewPartners && (
                         <a className="admin-nav__link" href="/admin/partners">
-                            <Handshake size={18} strokeWidth={1.8} />
+                            <Handshake color='Green' size={18} strokeWidth={1.8} />
                             <span>Partners</span>
                         </a>
                     )}
                     {canViewPartnerCenters && (
                         <a className="admin-nav__link" href="/admin/partner-centers">
-                            <Building2 size={18} strokeWidth={1.8} />
+                            <Building2 color='Green' size={18} strokeWidth={1.8} />
                             <span>Partner centers</span>
                         </a>
                     )}
                     {canManagePlacementUsers && (
                         <a className="admin-nav__link" href="/admin/partner-placement-users">
-                            <BriefcaseBusiness size={18} strokeWidth={1.8} />
+                            <BriefcaseBusiness color='skyblue' size={18} strokeWidth={1.8} />
                             <span>Placement users</span>
                         </a>
                     )}
                     {canViewFieldAgents && (
                         <a className="admin-nav__link" href="/admin/field-agents">
-                            <LocateFixed size={18} strokeWidth={1.8} />
+                            <LocateFixed color='orange'  size={18} strokeWidth={1.8} />
                             <span>Field agents</span>
                         </a>
                     )}
 
                     {canViewEventTypes && (
                         <a className="admin-nav__link" href="/admin/event-types">
-                            <CalendarDays  size={18} strokeWidth={1.8} />
+                            <CalendarDays  color='green'  size={18} strokeWidth={1.8} />
                             <span>Event Type</span>
                         </a>
                     )}
 
                     {canViewEventCategories && (
                         <a className="admin-nav__link" href="/admin/event-categories">
-                            <FolderTree size={18} strokeWidth={1.8} />
+                            <FolderTree color='green'  size={18} strokeWidth={1.8} />
                             <span>Event Category</span>
                         </a>
                     )}
 
                     {canViewEventMasters && (
                         <a className="admin-nav__link" href="/admin/event-masters">
-                            <CalendarDays  size={18} strokeWidth={1.8} />
+                            <CalendarDays color='green'  size={18} strokeWidth={1.8} />
                             <span>Event Master</span>
                         </a>
                     )}
+
+
+                    {canViewDownloads && (
+                        <a className="admin-nav__link" href="/admin/downloads">
+                            <Download color='brown'  size={18} strokeWidth={1.8} />
+                            <span>Downloads</span>
+                        </a>
+                    )}
+
+
 
                 </nav>
 
