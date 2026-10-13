@@ -42,6 +42,9 @@ document.querySelectorAll('[data-react-app]').forEach((element) => {
 
                 canViewDownloads:
                     element.dataset.canViewDownloads === 'true',
+
+                canViewErrorLogs:
+                    element.dataset.canViewErrorLogs === 'true',
             }),
         );
 	}

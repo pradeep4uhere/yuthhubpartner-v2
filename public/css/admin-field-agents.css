@@ -1552,3 +1552,76 @@ RESPONSIVE — 480px
 }
 
 }
+
+
+/* Transaction workflow and review status badges */
+.field-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    border: 0px solid transparent;
+}
+
+.field-status-badge .status-dot {
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Green — Approved */
+.field-status-approved {
+    color: #15803d;
+    background: #dcfce7;
+    border-color: #bbf7d0;
+}
+
+/* Red — Rejected */
+.field-status-rejected {
+    color: #b91c1c;
+    background: #fee2e2;
+    border-color: #fecaca;
+}
+
+/* Orange — Returned */
+.field-status-returned {
+    color: #c2410c;
+    background: #ffedd5;
+    border-color: #fed7aa;
+}
+
+/* Blue — Under Review */
+.field-status-under-review {
+    color: #d8491d;
+
+
+}
+
+/* Purple — Submitted / Resubmitted */
+.field-status-submitted {
+    color: #098440;
+
+    border-color: #e9d5ff;
+}
+
+/* Grey — Draft */
+.field-status-draft {
+    color: #475569;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+/* Neutral — Other statuses */
+.field-status-default {
+    color: #52525b;
+    background: #f4f4f5;
+    border-color: #e4e4e7;
+}
+

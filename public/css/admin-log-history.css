@@ -1,0 +1,890 @@
+/* =========================================================
+   ADMIN LOG HISTORY — DOWNLOADS PAGE DESIGN REFERENCE
+   File: public/css/admin-log-history.css
+   ========================================================= */
+
+.admin-log-history-page {
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 28px 30px 40px;
+    color: #0f172a;
+    box-sizing: border-box;
+}
+
+.admin-log-history-page *,
+.admin-log-history-page *::before,
+.admin-log-history-page *::after {
+    box-sizing: border-box;
+}
+
+/* ================= HEADER ================= */
+
+.admin-log-history-page .admin-exports-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 26px;
+}
+
+.admin-log-history-page .admin-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.admin-log-history-page .admin-back-link:hover {
+    color: #2563eb;
+}
+
+.admin-log-history-page .admin-back-link span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    color: #475569;
+    font-size: 18px;
+}
+
+.admin-log-history-page .export-signout {
+    min-height: 35px;
+    padding: 0 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    color: #475569;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.admin-log-history-page .export-signout:hover {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* ================= PAGE TITLE ================= */
+
+.admin-log-history-page .admin-exports-content {
+    min-width: 0;
+}
+
+.admin-log-history-page .admin-exports-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 25px;
+}
+
+.admin-log-history-page .export-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: .12em;
+}
+
+.admin-log-history-page .export-eyebrow::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    content: "";
+}
+
+.admin-log-history-page .admin-exports-title h1 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 29px;
+    line-height: 1.2;
+    font-weight: 750;
+    letter-spacing: -.035em;
+}
+
+.admin-log-history-page .admin-exports-title p:not(.export-eyebrow) {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.admin-log-history-page .export-alert {
+    margin-bottom: 18px;
+    padding: 12px 15px;
+    border: 1px solid #a7f3d0;
+    border-radius: 9px;
+    background: #f0fdf4;
+    color: #047857;
+    font-size: 12px;
+}
+
+/* ================= SUMMARY CARDS ================= */
+
+.admin-log-history-page .export-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.admin-log-history-page .export-kpi-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    min-width: 0;
+    min-height: 130px;
+    padding: 18px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, .025);
+}
+
+.admin-log-history-page .export-kpi-card::after {
+    position: absolute;
+    right: -25px;
+    bottom: -35px;
+    width: 95px;
+    height: 95px;
+    border: 1px solid #f1f5f9;
+    border-radius: 50%;
+    content: "";
+    pointer-events: none;
+}
+
+.admin-log-history-page .export-kpi-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dbeafe;
+    border-radius: 9px;
+    background: #f8fbff;
+    color: #2563eb;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.admin-log-history-page .export-kpi-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.admin-log-history-page .export-kpi-content > span {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.admin-log-history-page .export-kpi-content strong {
+    display: block;
+    margin-top: 15px;
+    color: #0f172a;
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 750;
+    letter-spacing: -.035em;
+}
+
+.admin-log-history-page .export-kpi-content small {
+    display: block;
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.admin-log-history-page .export-kpi-content small.negative {
+    color: #dc2626;
+}
+
+.admin-log-history-page .export-kpi-card-warning {
+    border-color: #fee2e2;
+}
+
+.admin-log-history-page .export-kpi-card-warning .export-kpi-icon {
+    border-color: #fee2e2;
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* ================= MAIN PANEL ================= */
+
+.admin-log-history-page .export-table-panel {
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, .035);
+}
+
+.admin-log-history-page .export-table-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 21px 22px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.admin-log-history-page .export-table-heading > div > span {
+    display: block;
+    margin-bottom: 6px;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .11em;
+}
+
+.admin-log-history-page .export-table-heading h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.admin-log-history-page .export-result-count {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+/* ================= FILTERS ================= */
+
+.admin-log-history-page .export-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef2f7;
+    background: #fcfdff;
+}
+
+.admin-log-history-page .export-search {
+    position: relative;
+    flex: 1 1 250px;
+    min-width: 210px;
+}
+
+.admin-log-history-page .export-search > span {
+    position: absolute;
+    top: 50%;
+    left: 11px;
+    color: #94a3b8;
+    font-size: 20px;
+    line-height: 1;
+    transform: translateY(-54%);
+    pointer-events: none;
+}
+
+.admin-log-history-page .export-search input,
+.admin-log-history-page .admin-log-filters select,
+.admin-log-history-page .admin-log-date input {
+    width: 100%;
+    height: 36px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    outline: none;
+    background: #fff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 11px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.admin-log-history-page .export-search input {
+    padding: 0 12px 0 34px;
+}
+
+.admin-log-history-page .export-search input::placeholder {
+    color: #a1aab8;
+}
+
+.admin-log-history-page .admin-log-filters select {
+    flex: 0 1 145px;
+    min-width: 125px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.admin-log-history-page .admin-log-date {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #64748b;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.admin-log-history-page .admin-log-date input {
+    width: 142px;
+    padding: 0 8px;
+}
+
+.admin-log-history-page .export-search input:focus,
+.admin-log-history-page .admin-log-filters select:focus,
+.admin-log-history-page .admin-log-date input:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .08);
+}
+
+.admin-log-history-page .export-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.admin-log-history-page .export-btn,
+.admin-log-history-page .export-clear-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 35px;
+    padding: 0 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 650;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+.admin-log-history-page .export-btn-primary {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #fff;
+}
+
+.admin-log-history-page .export-btn-primary:hover {
+    border-color: #1d4ed8;
+    background: #1d4ed8;
+}
+
+.admin-log-history-page .export-clear-btn {
+    background: #fff;
+    color: #64748b;
+}
+
+.admin-log-history-page .export-clear-btn:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+}
+
+/* ================= TABLE ================= */
+
+.admin-log-history-page .export-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-log-history-page .export-table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+}
+
+.admin-log-history-page .export-table th {
+    height: 42px;
+    padding: 0 16px;
+    border-bottom: 1px solid #e8edf3;
+    background: #f8fafc;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .09em;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.admin-log-history-page .export-table td {
+    padding: 15px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    vertical-align: top;
+}
+
+.admin-log-history-page .export-table tbody tr {
+    transition: background .15s ease;
+}
+
+.admin-log-history-page .export-table tbody tr:hover {
+    background: #fbfdff;
+}
+
+.admin-log-history-page .export-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.admin-log-history-page .admin-log-table th:first-child,
+.admin-log-history-page .admin-log-table td:first-child {
+    padding-left: 20px;
+}
+
+.admin-log-history-page .admin-log-message-cell {
+    min-width: 320px;
+    max-width: 560px;
+}
+
+.admin-log-history-page .admin-log-message-cell > strong {
+    display: block;
+    color: #1e293b;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.admin-log-history-page .admin-log-message-cell p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.admin-log-history-page .admin-log-message-cell small {
+    display: block;
+    margin-top: 6px;
+    color: #94a3b8;
+    font-size: 9px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* ================= SOURCE BADGE ================= */
+
+.admin-log-history-page .export-type-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 25px;
+    padding: 0 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+/* ================= DATE / TIME ================= */
+
+.admin-log-history-page .export-requested {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.admin-log-history-page .export-requested strong {
+    color: #475569;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.admin-log-history-page .export-requested small {
+    color: #94a3b8;
+    font-size: 9px;
+}
+
+/* ================= LOG LEVELS ================= */
+
+.admin-log-history-page .admin-log-level {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 25px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+.admin-log-history-page .admin-log-level--error {
+    border-color: #fee2e2;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.admin-log-history-page .admin-log-level--warning {
+    border-color: #fde68a;
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.admin-log-history-page .admin-log-level--info {
+    border-color: #dbeafe;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+/* ================= EXPANDABLE DETAILS ================= */
+
+.admin-log-history-page .admin-log-details {
+    min-width: 100px;
+}
+
+.admin-log-history-page .admin-log-details summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0 9px;
+    border: 1px solid #dbeafe;
+    border-radius: 7px;
+    background: #f8fbff;
+    color: #2563eb;
+    font-size: 10px;
+    font-weight: 650;
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+}
+
+.admin-log-history-page .admin-log-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.admin-log-history-page .admin-log-details summary::after {
+    margin-left: 7px;
+    content: "+";
+    font-size: 13px;
+    line-height: 1;
+}
+
+.admin-log-history-page .admin-log-details[open] summary::after {
+    content: "−";
+}
+
+.admin-log-history-page .admin-log-details summary:hover {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+}
+
+.admin-log-history-page .admin-log-details pre {
+    width: min(540px, 65vw);
+    max-height: 320px;
+    margin: 10px 0 0;
+    padding: 12px;
+    overflow: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* ================= EMPTY STATE ================= */
+
+.admin-log-history-page .export-empty {
+    height: 220px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.admin-log-history-page .export-empty > div {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.admin-log-history-page .export-empty strong {
+    color: #334155;
+    font-size: 13px;
+}
+
+.admin-log-history-page .export-empty span {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* ================= PAGINATION ================= */
+
+.admin-log-history-page .export-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 15px 19px;
+    border-top: 1px solid #eef2f7;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.admin-log-history-page .export-table-footer > span strong {
+    color: #475569;
+    font-weight: 700;
+}
+
+.admin-log-history-page .export-table-footer > div nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.admin-log-history-page .export-table-footer nav a,
+.admin-log-history-page .export-table-footer nav span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 29px;
+    min-height: 29px;
+    padding: 0 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    background: #fff;
+    color: #64748b;
+    font-size: 10px;
+    text-decoration: none;
+}
+
+.admin-log-history-page .export-table-footer nav a:hover {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.admin-log-history-page .export-table-footer nav span[aria-current="page"] span {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #fff;
+}
+
+/* ================= NOTE ================= */
+
+.admin-log-history-page .admin-log-note {
+    margin: 15px 2px 0;
+    color: #94a3b8;
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1200px) {
+    .admin-log-history-page {
+        padding: 24px 22px 32px;
+    }
+
+    .admin-log-history-page .export-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-log-history-page .export-filters {
+        align-items: stretch;
+    }
+
+    .admin-log-history-page .export-search {
+        flex-basis: 100%;
+    }
+
+    .admin-log-history-page .admin-log-filters select {
+        flex: 1 1 140px;
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-log-history-page {
+        padding: 18px 14px 26px;
+    }
+
+    .admin-log-history-page .admin-exports-header {
+        margin-bottom: 20px;
+    }
+
+    .admin-log-history-page .admin-exports-title {
+        margin-bottom: 19px;
+    }
+
+    .admin-log-history-page .admin-exports-title h1 {
+        font-size: 24px;
+    }
+
+    .admin-log-history-page .admin-exports-title p:not(.export-eyebrow) {
+        font-size: 12px;
+    }
+
+    .admin-log-history-page .export-kpi-grid {
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .admin-log-history-page .export-kpi-card {
+        min-height: 112px;
+        gap: 10px;
+        padding: 13px;
+    }
+
+    .admin-log-history-page .export-kpi-icon {
+        flex-basis: 30px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .admin-log-history-page .export-kpi-content strong {
+        margin-top: 12px;
+        font-size: 22px;
+    }
+
+    .admin-log-history-page .export-kpi-content small {
+        font-size: 9px;
+    }
+
+    .admin-log-history-page .export-table-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        padding: 17px 15px;
+    }
+
+    .admin-log-history-page .export-filters {
+        padding: 13px;
+    }
+
+    .admin-log-history-page .admin-log-filters select {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+    }
+
+    .admin-log-history-page .admin-log-date {
+        flex: 1 1 calc(50% - 8px);
+        justify-content: space-between;
+    }
+
+    .admin-log-history-page .admin-log-date input {
+        width: min(145px, 68%);
+        min-width: 0;
+    }
+
+    .admin-log-history-page .export-filter-actions {
+        width: 100%;
+    }
+
+    .admin-log-history-page .export-filter-actions .export-btn,
+    .admin-log-history-page .export-filter-actions .export-clear-btn {
+        flex: 1;
+    }
+
+    .admin-log-history-page .export-table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-log-history-page .admin-log-details pre {
+        width: min(75vw, 440px);
+    }
+}
+
+@media (max-width: 420px) {
+    .admin-log-history-page .export-kpi-card {
+        flex-direction: column;
+        gap: 8px;
+        min-height: 125px;
+    }
+
+    .admin-log-history-page .export-kpi-content strong {
+        margin-top: 9px;
+    }
+
+    .admin-log-history-page .admin-log-filters select,
+    .admin-log-history-page .admin-log-date {
+        flex-basis: 100%;
+    }
+
+    .admin-log-history-page .admin-log-date input {
+        width: 72%;
+    }
+
+    .admin-log-history-page .export-result-count {
+        white-space: normal;
+    }
+}
+
+
+
+/* Clear Logs Button */
+
+.admin-log-history-page .admin-log-heading-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-log-history-page .admin-log-heading-actions form {
+    margin: 0;
+}
+
+.admin-log-history-page .admin-log-clear-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 35px;
+    padding: 0 14px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.admin-log-history-page .admin-log-clear-btn:hover {
+    border-color: #dc2626;
+    background: #dc2626;
+    color: #fff;
+}
+
+@media (max-width: 760px) {
+    .admin-log-history-page .admin-log-heading-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+

@@ -7,9 +7,45 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Export;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Artisan;
+use App\Models\Download;
 
 class DownloadController extends Controller
 {
+
+
+   public function process(Export $export)
+    {
+        if (!in_array($export->status, ['queued', 'failed'])) {
+            return back()->with(
+                'error',
+                'This export cannot be processed in its current status.'
+            );
+        }
+
+        try {
+
+            Artisan::call('queue:work', [
+                '--once' => true,
+                '--tries' => 1,
+                '--timeout' => 120,
+            ]);
+
+            return back()->with(
+                'success',
+                'Queue processing started. Please refresh the page shortly.'
+            );
+
+        } catch (\Throwable $e) {
+
+            return back()->with(
+                'error',
+                'Queue processing failed: ' . $e->getMessage()
+            );
+        }
+    }
+
+
     public function index(Request $request)
     {
         $admin = auth('admin')->user();

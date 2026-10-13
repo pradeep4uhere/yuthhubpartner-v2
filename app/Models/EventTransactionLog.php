@@ -29,6 +29,8 @@ class EventTransactionLog extends Model
 
         'comment',
 
+        'actor_name',
+
         'old_values',
         'new_values',
 
@@ -104,8 +106,13 @@ class EventTransactionLog extends Model
     |
     */
 
-    public function getActorNameAttribute()
+   public function getActorNameAttribute($value): string
     {
+        // Use the name saved in the event_transaction_logs table first.
+        if (filled($value)) {
+            return $value;
+        }
+
         if (!$this->user_id || !$this->user_type) {
             return 'System';
         }
@@ -115,6 +122,7 @@ class EventTransactionLog extends Model
             'FieldAgent' => FieldAgent::class,
             'Partner' => Partner::class,
             'PartnerPlacementUser' => PartnerPlacementUser::class,
+            'PartnerCenter' => PartnerCenter::class,
             default => null,
         };
 
@@ -122,6 +130,8 @@ class EventTransactionLog extends Model
             return 'Unknown User';
         }
 
-        return $model::find($this->user_id);
+        return $model::query()
+            ->whereKey($this->user_id)
+            ->value('name') ?? 'Unknown User';
     }
 }

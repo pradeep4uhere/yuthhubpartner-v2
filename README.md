@@ -126,3 +126,26 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Trumcate Tables
+USE youthhubpartner;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE event_transaction_logs;
+TRUNCATE TABLE event_transactions;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+## Admin Status
+Admin ke statuses
+Status	    Admin ke liye meaning	                                                Admin action
+Draft	    Field Agent ne transaction banaya hai, abhi submit nahi kiya	        View, as per permission
+Submitted	Field Agent ne submit kar diya	                                        Start Review
+Under Review	Admin transaction verify kar raha hai	                            Approve, Return, Reject
+Returned	Correction ke liye Field Agent ko wapas bheja	                        Reason dekhna, resubmission ka wait
+Rejected	Admin ne reject kiya; aapke rule ke mutabik resubmission allowed hai	Reason dekhna, resubmission ka wait
+Resubmitted	Field Agent ne correction ke baad dobara submit kiya	            Review dobara start karna
+Approved	Transaction approve ho chuka hai	                                    View, history

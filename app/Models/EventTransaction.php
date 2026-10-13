@@ -185,4 +185,85 @@ class EventTransaction extends Model
     {
         return $query->where('workflow_status', 'rejected');
     }
+
+
+
+     /*
+    |--------------------------------------------------------------------------
+    | Field Type
+    |--------------------------------------------------------------------------
+    */
+
+    public function fieldType(): BelongsTo
+    {
+        return $this->belongsTo(
+            FieldType::class,
+            'field_type_id',
+            'id'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Industry Type
+    |--------------------------------------------------------------------------
+    */
+
+    public function industryType(): BelongsTo
+    {
+        return $this->belongsTo(
+            IndustryType::class,
+            'industry_type_id',
+            'id'
+        );
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Event Master
+    |--------------------------------------------------------------------------
+    */
+
+    public function eventMaster(): BelongsTo
+    {
+        return $this->belongsTo(
+            EventMaster::class,
+            'event_master_id',
+            'id'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Event Master Type
+    |--------------------------------------------------------------------------
+    */
+
+    public function eventMasterType(): BelongsTo
+    {
+        return $this->belongsTo(
+            EventMasterType::class,
+            'event_master_type_id',
+            'id'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Event Category
+    |--------------------------------------------------------------------------
+    */
+
+    public function eventCategory(): BelongsTo
+    {
+        return $this->belongsTo(
+            EventCategoryMaster::class,
+            'event_category_name',
+            'name'
+        );
+    }
+
+
 }

@@ -720,9 +720,32 @@
 
                                 @elseif($export->status === 'queued')
 
-                                    <span class="export-waiting">
-                                        Queued…
-                                    </span>
+                                    <form action="{{ route('admin.downloads.process', $export->id) }}" method="POST" style="display: inline-block;">
+                                    @csrf
+
+                                    <button type="submit" class="btn btn-primary">
+                                        ⚙ Process Now
+                                    </button>
+                                </form>
+
+                                @elseif($export->status === 'failed')
+
+                                    <form
+                                        method="POST"
+                                        action="{{ route('admin.downloads.process', $export) }}"
+                                        style="display:inline;">
+
+                                        @csrf
+
+                                        <button
+                                            type="submit"
+                                            class="export-process-btn">
+
+                                            ↻ Retry
+
+                                        </button>
+
+                                    </form>
 
                                 @else
 

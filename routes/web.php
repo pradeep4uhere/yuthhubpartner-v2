@@ -20,6 +20,9 @@ use App\Http\Controllers\EventCategoryMasterController;
 use App\Http\Controllers\EventMasterTypeController;
 use App\Http\Controllers\Admin\EventTransactionController;
 use App\Http\Controllers\Admin\DownloadController;
+use App\Http\Controllers\Admin\LogHistoryController;
+use App\Http\Controllers\Admin\DashboardController;
+
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -66,6 +69,17 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::middleware('auth:admin')->group(function (): void {
         Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
         Route::get('/', AdminController::class)->middleware('can:admin.access')->name('dashboard');
+        Route::get('/dashboard-data', [DashboardController::class,'data'])->name('admin.dashboard.data');
+        Route::get('/dashboard/monthly-gender',[DashboardController::class, 'monthlyGender'])->name('dashboard.monthly-gender');
+        Route::get('/dashboard/event-transaction-status',[DashboardController::class, 'eventTransactionStatus'])->name('dashboard.event-transaction-status');
+        Route::get('/dashboard/learner-gender-status',[DashboardController::class, 'learnerGenderStatus'])->name('dashboard.learner-gender-status');
+        Route::get('/dashboard/learner-age-distribution',[DashboardController::class, 'learnerAgeDistribution'])->name('dashboard.learner-age-distribution');
+        Route::get('/dashboard/event-transaction-counts',[DashboardController::class, 'eventTransactionCounts'])->name('dashboard.event-transaction-counts');
+        Route::get('/dashboard/learners-by-programme',[DashboardController::class, 'learnersByProgramme'])->name('dashboard.learners-by-programme');
+        Route::get('/dashboard/top-10-field-agents',[DashboardController::class, 'top10FieldAgents'])->name('dashboard.top-10-field-agents');
+        Route::get('/dashboard/event-review-performance',[DashboardController::class, 'eventReviewPerformance'])->name('dashboard.event-review-performance');
+
+
         Route::get('/users', [AdminUserController::class, 'index'])->middleware('can:admins.manage')->name('users.index');
         Route::post('/users', [AdminUserController::class, 'store'])->middleware('can:admins.manage')->name('users.store');
         Route::patch('/users/{admin}/status', [AdminUserController::class, 'updateStatus'])->middleware('can:admins.manage')->name('users.status');
@@ -199,32 +213,24 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
 
 
 
-        Route::resource(
-            'event-transactions',
-            EventTransactionController::class
-        )->except(['create', 'store']);
-
-        Route::post(
-            'event-transactions/{eventTransaction}/under-review',
-            [EventTransactionController::class, 'underReview']
-        )->name('event-transactions.under-review');
-
-        Route::post(
-            'event-transactions/{eventTransaction}/approve',
-            [EventTransactionController::class, 'approve']
-        )->name('event-transactions.approve');
-
-        Route::post(
-            'event-transactions/{eventTransaction}/reject',
-            [EventTransactionController::class, 'reject']
-        )->name('event-transactions.reject');
-
+        Route::resource('event-transactions', EventTransactionController::class)->except(['create', 'store']);
+        Route::post('event-transactions/{eventTransaction}/under-review',[EventTransactionController::class, 'underReview'])->name('event-transactions.under-review');
+        Route::post('event-transactions/{eventTransaction}/approve',[EventTransactionController::class, 'approve'])->name('event-transactions.approve');
+        Route::post('event-transactions/{eventTransaction}/reject',[EventTransactionController::class, 'reject'])->name('event-transactions.reject');
+        Route::put('event-transactions/{eventTransaction}',[EventTransactionController::class, 'update'])->name('event-transactions.update');
 
 
         Route::get('/downloads', [DownloadController::class, 'index'])->name('downloads.index');
         Route::get('/downloads/{export}/download', [DownloadController::class, 'download'])->name('downloads.download');
         Route::get('/downloads/{export}/status', [DownloadController::class, 'status'])->name('downloads.status');
         Route::get('/downloads/{export}/download', [DownloadController::class, 'download'])->name('downloads.download');
-});
+        Route::post('/downloads/{export}/process', [DownloadController::class, 'process'])->name('downloads.process');
+
+
+        Route::get('/log-history', [LogHistoryController::class,'index'])->name('logs.index');
+
+        Route::post('/logs/clear', [LogHistoryController::class,'clear'])->name('logs.clear');
+
+    });
 
 });

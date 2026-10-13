@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Support\EventTransactionReviewStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateEventTransactionRequest extends FormRequest
 {
@@ -12,18 +13,45 @@ class UpdateEventTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth('admin')->check();
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'review_status' => [
+                'sometimes',
+                'required',
+                Rule::in(EventTransactionReviewStatus::values()),
+            ],
+
+            'field_type' => [
+                'sometimes',
+                'required',
+                'integer',
+            ],
+
+            'industry_type' => [
+                'sometimes',
+                'required',
+                'integer',
+            ],
+
+            'comment_type' => [
+                'sometimes',
+                'required',
+                'string',
+            ],
+
+            'comment' => [
+                'sometimes',
+                'required',
+                'string',
+            ],
         ];
     }
 }
+
