@@ -1,51 +1,66 @@
+
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
+
 import PartnerWorkspace from './components/PartnerWorkspace.jsx';
 import AdminDashboard from './components/AdminDashboard.jsx';
+import FieldAgentDashboard from './field-agent/FieldAgentDashboard.jsx';
 
 const components = {
-	'partner-workspace': PartnerWorkspace,
-	'admin-dashboard': AdminDashboard,
+    'partner-workspace': PartnerWorkspace,
+    'admin-dashboard': AdminDashboard,
+    'field-agent-dashboard': FieldAgentDashboard,
 };
 
 document.querySelectorAll('[data-react-app]').forEach((element) => {
-	const Component = components[element.dataset.reactApp];
-	if (Component) {
-		createRoot(element).render(
-            createElement(Component, {
-                partnerName: element.dataset.partnerName,
-                adminName: element.dataset.adminName,
+    const Component = components[element.dataset.reactApp];
 
-                canManageAdmins:
-                    element.dataset.canManageAdmins === 'true',
+    if (!Component) {
+        return;
+    }
 
-                canViewPartners:
-                    element.dataset.canViewPartners === 'true',
+    const agent = element.dataset.agent
+        ? JSON.parse(element.dataset.agent)
+        : {};
 
-                canViewPartnerCenters:
-                    element.dataset.canViewPartnerCenters === 'true',
+    createRoot(element).render(
+        createElement(Component, {
+            partnerName: element.dataset.partnerName,
+            adminName: element.dataset.adminName,
+            agent,
 
-                canManagePlacementUsers:
-                    element.dataset.canManagePlacementUsers === 'true',
+            canManageAdmins:
+                element.dataset.canManageAdmins === 'true',
 
-                canViewFieldAgents:
-                    element.dataset.canViewFieldAgents === 'true',
+            canViewPartners:
+                element.dataset.canViewPartners === 'true',
 
-                canViewEventTypes:
-                    element.dataset.canViewEventTypes === 'true',
+            canViewPartnerCenters:
+                element.dataset.canViewPartnerCenters === 'true',
 
-                canViewEventCategories:
-                    element.dataset.canViewEventCategories === 'true',
+            canManagePlacementUsers:
+                element.dataset.canManagePlacementUsers === 'true',
 
-                canViewEventMasters:
-                    element.dataset.canViewEventMasters === 'true',
+            canViewFieldAgents:
+                element.dataset.canViewFieldAgents === 'true',
 
-                canViewDownloads:
-                    element.dataset.canViewDownloads === 'true',
+            canViewEventTypes:
+                element.dataset.canViewEventTypes === 'true',
 
-                canViewErrorLogs:
-                    element.dataset.canViewErrorLogs === 'true',
-            }),
-        );
-	}
+            canViewEventCategories:
+                element.dataset.canViewEventCategories === 'true',
+
+            canViewEventMasters:
+                element.dataset.canViewEventMasters === 'true',
+
+            canViewDownloads:
+                element.dataset.canViewDownloads === 'true',
+
+            canViewErrorLogs:
+                element.dataset.canViewErrorLogs === 'true',
+
+            fieldAgentName: element.dataset.fieldAgentName,
+            fieldAgentStatus: element.dataset.fieldAgentStatus,
+        }),
+    );
 });

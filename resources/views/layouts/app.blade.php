@@ -11,6 +11,7 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @yield('styles')
+        @stack('styles')
     </head>
     <body>
         @yield('content')

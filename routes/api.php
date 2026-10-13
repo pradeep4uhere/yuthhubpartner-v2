@@ -5,6 +5,33 @@ use App\Http\Controllers\Api\EventTransactionController;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use App\Http\Controllers\Api\FieldAgent\EventActivityController;
+use App\Http\Controllers\Api\FieldAgent\DashboardStatsController;
+use App\Http\Controllers\Api\FieldAgent\DashboardChartsController;
+
+
+Route::middleware(['web', 'auth:field_agent'])
+    ->prefix('field-agent')
+    ->name('api.field-agent.')
+    ->group(function () {
+        Route::get(
+            '/event-activities',
+            [EventActivityController::class, 'index']
+        )->name('event-activities.index');
+
+        Route::get(
+            '/event-activities/{id}',
+            [EventActivityController::class, 'show']
+        )
+            ->whereNumber('id')
+            ->name('event-activities.show');
+
+        Route::get('/dashboard-stats',[DashboardStatsController::class, 'index'])->name('dashboard-stats');
+        Route::get('/dashboard-charts', [DashboardChartsController::class, 'index'])->name('dashboard-charts');
+
+
+    });
+
 
 Route::middleware([
       EncryptCookies::class,

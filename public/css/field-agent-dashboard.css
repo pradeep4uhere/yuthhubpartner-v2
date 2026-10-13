@@ -1,0 +1,1306 @@
+
+/* ==========================================================
+   YOUTHHUB FIELD AGENT
+   Mobile-first responsive dashboard
+   ========================================================== */
+
+:root {
+    --fa-navy: #14243b;
+    --fa-navy-light: #203954;
+    --fa-primary: #315efb;
+    --fa-teal: #0d9488;
+    --fa-bg: #f5f7fb;
+    --fa-white: #ffffff;
+    --fa-text: #19263a;
+    --fa-muted: #778397;
+    --fa-border: #e8edf4;
+    --fa-radius: 16px;
+    --fa-shadow: 0 5px 24px rgba(20, 36, 59, .055);
+    --fa-mobile-nav-height: 68px;
+}
+
+.field-agent-app,
+.field-agent-app * {
+    box-sizing: border-box;
+}
+
+.field-agent-app {
+    min-height: 100vh;
+    background: var(--fa-bg);
+    color: var(--fa-text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.field-agent-app button,
+.field-agent-app a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.field-agent-app a {
+    text-decoration: none;
+}
+
+/* --------------------------
+   App header
+   -------------------------- */
+
+.field-agent-header {
+    height: 64px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--fa-white);
+    border-bottom: 1px solid var(--fa-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.portal-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: auto;
+    color: var(--fa-navy);
+    font-size: 17px;
+    font-weight: 750;
+    letter-spacing: -.45px;
+    white-space: nowrap;
+}
+
+.portal-brand strong {
+    color: var(--fa-teal);
+}
+
+.portal-brand__mark {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #315efb, #0d9488);
+    color: #fff;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.field-agent-header__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    border-radius: 30px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.field-agent-header__status i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.field-agent-signout {
+    min-height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--fa-border);
+    border-radius: 10px;
+    background: #fff;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.field-agent-signout:hover {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #be123c;
+}
+
+/* --------------------------
+   Mobile page content
+   -------------------------- */
+
+.field-agent-main {
+    width: 100%;
+    max-width: 1500px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 22px 16px calc(var(--fa-mobile-nav-height) + 30px);
+}
+
+.field-agent-welcome {
+    margin-bottom: 24px;
+}
+
+.field-agent-eyebrow {
+    margin: 0 0 9px;
+    color: var(--fa-teal);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.field-agent-welcome h1 {
+    margin: 0 0 9px;
+    color: var(--fa-navy);
+    font-size: clamp(25px, 6vw, 32px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.field-agent-welcome > p:last-child {
+    margin: 0;
+    color: var(--fa-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* --------------------------
+   Section cards
+   -------------------------- */
+
+.field-agent-assignment,
+.field-agent-profile {
+    min-width: 0;
+    margin-bottom: 18px;
+    padding: 19px 16px;
+    border: 1px solid var(--fa-border);
+    border-radius: var(--fa-radius);
+    background: var(--fa-white);
+    box-shadow: var(--fa-shadow);
+}
+
+.field-agent-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.field-agent-section-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: #eff6ff;
+    color: #315efb;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.field-agent-section-icon--coral {
+    background: #fff1f2;
+    color: #e11d48;
+}
+
+.field-agent-section-heading h2 {
+    margin: 0 0 5px;
+    color: var(--fa-navy);
+    font-size: 16px;
+    font-weight: 750;
+    letter-spacing: -.3px;
+}
+
+.field-agent-section-heading p {
+    margin: 0;
+    color: var(--fa-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* --------------------------
+   Assignment cards
+   -------------------------- */
+
+.field-agent-assignment-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+}
+
+.field-agent-assignment-grid article {
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid var(--fa-border);
+    border-radius: 13px;
+    background: #fbfcff;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.field-agent-assignment-grid article > span {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--fa-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.field-agent-assignment-grid article strong {
+    display: block;
+    color: var(--fa-navy);
+    font-size: 15px;
+    font-weight: 750;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.field-agent-assignment-grid article small {
+    display: inline-block;
+    margin-top: 11px;
+    padding: 6px 9px;
+    border-radius: 7px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: 11px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+/* --------------------------
+   Profile details
+   -------------------------- */
+
+.field-agent-details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    margin: 0;
+}
+
+.field-agent-details > div {
+    min-width: 0;
+    padding: 14px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.field-agent-details > div:first-child {
+    padding-top: 0;
+}
+
+.field-agent-details > div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.field-agent-details dt {
+    margin: 0 0 7px;
+    color: var(--fa-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.field-agent-details dd {
+    margin: 0;
+    color: var(--fa-text);
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* --------------------------
+   Footer
+   -------------------------- */
+
+.field-agent-footer {
+    padding: 18px 0 8px;
+    color: #8490a2;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-align: center;
+}
+
+.field-agent-footer span {
+    display: block;
+    margin-top: 7px;
+    color: var(--fa-muted);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+/* ==========================================================
+   Drawer components
+   These become active when the matching HTML is added.
+   ========================================================== */
+
+.field-agent-menu-toggle {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--fa-border);
+    border-radius: 11px;
+    background: #fff;
+    color: var(--fa-navy);
+    font-size: 21px;
+    cursor: pointer;
+}
+
+.field-agent-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 199;
+    background: rgba(15, 23, 42, .48);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s, visibility .25s;
+}
+
+.field-agent-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 200;
+    width: min(290px, 84vw);
+    padding: 22px 16px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--fa-navy);
+    color: #fff;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform .25s ease, visibility .25s;
+}
+
+.field-agent-app.drawer-open .field-agent-drawer {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.field-agent-app.drawer-open .field-agent-drawer-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+.field-agent-drawer .portal-brand {
+    margin: 0 0 30px;
+    color: #fff;
+}
+
+.field-agent-drawer .portal-brand strong {
+    color: #5eead4;
+}
+
+.field-agent-drawer__label {
+    margin: 18px 12px 10px;
+    color: #94a9c3;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.field-agent-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.field-agent-nav a {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 13px;
+    border-radius: 11px;
+    color: #c7d3e2;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background .2s, color .2s;
+}
+
+.field-agent-nav a:hover,
+.field-agent-nav a.active {
+    background: var(--fa-navy-light);
+    color: #fff;
+}
+
+.field-agent-nav a.active {
+    box-shadow: inset 3px 0 #5eead4;
+}
+
+.field-agent-nav__icon {
+    width: 22px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.field-agent-drawer__bottom {
+    margin-top: auto;
+    padding-top: 22px;
+}
+
+/* --------------------------
+   Mobile bottom navigation
+   -------------------------- */
+
+.field-agent-bottom-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 150;
+    min-height: var(--fa-mobile-nav-height);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 7px 6px calc(7px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--fa-border);
+    background: rgba(255, 255, 255, .97);
+    backdrop-filter: blur(14px);
+}
+
+.field-agent-bottom-nav a,
+.field-agent-bottom-nav button {
+    min-width: 0;
+    min-height: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #8994a5;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.field-agent-bottom-nav a span:first-child,
+.field-agent-bottom-nav button span:first-child {
+    font-size: 19px;
+    line-height: 1.1;
+}
+
+.field-agent-bottom-nav a.active,
+.field-agent-bottom-nav button.active {
+    background: #eff6ff;
+    color: var(--fa-primary);
+}
+
+/* React mounting area */
+
+.field-agent-react-root {
+    min-width: 0;
+    width: 100%;
+}
+
+/* ==========================================================
+   Tablet
+   ========================================================== */
+
+@media (min-width: 600px) {
+    .field-agent-header {
+        height: 70px;
+        padding: 0 24px;
+    }
+
+    .field-agent-main {
+        padding: 30px 24px 40px;
+    }
+
+    .field-agent-assignment,
+    .field-agent-profile {
+        padding: 24px;
+    }
+
+    .field-agent-assignment-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field-agent-details {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 24px;
+    }
+
+    .field-agent-details > div:nth-last-child(-n + 3) {
+        border-bottom: 1px solid #edf0f5;
+    }
+
+    .field-agent-details > div:nth-last-child(-n + 2) {
+        border-bottom: 0;
+    }
+
+    .field-agent-details > div:first-child {
+        padding-top: 14px;
+    }
+
+    .field-agent-details > div:nth-child(-n + 2) {
+        padding-top: 0;
+    }
+}
+
+/* ==========================================================
+   Desktop
+   ========================================================== */
+
+@media (min-width: 1024px) {
+    .field-agent-header {
+        height: 76px;
+        padding: 0 34px;
+    }
+
+    .field-agent-main {
+        padding: 36px 34px 44px;
+    }
+
+    .field-agent-welcome {
+        margin-bottom: 30px;
+    }
+
+    .field-agent-welcome h1 {
+        font-size: 34px;
+    }
+
+    .field-agent-assignment,
+    .field-agent-profile {
+        margin-bottom: 24px;
+        padding: 28px;
+    }
+
+    .field-agent-assignment-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .field-agent-assignment-grid article {
+        padding: 22px;
+    }
+
+    .field-agent-assignment-grid article:hover {
+        border-color: #bfdbfe;
+        box-shadow: 0 8px 20px rgba(30, 64, 175, .07);
+    }
+
+    .field-agent-details {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        column-gap: 28px;
+    }
+
+    .field-agent-details > div:nth-last-child(-n + 2) {
+        border-bottom: 1px solid #edf0f5;
+    }
+
+    .field-agent-details > div:nth-last-child(-n + 3) {
+        border-bottom: 0;
+    }
+
+    .field-agent-details > div:nth-child(-n + 2) {
+        padding-top: 17px;
+    }
+
+    .field-agent-details > div:first-child,
+    .field-agent-details > div:nth-child(-n + 3) {
+        padding-top: 0;
+    }
+
+    .field-agent-bottom-nav,
+    .field-agent-menu-toggle,
+    .field-agent-drawer-overlay,
+    .field-agent-drawer {
+        display: none;
+    }
+}
+
+/* Smaller phones */
+
+@media (max-width: 380px) {
+    .field-agent-header {
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .portal-brand {
+        gap: 7px;
+        font-size: 15px;
+    }
+
+    .portal-brand__mark {
+        width: 34px;
+        height: 34px;
+    }
+
+    .field-agent-header__status {
+        padding: 6px 8px;
+        font-size: 10px;
+    }
+
+    .field-agent-signout {
+        min-height: 34px;
+        padding: 0 8px;
+        font-size: 11px;
+    }
+
+    .field-agent-main {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+    .field-agent-app *,
+    .field-agent-app *::before,
+    .field-agent-app *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+    }
+}
+
+
+
+.field-agent-drawer__bottom form,
+.field-agent-drawer__bottom .field-agent-signout {
+    width: 100%;
+}
+
+.field-agent-drawer__bottom .field-agent-signout {
+    min-height: 44px;
+}
+
+@media (min-width: 1024px) {
+    .field-agent-app {
+        padding-left: 270px;
+    }
+
+    .field-agent-drawer {
+        width: 270px;
+        transform: none;
+        visibility: visible;
+        position: fixed;
+    }
+
+    .field-agent-header {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 1023px) {
+    .field-agent-app {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 599px) {
+    .field-agent-details > div {
+        scroll-margin-top: 80px;
+    }
+
+    #profile {
+        scroll-margin-top: 80px;
+    }
+}
+/* =========================================
+   FIELD AGENT DESKTOP LAYOUT FIX
+   Add at the END of the CSS file
+========================================= */
+
+@media (min-width: 1024px) {
+    .field-agent-app {
+        padding-left: 270px !important;
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: clip;
+    }
+
+    .field-agent-drawer {
+        display: flex !important;
+        flex-direction: column;
+        position: fixed !important;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 270px;
+        height: 100vh;
+        height: 100dvh;
+        z-index: 1000;
+        overflow-y: auto;
+        transform: translateX(0) !important;
+        visibility: visible !important;
+        background: #ffffff;
+        border-right: 1px solid #e5e7eb;
+    }
+
+    .field-agent-drawer-overlay {
+        display: none !important;
+    }
+
+    .field-agent-menu-toggle {
+        display: none !important;
+    }
+
+    .field-agent-bottom-nav {
+        display: none !important;
+    }
+
+    .field-agent-header {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .field-agent-main {
+        width: 100%;
+        min-width: 0;
+        max-width: 1600px;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+    }
+
+    .field-agent-react-root {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 1023px) {
+    .field-agent-app {
+        padding-left: 0 !important;
+    }
+
+    .field-agent-drawer {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+    .field-agent-bottom-nav {
+        display: flex;
+    }
+}
+
+/* =========================================
+   MOBILE BOTTOM NAVIGATION FIX
+========================================= */
+
+@media (max-width: 767px) {
+    .field-agent-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: center;
+        justify-items: stretch;
+
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        min-height: 64px;
+        padding: 7px 4px calc(7px + env(safe-area-inset-bottom));
+
+        box-sizing: border-box;
+        background: #ffffff;
+        border-top: 1px solid #e5e7eb;
+        box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.06);
+        z-index: 1100;
+        gap: 2px;
+    }
+
+    .field-agent-bottom-nav > * {
+        min-width: 0;
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .field-agent-bottom-nav button,
+    .field-agent-bottom-nav a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+
+        min-width: 0;
+        min-height: 48px;
+        padding: 5px 2px;
+        border: 0;
+        background: transparent;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.2;
+        text-align: center;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .field-agent-bottom-nav svg {
+        display: block;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .field-agent-bottom-nav button.active,
+    .field-agent-bottom-nav a.active,
+    .field-agent-bottom-nav button[aria-current="page"],
+    .field-agent-bottom-nav a[aria-current="page"] {
+        color: #2563eb;
+        font-weight: 600;
+    }
+
+    .field-agent-app {
+        padding-bottom: 90px;
+    }
+}
+
+@media (min-width: 768px) {
+    .field-agent-bottom-nav {
+        display: none !important;
+    }
+}
+
+/* =========================================================
+   YOUTHHUB FIELD — PREMIUM NAVIGATION SYSTEM
+   Desktop sidebar + responsive mobile drawer
+========================================================= */
+
+.field-agent-app {
+    --fa-sidebar-width: 272px;
+    --fa-sidebar-bg: #111827;
+    --fa-sidebar-bg-deep: #0b1220;
+    --fa-sidebar-text: #cbd5e1;
+    --fa-sidebar-muted: #8190a7;
+    --fa-sidebar-border: rgb(255 255 255 / 8%);
+    --fa-accent: #818cf8;
+    --fa-accent-bright: #a5b4fc;
+    --fa-accent-soft: rgb(129 140 248 / 13%);
+    --fa-accent-border: rgb(129 140 248 / 25%);
+}
+
+/* Drawer surface */
+.field-agent-app .field-agent-drawer {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    width: var(--fa-sidebar-width);
+    height: 100vh;
+    height: 100dvh;
+    padding: 25px 17px 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    background:
+        radial-gradient(
+            ellipse at 0% 0%,
+            rgb(79 70 229 / 17%),
+            transparent 45%
+        ),
+        linear-gradient(
+            165deg,
+            var(--fa-sidebar-bg) 0%,
+            var(--fa-sidebar-bg-deep) 100%
+        );
+
+    border-right: 1px solid rgb(255 255 255 / 7%);
+    color: var(--fa-sidebar-text);
+
+    box-shadow: 8px 0 32px rgb(15 23 42 / 5%);
+    transition:
+        transform 280ms cubic-bezier(.2, .75, .25, 1),
+        box-shadow 280ms ease;
+
+    scrollbar-width: thin;
+    scrollbar-color: #374151 transparent;
+}
+
+.field-agent-app .field-agent-drawer::-webkit-scrollbar {
+    width: 5px;
+}
+
+.field-agent-app .field-agent-drawer::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background: #374151;
+}
+
+/* Brand */
+.field-agent-app .field-agent-drawer .portal-brand {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    margin: 0 4px 33px;
+    color: #f8fafc;
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.55px;
+    text-decoration: none;
+}
+
+.field-agent-app .field-agent-drawer .portal-brand strong {
+    color: #a5b4fc;
+    font-weight: 750;
+}
+
+.field-agent-app .field-agent-drawer .portal-brand__mark {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 43px;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(145deg, #818cf8 0%, #4f46e5 58%, #3730a3 100%);
+
+    color: #ffffff;
+    font-size: 21px;
+    font-weight: 800;
+
+    box-shadow:
+        0 6px 16px rgb(79 70 229 / 30%),
+        inset 0 1px 0 rgb(255 255 255 / 25%);
+}
+
+.field-agent-app .field-agent-drawer .portal-brand__mark::after {
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--fa-sidebar-bg);
+    border-radius: 50%;
+    background: #34d399;
+    content: "";
+}
+
+/* Section labels */
+.field-agent-app .field-agent-drawer__label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 11px 12px;
+    color: var(--fa-sidebar-muted);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 1.55px;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.field-agent-app .field-agent-drawer__label:not(:first-of-type) {
+    margin-top: 31px;
+}
+
+/* Navigation group */
+.field-agent-app .field-agent-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+/* Links and buttons share the same visual system */
+.field-agent-app .field-agent-nav > a,
+.field-agent-app .field-agent-nav > button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+    padding: 11px 12px;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+
+    color: var(--fa-sidebar-text);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0.05px;
+    text-align: left;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition:
+        color 180ms ease,
+        background 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+/* Left indicator for active navigation */
+.field-agent-app .field-agent-nav > a::before,
+.field-agent-app .field-agent-nav > button::before {
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 0;
+    width: 3px;
+    border-radius: 0 5px 5px 0;
+    background: transparent;
+    content: "";
+    transition: background 180ms ease;
+}
+
+/* Icon containers */
+.field-agent-app .field-agent-nav__icon {
+    display: inline-flex;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    box-sizing: border-box;
+
+    border: 1px solid rgb(255 255 255 / 7%);
+    border-radius: 10px;
+    background: rgb(255 255 255 / 4%);
+
+    color: #aab7cc;
+    font-size: 19px;
+    line-height: 1;
+
+    transition:
+        color 180ms ease,
+        background 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+/* Hover */
+.field-agent-app .field-agent-nav > a:hover,
+.field-agent-app .field-agent-nav > button:hover {
+    transform: translateX(2px);
+    border-color: rgb(255 255 255 / 6%);
+    background: rgb(255 255 255 / 5%);
+    color: #ffffff;
+}
+
+.field-agent-app .field-agent-nav > a:hover .field-agent-nav__icon,
+.field-agent-app .field-agent-nav > button:hover .field-agent-nav__icon {
+    border-color: rgb(165 180 252 / 15%);
+    background: rgb(129 140 248 / 12%);
+    color: #c7d2fe;
+}
+
+/* Active item */
+.field-agent-app .field-agent-nav > a.active,
+.field-agent-app .field-agent-nav > button.active {
+    border-color: var(--fa-accent-border);
+    background:
+        linear-gradient(
+            100deg,
+            rgb(99 102 241 / 23%),
+            rgb(99 102 241 / 9%)
+        );
+    color: #ffffff;
+    font-weight: 650;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
+}
+
+.field-agent-app .field-agent-nav > a.active::before,
+.field-agent-app .field-agent-nav > button.active::before {
+    background: linear-gradient(180deg, #a5b4fc, #6366f1);
+}
+
+.field-agent-app .field-agent-nav > a.active .field-agent-nav__icon,
+.field-agent-app .field-agent-nav > button.active .field-agent-nav__icon {
+    border-color: rgb(165 180 252 / 24%);
+    background: linear-gradient(
+        145deg,
+        rgb(129 140 248 / 28%),
+        rgb(79 70 229 / 20%)
+    );
+    color: #c7d2fe;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 10%);
+}
+
+/* Account / sign-out area */
+.field-agent-app .field-agent-drawer__bottom {
+    margin-top: auto;
+    padding-top: 25px;
+}
+
+.field-agent-app .field-agent-drawer__bottom form {
+    padding-top: 17px;
+    border-top: 1px solid var(--fa-sidebar-border);
+}
+
+.field-agent-app .field-agent-drawer .field-agent-signout {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 11px;
+    width: 100%;
+    min-height: 45px;
+    padding: 11px 13px;
+
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: transparent;
+    color: #fca5a5;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 550;
+    text-align: left;
+    cursor: pointer;
+
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+}
+
+.field-agent-app .field-agent-drawer .field-agent-signout:hover {
+    border-color: rgb(248 113 113 / 15%);
+    background: rgb(239 68 68 / 10%);
+    color: #fecaca;
+}
+
+/* Mobile backdrop */
+.field-agent-app .field-agent-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    background: rgb(2 6 23 / 60%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+
+    transition:
+        opacity 260ms ease,
+        visibility 260ms ease;
+}
+
+/* Menu toggle */
+.field-agent-app .field-agent-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    flex: 0 0 43px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #1e293b;
+
+    font-size: 21px;
+    cursor: pointer;
+
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.field-agent-app .field-agent-menu-toggle:hover {
+    border-color: #c7d2fe;
+    background: #f5f7ff;
+    box-shadow: 0 3px 10px rgb(79 70 229 / 8%);
+}
+
+/* Desktop sidebar */
+@media (min-width: 1024px) {
+    .field-agent-app .field-agent-drawer {
+        transform: translateX(0);
+    }
+
+    .field-agent-app .field-agent-drawer-overlay {
+        display: none;
+    }
+
+    
+
+    .field-agent-app .field-agent-menu-toggle {
+        display: none;
+    }
+
+    .field-agent-app .field-agent-bottom-nav {
+        display: none;
+    }
+}
+
+/* Mobile and tablet drawer */
+@media (max-width: 1023px) {
+    .field-agent-app .field-agent-drawer {
+        width: min(300px, 87vw);
+        max-width: 100%;
+        transform: translateX(-102%);
+        box-shadow: none;
+    }
+
+    .field-agent-app.drawer-open .field-agent-drawer {
+        transform: translateX(0);
+        box-shadow: 20px 0 55px rgb(2 6 23 / 28%);
+    }
+
+    .field-agent-app.drawer-open .field-agent-drawer-overlay {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .field-agent-app .field-agent-header,
+    .field-agent-app .field-agent-main {
+        margin-left: 0;
+    }
+}
+
+/* Keyboard focus */
+.field-agent-app .field-agent-nav > a:focus-visible,
+.field-agent-app .field-agent-nav > button:focus-visible,
+.field-agent-app .field-agent-menu-toggle:focus-visible {
+    outline: 2px solid #a5b4fc;
+    outline-offset: 3px;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .field-agent-app .field-agent-drawer,
+    .field-agent-app .field-agent-drawer-overlay,
+    .field-agent-app .field-agent-nav > a,
+    .field-agent-app .field-agent-nav > button,
+    .field-agent-app .field-agent-nav__icon {
+        transition: none;
+    }
+}
