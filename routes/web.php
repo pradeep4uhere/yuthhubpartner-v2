@@ -22,9 +22,11 @@ use App\Http\Controllers\Admin\EventTransactionController;
 use App\Http\Controllers\Admin\DownloadController;
 use App\Http\Controllers\Admin\LogHistoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\LanguageController;
 
 
 Route::get('/', HomeController::class)->name('home');
+Route::post('/language', [LanguageController::class, 'update'])->name('language.update');
 
 Route::prefix('field-agent')->name('field-agent.')->group(function (): void {
     Route::get('/login', [FieldAgentPortalController::class, 'create'])->middleware('guest:field_agent')->name('login');
@@ -156,6 +158,8 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/event-masters/categories/{eventMasterType}',[EventMasterController::class, 'categories'])
             ->middleware('can:event_masters.view')
             ->name('event-masters.categories');
+
+        Route::get('/event-categories/by-type/{typeId}',[EventMasterController::class, 'byType'])->name('event-categories.by-type');
 
 
 

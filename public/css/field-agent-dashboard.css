@@ -1249,7 +1249,7 @@
         display: none;
     }
 
-    
+
 
     .field-agent-app .field-agent-menu-toggle {
         display: none;
@@ -1304,3 +1304,28 @@
         transition: none;
     }
 }
+
+
+
+.field-agent-language-form {
+    display: flex;
+    align-items: center;
+}
+
+.field-agent-language-form select {
+    min-height: 38px;
+    padding: 6px 28px 6px 10px;
+    border: 1px solid #d9e0e8;
+    border-radius: 8px;
+    background: #fff;
+    color: #253247;
+    font: inherit;
+    cursor: pointer;
+    max-width: 125px;
+}
+
+.field-agent-language-form select:focus {
+    outline: 2px solid #2457a7;
+    outline-offset: 2px;
+}
+

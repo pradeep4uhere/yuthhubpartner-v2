@@ -19,49 +19,57 @@
         <aside
             class="field-agent-drawer"
             id="field-agent-drawer"
-            aria-label="Main navigation"
+            aria-label="{{ __('field_agent.main_navigation') }}"
             aria-hidden="false">
 
             <a class="portal-brand"
                href="{{ route('field-agent.dashboard') }}">
                 <span class="portal-brand__mark">Y</span>
-                <span>YouthHub <strong>Field</strong></span>
+                <span>{{ __('field_agent.brand') }}</span>
             </a>
 
-            <p class="field-agent-drawer__label">WORKSPACE</p>
+            <p class="field-agent-drawer__label">
+                {{ __('field_agent.workspace') }}
+            </p>
 
-            <nav class="field-agent-nav" aria-label="Workspace navigation">
+            <nav class="field-agent-nav"
+                 aria-label="{{ __('field_agent.workspace_navigation') }}">
+
                 <a href="{{ route('field-agent.dashboard') }}"
                    data-home-link
                    data-section="overview"
                    class="active"
                    aria-current="page">
                     <span class="field-agent-nav__icon">⌂</span>
-                    <span>Overview</span>
+                    <span>{{ __('field_agent.overview') }}</span>
                 </a>
 
                 <button type="button" data-section="learners">
                     <span class="field-agent-nav__icon">♙</span>
-                    <span>My Learners</span>
+                    <span>{{ __('field_agent.learners') }}</span>
                 </button>
 
                 <button type="button" data-section="activities">
                     <span class="field-agent-nav__icon">▤</span>
-                    <span>Events</span>
+                    <span>{{ __('field_agent.events') }}</span>
                 </button>
 
                 <button type="button" data-section="reports">
                     <span class="field-agent-nav__icon">▥</span>
-                    <span>Reports</span>
+                    <span>{{ __('field_agent.reports') }}</span>
                 </button>
             </nav>
 
-            <p class="field-agent-drawer__label">ACCOUNT</p>
+            <p class="field-agent-drawer__label">
+                {{ __('field_agent.account') }}
+            </p>
 
-            <nav class="field-agent-nav" aria-label="Account navigation">
+            <nav class="field-agent-nav"
+                 aria-label="{{ __('field_agent.account_navigation') }}">
+
                 <button type="button" data-section="profile">
                     <span class="field-agent-nav__icon">◎</span>
-                    <span>My Profile</span>
+                    <span>{{ __('field_agent.profile') }}</span>
                 </button>
             </nav>
 
@@ -69,8 +77,9 @@
                 <form method="POST"
                       action="{{ route('field-agent.logout') }}">
                     @csrf
+
                     <button class="field-agent-signout" type="submit">
-                        Sign out
+                        {{ __('field_agent.sign_out') }}
                     </button>
                 </form>
             </div>
@@ -78,11 +87,12 @@
 
         {{-- Top header --}}
         <header class="field-agent-header">
+
             <button
                 type="button"
                 class="field-agent-menu-toggle"
                 id="field-agent-menu-toggle"
-                aria-label="Open navigation menu"
+                aria-label="{{ __('field_agent.open_menu') }}"
                 aria-controls="field-agent-drawer"
                 aria-expanded="false">
                 ☰
@@ -90,27 +100,57 @@
 
             <a class="portal-brand"
                href="{{ route('field-agent.dashboard') }}"
-               aria-label="Field Agent home">
+               aria-label="{{ __('field_agent.field_agent_home') }}">
                 <span class="portal-brand__mark">Y</span>
-                <span>YouthHub <strong>Field</strong></span>
+                <span>{{ __('field_agent.brand') }}</span>
             </a>
 
             <span class="field-agent-header__status">
                 <i></i>
-                {{ ucfirst($fieldAgent->status) }}
+                {{ __('field_agent.statuses.' . strtolower($fieldAgent->status)) }}
             </span>
+
+            {{-- Language selector --}}
+            <form method="POST"
+                  action="{{ route('language.update') }}"
+                  class="field-agent-language-form">
+                @csrf
+
+                <label for="field-agent-language" class="sr-only">
+                    {{ __('field_agent.language') }}
+                </label>
+
+                <select
+                    id="field-agent-language"
+                    name="locale"
+                    onchange="this.form.submit()"
+                    aria-label="{{ __('field_agent.language') }}">
+
+                    <option value="en"
+                        {{ app()->getLocale() === 'en' ? 'selected' : '' }}>
+                        English
+                    </option>
+
+                    <option value="hi"
+                        {{ app()->getLocale() === 'hi' ? 'selected' : '' }}>
+                        हिन्दी
+                    </option>
+                </select>
+            </form>
 
             <form method="POST"
                   action="{{ route('field-agent.logout') }}">
                 @csrf
+
                 <button class="field-agent-signout" type="submit">
-                    Sign out
+                    {{ __('field_agent.sign_out') }}
                 </button>
             </form>
         </header>
 
         {{-- React dashboard root --}}
         <section class="field-agent-main">
+
             <div
                 id="field-agent-react-root"
                 class="field-agent-react-root"
@@ -133,15 +173,21 @@
                 ]) }}">
             </div>
 
+            {{-- React translations --}}
+            <script type="application/json"
+                    id="field-agent-translations">
+                @json(__('field_agent.react'))
+            </script>
+
             <footer class="field-agent-footer">
-                YOUTHHUB PARTNER
-                <span>Field operations</span>
+                {{ __('field_agent.footer_brand') }}
+                <span>{{ __('field_agent.field_operations') }}</span>
             </footer>
         </section>
 
         {{-- Mobile bottom navigation --}}
         <nav class="field-agent-bottom-nav"
-             aria-label="Mobile navigation">
+             aria-label="{{ __('field_agent.mobile_navigation') }}">
 
             <a href="{{ route('field-agent.dashboard') }}"
                data-home-link
@@ -149,22 +195,22 @@
                class="active"
                aria-current="page">
                 <span>⌂</span>
-                <span>Home</span>
+                <span>{{ __('field_agent.home') }}</span>
             </a>
 
             <button type="button" data-section="learners">
                 <span>♙</span>
-                <span>Learners</span>
+                <span>{{ __('field_agent.learners_short') }}</span>
             </button>
 
             <button type="button" data-section="activities">
                 <span>▤</span>
-                <span>Events</span>
+                <span>{{ __('field_agent.events') }}</span>
             </button>
 
             <button type="button" data-section="profile">
                 <span>◎</span>
-                <span>Profile</span>
+                <span>{{ __('field_agent.profile_short') }}</span>
             </button>
         </nav>
 
@@ -194,7 +240,6 @@
             function setDrawer(open) {
                 const shouldOpen = Boolean(open) && isMobile();
 
-                // Move focus before hiding the drawer from accessibility tools.
                 if (
                     !shouldOpen &&
                     drawer.contains(document.activeElement)
@@ -205,14 +250,14 @@
                 app.classList.toggle('drawer-open', shouldOpen);
 
                 toggle.setAttribute('aria-expanded', String(shouldOpen));
+
                 toggle.setAttribute(
                     'aria-label',
                     shouldOpen
-                        ? 'Close navigation menu'
-                        : 'Open navigation menu'
+                        ? @json(__('field_agent.close_menu'))
+                        : @json(__('field_agent.open_menu'))
                 );
 
-                // Desktop sidebar stays available; mobile drawer is hidden when closed.
                 drawer.setAttribute(
                     'aria-hidden',
                     String(isMobile() && !shouldOpen)
@@ -254,7 +299,6 @@
                 setDrawer(false);
             });
 
-            // One navigation handler for desktop sidebar and mobile navigation.
             app.querySelectorAll('[data-section]').forEach(link => {
                 link.addEventListener('click', event => {
                     event.preventDefault();
@@ -276,7 +320,6 @@
                 });
             });
 
-            // Set correct initial drawer accessibility state.
             setDrawer(false);
             updateActiveNavigation('overview');
 

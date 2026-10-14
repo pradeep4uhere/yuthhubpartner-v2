@@ -20,42 +20,55 @@ const WORKFLOW_STATUSES = [
     'approved',
     'rejected',
 ];
-
-function formatDate(value) {
+function formatDate(value, locale = 'en-IN') {
     if (!value) return '—';
 
     const date = new Date(value);
 
     if (Number.isNaN(date.getTime())) return value;
 
-    return date.toLocaleDateString('en-IN', {
+    return date.toLocaleDateString(locale, {
         day: '2-digit',
         month: 'short',
         year: 'numeric',
     });
 }
 
-function formatStatus(value) {
-    if (!value) return 'Not specified';
+function formatStatus(value, t) {
+    if (!value) return t('not_specified');
 
-    return value
+    const normalized = String(value)
         .replaceAll('_', ' ')
-        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+        .toLowerCase();
+
+    const statusKeys = {
+        open: 'status_open',
+        pending: 'status_pending',
+        accepted: 'status_accepted',
+        rejected: 'status_rejected',
+        return: 'status_return',
+        draft: 'status_draft',
+        submitted: 'status_submitted',
+        under_review: 'status_under_review',
+        approved: 'status_approved',
+    };
+
+    const key = statusKeys[normalized.replaceAll(' ', '_')];
+
+    return key ? t(key) : normalized.replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function StatusBadge({ value }) {
+function StatusBadge({ value, t }) {
     const normalized = (value || 'unknown')
         .toLowerCase()
         .replaceAll(/[^a-z0-9]+/g, '-');
 
     return (
         <span className={`ea-status ea-status--${normalized}`}>
-            {formatStatus(value)}
+            {formatStatus(value, t)}
         </span>
     );
 }
-
-
 
 function ActivitySummaryCard({ icon: Icon, label, count, tone }) {
     return (
@@ -72,8 +85,16 @@ function ActivitySummaryCard({ icon: Icon, label, count, tone }) {
     );
 }
 
-
-export default function EventActivitiesPage({ agent = {}, onNavigate }) {
+export default function EventActivitiesPage({
+    agent = {},
+    onNavigate,
+    onEditActivity,
+    t = (key) => key,
+}) {
+        const locale =
+            document.documentElement.lang?.toLowerCase().startsWith('hi')
+                ? 'hi-IN'
+                : 'en-IN';
     const [activities, setActivities] = useState([]);
     const [pagination, setPagination] = useState({
         current_page: 1,
@@ -95,6 +116,12 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
     open: 0,
     draft: 0,
 });
+    const [editingActivity, setEditingActivity] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
+
+    const handleEdit = (activity) => {
+        setEditingActivity(activity);
+    };
 
 
 
@@ -102,7 +129,7 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
     const loadActivities = useCallback(async (signal) => {
         setLoading(true);
         setError('');
-       
+
 
         try {
             const params = new URLSearchParams({
@@ -217,10 +244,10 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
         <section className="ea-page">
             <header className="ea-header">
                 <div>
-                    <p className="ea-eyebrow">FIELD AGENT WORKSPACE</p>
-                    <h1>Event Activities</h1>
+                    <p className="ea-eyebrow">{t('field_agent_workspace')}</p>
+                    <h1>{t('event_activities')}</h1>
                     <p className="ea-subtitle">
-                        View and track your event activity records.
+                        {t('event_activities_subtitle')}
                     </p>
                 </div>
 
@@ -231,73 +258,89 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
                     disabled={loading}
                 >
                     <RefreshCw size={16} />
-                    Refresh
+                    {t('refresh')}
                 </button>
             </header>
 
             <div >
-                        
+
             <div className="ea-summary-grid">
-                <ActivitySummaryCard
+               <ActivitySummaryCard
                     icon={CalendarDays}
-                    label="Total Activities"
+                    label={t('total_activities')}
                     count={summary.total}
                     tone="blue"
                 />
 
                 <ActivitySummaryCard
                     icon={CheckCircle2}
-                    label="Accepted"
+                    label={t('status_accepted')}
                     count={summary.approved}
                     tone="green"
                 />
 
                 <ActivitySummaryCard
                     icon={XCircle}
-                    label="Rejected"
+                    label={t('status_rejected')}
                     count={summary.rejected}
                     tone="red"
                 />
 
                 <ActivitySummaryCard
                     icon={Clock3}
-                    label="Open"
+                    label={t('status_open')}
                     count={summary.open}
                     tone="amber"
                 />
 
                 <ActivitySummaryCard
                     icon={FilePenLine}
-                    label="Draft"
+                    label={t('status_draft')}
                     count={summary.draft}
                     tone="violet"
                 />
             </div>
 
             </div>
+            {successMessage && (
+                <div className="ea-success-banner" role="status">
+                    <CheckCircle2 size={22} />
+                    <div>
+                        <strong>Success!</strong>
+                        <p>{successMessage}</p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setSuccessMessage('')}
+                        aria-label="Dismiss success message"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
 
             <div className="ea-filters">
-                
+
                 <label className="ea-search">
-                      
+
                     <Search size={17} />
                     <input
                         type="search"
-                        placeholder="Search name, learner ID, event..."
+                       placeholder={t('search_activities')}
                         value={search}
                         onChange={(event) => setSearch(event.target.value)}
                     />
                 </label>
 
                 <label className="ea-filter">
-                    <span>Review status</span>
+                    <span>{t('review_status')}</span>
                     <select
                         value={reviewStatus}
                         onChange={(event) =>
                             changeReviewStatus(event.target.value)
                         }
                     >
-                        <option value="">All review statuses</option>
+                        <option value="">{t('all_review_statuses')}</option>
                         {REVIEW_STATUSES.map((status) => (
                             <option key={status} value={status}>
                                 {status}
@@ -307,17 +350,17 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
                 </label>
 
                 <label className="ea-filter">
-                    <span>Workflow status</span>
+                    <span>{t('workflow_status')}</span>
                     <select
                         value={workflowStatus}
                         onChange={(event) =>
                             changeWorkflowStatus(event.target.value)
                         }
                     >
-                        <option value="">All workflow statuses</option>
+                        <option value="">{t('all_workflow_statuses')}</option>
                         {WORKFLOW_STATUSES.map((status) => (
                             <option key={status} value={status}>
-                                {formatStatus(status)}
+                                 {formatStatus(status, t)}
                             </option>
                         ))}
                     </select>
@@ -341,7 +384,7 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
             {loading ? (
                 <div className="ea-state">
                     <span className="ea-spinner" />
-                    <p>Loading event activities...</p>
+                    <p>{t('loading_event_activities')}</p>
                 </div>
             ) : !error && visibleActivities.length === 0 ? (
                 <div className="ea-state">
@@ -377,30 +420,31 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
 
                                 <StatusBadge
                                     value={activity.review_status}
+                                    t={t}
                                 />
                             </div>
 
                             <div className="ea-card-details">
                                 <div>
-                                    <span>Learner ID</span>
+                                    <span>{t('learner_id')}</span>
                                     <strong>
                                         {activity.learner_id ?? '—'}
                                     </strong>
                                 </div>
                                 <div>
-                                    <span>Beneficiary</span>
+                                    <span>{t('beneficiary')}</span>
                                     <strong>
                                         {activity.beneficiary_name || '—'}
                                     </strong>
                                 </div>
                                 <div>
-                                    <span>Event date</span>
+                                    <span>{t('event_date')}</span>
                                     <strong>
-                                        {formatDate(activity.event_create_date)}
+                                       {formatDate(activity.event_create_date, locale)}
                                     </strong>
                                 </div>
                                 <div>
-                                    <span>Event value</span>
+                                    <span>{t('event_value')}</span>
                                     <strong>
                                         {activity.event_value != null
                                             ? `₹${activity.event_value}`
@@ -411,20 +455,29 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
 
                             <div className="ea-card-footer">
                                 <div>
-                                    <span>Workflow</span>
+                                    <span>{t('workflow')}</span>
                                     <StatusBadge
                                         value={activity.workflow_status}
+                                        t={t}
                                     />
                                 </div>
                                 <span>
-                                    Submitted:{' '}
-                                    {formatDate(activity.event_date_submitted)}
+                                    {t('submitted')}:{' '}
+                                    {formatDate(activity.event_date_submitted, locale)}
                                 </span>
+                                <button
+                                    type="button"
+                                    className="ea-edit-button"
+                                    onClick={() => onEditActivity?.(activity)}
+                                >
+                                    <FilePenLine size={16} />
+                                    {t('edit_event')}
+                                </button>
                             </div>
 
                             {activity.last_comment && (
                                 <p className="ea-comment">
-                                    <strong>Latest comment:</strong>{' '}
+                                    <strong>{t('latest_comment')}:</strong>{' '}
                                     {activity.last_comment}
                                 </p>
                             )}
@@ -445,14 +498,14 @@ export default function EventActivitiesPage({ agent = {}, onNavigate }) {
                             disabled={page <= 1}
                             onClick={() => setPage((current) => current - 1)}
                         >
-                            Previous
+                            {t('previous')}
                         </button>
                         <button
                             type="button"
                             disabled={page >= pagination.last_page}
                             onClick={() => setPage((current) => current + 1)}
                         >
-                            Next
+                            {t('next')}
                         </button>
                     </div>
                 </nav>

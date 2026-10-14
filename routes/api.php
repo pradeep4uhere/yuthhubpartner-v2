@@ -26,6 +26,21 @@ Route::middleware(['web', 'auth:field_agent'])
             ->whereNumber('id')
             ->name('event-activities.show');
 
+
+        Route::put('/event-activities/{id}', [
+            EventActivityController::class,
+            'update',
+        ])->whereNumber('id')->name('event-activities.update');
+
+
+        Route::get('/event-activity-options',[EventActivityController::class, 'options'])->name('event-activities.options');
+        Route::get('/event-activity-categories/{typeId}',[EventActivityController::class, 'categories'])->whereNumber('typeId')->name('event-activities.categories');
+        Route::get('/event-activity-types',[EventActivityController::class, 'eventTypes']);
+
+        Route::get('/event-activity-types/{typeId}/categories',[EventActivityController::class, 'eventCategories'])->whereNumber('typeId');
+
+        Route::get('/learners/search', [EventActivityController::class,'searchLearners'])->name('learners.search');
+
         Route::get('/dashboard-stats',[DashboardStatsController::class, 'index'])->name('dashboard-stats');
         Route::get('/dashboard-charts', [DashboardChartsController::class, 'index'])->name('dashboard-charts');
 
@@ -36,7 +51,7 @@ Route::middleware(['web', 'auth:field_agent'])
 Route::middleware([
       EncryptCookies::class,
       AddQueuedCookiesToResponse::class,
-      StartSession::class, 
+      StartSession::class,
       'event.transaction.auth'
     ])
     ->prefix('event-transactions')

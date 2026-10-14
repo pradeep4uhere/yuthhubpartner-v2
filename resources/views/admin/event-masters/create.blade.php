@@ -245,4 +245,94 @@
 
         filterEventCategories();
     </script>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const typeSelect = document.getElementById('event_master_type_id');
+    const categorySelect = document.getElementById('event_category_id');
+
+    if (!typeSelect || !categorySelect) return;
+
+    const categoryUrlTemplate = @json(
+        route('admin.event-categories.by-type', ['typeId' => '__TYPE_ID__'])
+    );
+
+    async function loadCategories(typeId, selectedCategoryId = '') {
+        categorySelect.innerHTML = '';
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = typeId
+            ? 'Loading categories...'
+            : 'Select event type first';
+
+        categorySelect.appendChild(placeholder);
+        categorySelect.disabled = true;
+
+        if (!typeId) return;
+
+        try {
+            const url = categoryUrlTemplate.replace(
+                '__TYPE_ID__',
+                encodeURIComponent(typeId)
+            );
+
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error('Unable to load categories. HTTP ' + response.status);
+            }
+
+            const result = await response.json();
+
+            categorySelect.innerHTML = '';
+
+            const firstOption = document.createElement('option');
+            firstOption.value = '';
+            firstOption.textContent = 'Select event category';
+            categorySelect.appendChild(firstOption);
+
+            (result.data || []).forEach(function (category) {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                option.selected =
+                    String(category.id) === String(selectedCategoryId);
+
+                categorySelect.appendChild(option);
+            });
+
+            if (!result.data || result.data.length === 0) {
+                firstOption.textContent = 'No categories available';
+            }
+
+            categorySelect.disabled = false;
+        } catch (error) {
+            console.error('Category loading error:', error);
+            categorySelect.innerHTML = '<option value="">Failed to load categories</option>';
+            categorySelect.disabled = true;
+        }
+    }
+
+    typeSelect.addEventListener('change', function () {
+        loadCategories(this.value);
+    });
+
+    // Restore categories after validation errors
+    const oldTypeId = @json(old('event_master_type_id'));
+    const oldCategoryId = @json(old('event_category_id'));
+
+    if (oldTypeId) {
+        loadCategories(oldTypeId, oldCategoryId);
+    }
+});
+</script>
 @endsection

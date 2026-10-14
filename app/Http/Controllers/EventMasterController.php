@@ -7,6 +7,7 @@ use App\Models\EventMasterType;
 use App\Models\EventCategoryMaster;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 
 
 class EventMasterController extends Controller
@@ -326,4 +327,26 @@ class EventMasterController extends Controller
 
         return response()->json($categories);
     }
+
+
+
+
+    public function byType(int $typeId): JsonResponse
+    {
+        $categories = EventCategoryMaster::query()
+            ->where('event_master_type_id', $typeId)
+            ->where('status', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return response()->json([
+            'success' => true,
+            'data' => $categories,
+        ]);
+    }
+
+
+
+
+
 }
