@@ -251,11 +251,11 @@ public function index(Request $request): JsonResponse
         ], 401);
     }
 
-    // Base query: only this logged-in Field Agent's activities.
+    // Base query: only the logged-in Field Agent's activities.
     $baseQuery = EventTransaction::query()
         ->where('field_agent_id', $agent->getAuthIdentifier());
 
-    // Apply the same filters to both the listing and summary.
+    // Apply filters to both listing and summary.
     if ($request->filled('review_status')) {
         $baseQuery->where(
             'review_status',
@@ -270,10 +270,7 @@ public function index(Request $request): JsonResponse
         );
     }
 
-    /*
-     * Summary counts are calculated across all matching records,
-     * not just the current page.
-     */
+    // Summary across all matching records.
     $summaryQuery = clone $baseQuery;
 
     $summary = [
@@ -296,13 +293,22 @@ public function index(Request $request): JsonResponse
             ->count(),
     ];
 
-    // Paginated activity listing.
+    // Load relationships to retrieve names and related details.
     $activities = (clone $baseQuery)
+        ->with([
+            'fieldType',
+            'industryType',
+            'eventMaster',
+            'eventMasterType',
+            'eventCategory',
+            'latestLog',
+        ])
         ->select([
             'id',
             'learner_id',
             'partner_id',
             'partner_center_id',
+            'partner_placement_user_id',
             'field_agent_id',
             'review_status',
             'workflow_status',
@@ -345,65 +351,72 @@ public function index(Request $request): JsonResponse
 }
 
 
+
     /**
-     * Show one activity, only if it belongs to the authenticated agent.
-     */
-    public function show(Request $request, int $id): JsonResponse
-    {
-        $agent = $request->user('field_agent');
+ * Show one activity, only if it belongs to the authenticated agent.
+ */
+public function show(Request $request, int $id): JsonResponse
+{
+    $agent = $request->user('field_agent');
 
-        if (!$agent) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthenticated Field Agent.',
-            ], 401);
-        }
-
-        $activity = EventTransaction::query()
-            ->where('field_agent_id', $agent->getAuthIdentifier())
-            ->select([
-                'id',
-                'learner_id',
-                'partner_id',
-                'partner_center_id',
-                'field_agent_id',
-                'review_status',
-                'workflow_status',
-                'beneficiary_name',
-                'beneficiary_phone_number',
-                'event_master_id',
-                'event_master_type_id',
-                'event_type_name',
-                'event_category_name',
-                'event_create_date',
-                'event_date_submitted',
-                'event_value',
-                'field_type_id',
-                'industry_type_id',
-                'uploaded_doc_1',
-                'uploaded_doc_2',
-                'uploaded_doc_3',
-                'last_comment',
-                'uploaded_doc_links',
-                'status',
-                'created_at',
-                'updated_at',
-            ])
-            ->find($id);
-
-        if (!$activity) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Activity not found.',
-            ], 404);
-        }
-
+    if (!$agent) {
         return response()->json([
-            'success' => true,
-            'message' => 'Event activity retrieved successfully.',
-            'data' => $activity,
-        ]);
+            'success' => false,
+            'message' => 'Unauthenticated Field Agent.',
+        ], 401);
     }
+
+    $activity = EventTransaction::query()
+        ->where('field_agent_id', $agent->getAuthIdentifier())
+        ->with([
+            'logs' => function ($query) {
+                $query->orderByDesc('created_at');
+            },
+            'logs.user',
+        ])
+        ->select([
+            'id',
+            'learner_id',
+            'partner_id',
+            'partner_center_id',
+            'field_agent_id',
+            'review_status',
+            'workflow_status',
+            'beneficiary_name',
+            'beneficiary_phone_number',
+            'event_master_id',
+            'event_master_type_id',
+            'event_type_name',
+            'event_category_name',
+            'event_create_date',
+            'event_date_submitted',
+            'event_value',
+            'field_type_id',
+            'industry_type_id',
+            'uploaded_doc_1',
+            'uploaded_doc_2',
+            'uploaded_doc_3',
+            'last_comment',
+            'uploaded_doc_links',
+            'status',
+            'created_at',
+            'updated_at',
+        ])
+        ->find($id);
+
+    if (!$activity) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Activity not found.',
+        ], 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Event activity retrieved successfully.',
+        'data' => $activity,
+    ]);
+}
 
 
 
@@ -434,16 +447,25 @@ public function index(Request $request): JsonResponse
                 ], 404);
             }
 
-            if (!in_array(
-                strtolower((string) $activity->workflow_status),
-                ['draft', 'submitted'],
-                true
-            )) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'This activity cannot be edited in its current workflow status.',
-                ], 422);
-            }
+            $workflowStatus = strtolower(trim(
+                (string) $activity->workflow_status
+            ));
+
+            $editableStatuses = [
+                'draft',
+                'submitted',
+                'returned',
+                'rejected',
+                'under_review',
+            ];
+
+           if (!in_array($workflowStatus, $editableStatuses, true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This activity cannot be edited in its current workflow status.',
+                'workflow_status' => $activity->workflow_status,
+            ], 422);
+        }
 
             $validated = $request->validate([
                 'learner_id' => [
@@ -567,8 +589,14 @@ public function index(Request $request): JsonResponse
                 }
             }
 
+            $isResubmission = in_array(
+                strtolower(trim((string) $activity->workflow_status)),
+                ['returned', 'rejected'],
+                true
+            );
             // Centralized update + audit logging.
             // Workflow status is intentionally not changed by this edit endpoint.
+            $updateData['_is_resubmission'] = $isResubmission;
             $activity = $this->service->update(
                 $activity,
                 $updateData,

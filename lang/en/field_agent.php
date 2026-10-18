@@ -141,5 +141,9 @@ return [
             'activity_id' => 'Activity ID',
             'event_details' => 'Event Details',
             'edit_event_form_placeholder' => 'The edit form will be added here.',
+            'event_category' => 'Event Category',
+            'event_type' => 'Event Type',
+
+            'learners_short'=> 'Learner'
         ],
 ];

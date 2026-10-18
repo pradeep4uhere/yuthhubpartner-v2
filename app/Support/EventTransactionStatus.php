@@ -8,7 +8,6 @@ class EventTransactionStatus
     |--------------------------------------------------------------------------
     | Status Definitions
     |--------------------------------------------------------------------------
-    | Add or remove statuses here.
     */
 
     public const DRAFT = 'draft';
@@ -61,6 +60,8 @@ class EventTransactionStatus
             return 'Unknown';
         }
 
+        $status = strtolower(trim($status));
+
         return self::labels()[$status]
             ?? ucfirst(str_replace('_', ' ', $status));
     }
@@ -73,16 +74,15 @@ class EventTransactionStatus
 
     public static function badgeClass(?string $status): string
     {
-        return match ($status) {
+        return match (strtolower(trim($status ?? ''))) {
             self::DRAFT        => 'field-status-draft',
-            self::SUBMITTED    => 'field-status-submitted',
+            self::SUBMITTED,
             self::RESUBMITTED  => 'field-status-submitted',
             self::UNDER_REVIEW => 'field-status-under-review',
             self::RETURNED     => 'field-status-returned',
             self::REJECTED     => 'field-status-rejected',
             self::APPROVED     => 'field-status-approved',
-
-            default => 'field-status-default',
+            default            => 'field-status-default',
         };
     }
 
@@ -92,7 +92,7 @@ class EventTransactionStatus
     |--------------------------------------------------------------------------
     */
 
-   public static function transitions(): array
+    public static function transitions(): array
     {
         return [
             self::DRAFT => [
@@ -101,7 +101,7 @@ class EventTransactionStatus
 
             self::SUBMITTED => [
                 self::UNDER_REVIEW,
-                self::APPROVED,
+                 self::APPROVED, // Allow Admin to approve a submitted activity
                 self::RETURNED,
                 self::REJECTED,
             ],
@@ -115,27 +115,23 @@ class EventTransactionStatus
             self::RETURNED => [
                 self::RESUBMITTED,
                 self::UNDER_REVIEW,
-                self::APPROVED,
                 self::REJECTED,
             ],
 
             self::REJECTED => [
                 self::RESUBMITTED,
                 self::UNDER_REVIEW,
-                self::RETURNED,
-                self::APPROVED,
             ],
 
             self::RESUBMITTED => [
                 self::UNDER_REVIEW,
-                self::APPROVED,
                 self::RETURNED,
                 self::REJECTED,
             ],
 
             self::APPROVED => [
-                  self::RETURNED,
-                  self::UNDER_REVIEW,
+                self::REJECTED,
+                self::UNDER_REVIEW,
             ],
         ];
     }
@@ -159,9 +155,11 @@ class EventTransactionStatus
 
         $transitions = self::transitions();
 
-        $allowedTransitions = $transitions[$from] ?? [];
-
-        return in_array($to, $allowedTransitions, true);
+        return in_array(
+            $to,
+            $transitions[$from] ?? [],
+            true
+        );
     }
 
     /*

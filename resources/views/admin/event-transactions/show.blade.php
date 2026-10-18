@@ -1672,189 +1672,202 @@ i.fas.fa-download {
 
             </div>
 
-            @php
-                $documentLinks = $eventTransaction->uploaded_doc_links;
 
-                // JSON string ko array mein convert karein
-                if (is_string($documentLinks)) {
-                    $documentLinks = json_decode($documentLinks, true);
-                }
+@php
+    $documentMapping = [
+        'uploaded_doc_1' => 'Document 1',
+        'uploaded_doc_2' => 'Document 2',
+        'uploaded_doc_3' => 'Document 3',
+    ];
 
-                // Sirf valid, non-empty JSON array hone par new mapping use hogi
-                $hasDocumentLinks = is_array($documentLinks) && !empty($documentLinks);
+    // Check individual document fields first.
+    $hasIndividualDocuments = collect(array_keys($documentMapping))
+        ->contains(function ($field) use ($eventTransaction) {
+            return !empty($eventTransaction->{$field});
+        });
 
-                $documentMapping = [
-                    'uploaded_doc_1' => 'document_doc_11',
-                    'uploaded_doc_2' => 'document_doc_21',
-                    'uploaded_doc_3' => 'document_doc_31',
-                ];
-            @endphp
+    // Decode JSON only for the fallback case.
+    $documentLinks = $eventTransaction->uploaded_doc_links;
+
+    if (is_string($documentLinks)) {
+        $documentLinks = json_decode($documentLinks, true);
+    }
+
+    $hasDocumentLinks = is_array($documentLinks)
+        && !empty($documentLinks);
+
+    $jsonDocumentMapping = [
+        'document_doc_11' => 'Document 1',
+        'document_doc_21' => 'Document 2',
+        'document_doc_31' => 'Document 3',
+    ];
+@endphp
 
 <div class="admin-event-documents">
 
-    @if ($hasDocumentLinks)
+    {{-- PRIORITY 1: Individual document columns --}}
+    @if ($hasIndividualDocuments)
 
-       {{-- Display documents from uploaded_doc_links JSON --}}
-@foreach ($documentMapping as $field => $jsonKey)
+        @foreach ($documentMapping as $field => $label)
 
-    @php
-        $documentPath = $documentLinks[$jsonKey] ?? null;
+            @php
+                $documentPath = $eventTransaction->{$field};
 
-        $documentUrl = $documentPath
-            ? asset('storage/' . ltrim($documentPath, '/'))
-            : null;
+                $documentUrl = $documentPath
+                    ? asset('storage/' . ltrim($documentPath, '/'))
+                    : null;
 
-        $extension = $documentPath
-            ? strtolower(pathinfo($documentPath, PATHINFO_EXTENSION))
-            : '';
+                $extension = $documentPath
+                    ? strtolower(pathinfo($documentPath, PATHINFO_EXTENSION))
+                    : '';
 
-        $isPdf = $extension === 'pdf';
-        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                $isPdf = $extension === 'pdf';
 
-        $label = match ($field) {
-            'uploaded_doc_1' => 'Document 1',
-            'uploaded_doc_2' => 'Document 2',
-            'uploaded_doc_3' => 'Document 3',
-            default => ucfirst(str_replace('_', ' ', $field)),
-        };
-    @endphp
-
-
-<div class="admin-event-document">
-
-    {{-- Document title --}}
-    <div class="admin-document-header">
-        <span class="admin-document-label">{{ $label }}</span>
-    </div>
-
-    {{-- Actions row --}}
-    @if ($documentUrl)
-        <div class="admin-document-actions">
-
-            {{-- View Document --}}
-            <button type="button"
-                class="admin-document-btn admin-document-view"
-                data-url="{{ $documentUrl }}"
-                data-type="{{ $isPdf ? 'pdf' : ($isImage ? 'image' : 'other') }}"
-                data-label="{{ $label }}">
-                @if ($isPdf)
-                    <i class="fas fa-file-pdf"></i>
-                @elseif ($isImage)
-                    <i class="fas fa-file-image"></i>
-                @else
-                    <i class="fas fa-file-alt"></i>
-                @endif
-                <span>View</span>
-            </button>
-
-            {{-- Download --}}
-            <a href="{{ $documentUrl }}"
-               download="{{ basename($documentPath) }}"
-               class="admin-document-btn admin-document-download"
-               title="Download {{ $label }}">
-                <i class="fas fa-download"></i>
-                <span>Download</span>
-            </a>
-
-        </div>
-    @else
-        <div class="admin-document-empty">
-            <i class="fas fa-minus-circle"></i>
-            <span>Not uploaded</span>
-        </div>
-    @endif
-
-</div>
-
-
-@endforeach
-
-    @else
-
-        {{-- Fallback: existing document fields --}}
-        @foreach ([
-            'uploaded_doc_1' => 'Document 1',
-            'uploaded_doc_2' => 'Document 2',
-            'uploaded_doc_3' => 'Document 3',
-        ] as $field => $label)
+                $isImage = in_array($extension, [
+                    'jpg', 'jpeg', 'png', 'gif', 'webp'
+                ]);
+            @endphp
 
             <div class="admin-event-document">
 
-                <small>{{ $label }}</small>
+                <div class="admin-document-header">
+                    <span class="admin-document-label">
+                        {{ $label }}
+                    </span>
+                </div>
 
-            @php
-    $documentPath = $eventTransaction->{$field};
+                @if ($documentUrl)
 
-    $documentUrl = $documentPath
-        ? asset('storage/' . ltrim($documentPath, '/'))
-        : null;
+                    <div class="admin-document-actions">
 
-    $extension = $documentPath
-        ? strtolower(pathinfo($documentPath, PATHINFO_EXTENSION))
-        : '';
+                        <button type="button"
+                            class="admin-document-btn admin-document-view"
+                            data-url="{{ $documentUrl }}"
+                            data-type="{{ $isPdf ? 'pdf' : ($isImage ? 'image' : 'other') }}"
+                            data-label="{{ $label }}">
 
-    $isPdf = $extension === 'pdf';
-    $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-@endphp
+                            @if ($isPdf)
+                                <i class="fas fa-file-pdf"></i>
+                            @elseif ($isImage)
+                                <i class="fas fa-file-image"></i>
+                            @else
+                                <i class="fas fa-file-alt"></i>
+                            @endif
 
-<div class="admin-event-document">
+                            <span>View</span>
+                        </button>
 
-    <div class="admin-document-info">
-        <div class="admin-document-icon">
-            @if ($isPdf)
-                <i class="fas fa-file-pdf"></i>
-            @elseif ($isImage)
-                <i class="fas fa-file-image"></i>
-            @else
-                <i class="fas fa-file-alt"></i>
-            @endif
-        </div>
+                        <a href="{{ $documentUrl }}"
+                           download="{{ basename($documentPath) }}"
+                           class="admin-document-btn admin-document-download"
+                           title="Download {{ $label }}">
 
-        <div class="admin-document-text">
-            <small>{{ $label }}</small>
-            <span class="admin-document-filename">
-                {{ $documentPath ? basename($documentPath) : 'No document uploaded' }}
-            </span>
-        </div>
-    </div>
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
+                        </a>
 
-    @if ($documentUrl)
+                    </div>
 
-        <div class="admin-document-actions">
+                @else
 
-            <button type="button"
-                    class="admin-document-btn admin-document-view"
-                    data-url="{{ $documentUrl }}"
-                    data-type="{{ $isPdf ? 'pdf' : ($isImage ? 'image' : 'other') }}"
-                    data-label="{{ $label }}">
-                <i class="fas fa-eye"></i>
-                <span>View Document</span>
-            </button>
+                    <div class="admin-document-empty">
+                        <i class="fas fa-minus-circle"></i>
+                        <span>Not uploaded</span>
+                    </div>
 
-            <a href="{{ $documentUrl }}"
-               download="{{ basename($documentPath) }}"
-               class="admin-document-btn admin-document-download"
-               title="Download {{ $label }}">
-                <i class="fas fa-download"></i>
-                <span>Download</span>
-            </a>
-
-        </div>
-
-    @else
-        <span class="admin-document-empty">
-            <i class="fas fa-minus-circle"></i>
-            Not uploaded
-        </span>
-    @endif
-
-</div>
+                @endif
 
             </div>
 
         @endforeach
 
+    {{-- PRIORITY 2: JSON document links only if all individual fields are empty --}}
+    @elseif ($hasDocumentLinks)
+
+        @foreach ($jsonDocumentMapping as $jsonKey => $label)
+
+            @php
+                $documentPath = $documentLinks[$jsonKey] ?? null;
+
+                $documentUrl = $documentPath
+                    ? asset('storage/' . ltrim($documentPath, '/'))
+                    : null;
+
+                $extension = $documentPath
+                    ? strtolower(pathinfo($documentPath, PATHINFO_EXTENSION))
+                    : '';
+
+                $isPdf = $extension === 'pdf';
+
+                $isImage = in_array($extension, [
+                    'jpg', 'jpeg', 'png', 'gif', 'webp'
+                ]);
+            @endphp
+
+            <div class="admin-event-document">
+
+                <div class="admin-document-header">
+                    <span class="admin-document-label">
+                        {{ $label }}
+                    </span>
+                </div>
+
+                @if ($documentUrl)
+
+                    <div class="admin-document-actions">
+
+                        <button type="button"
+                            class="admin-document-btn admin-document-view"
+                            data-url="{{ $documentUrl }}"
+                            data-type="{{ $isPdf ? 'pdf' : ($isImage ? 'image' : 'other') }}"
+                            data-label="{{ $label }}">
+
+                            @if ($isPdf)
+                                <i class="fas fa-file-pdf"></i>
+                            @elseif ($isImage)
+                                <i class="fas fa-file-image"></i>
+                            @else
+                                <i class="fas fa-file-alt"></i>
+                            @endif
+
+                            <span>View</span>
+                        </button>
+
+                        <a href="{{ $documentUrl }}"
+                           download="{{ basename($documentPath) }}"
+                           class="admin-document-btn admin-document-download"
+                           title="Download {{ $label }}">
+
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
+                        </a>
+
+                    </div>
+
+                @else
+
+                    <div class="admin-document-empty">
+                        <i class="fas fa-minus-circle"></i>
+                        <span>Not uploaded</span>
+                    </div>
+
+                @endif
+
+            </div>
+
+        @endforeach
+
+    @else
+
+        <div class="admin-document-empty">
+            <i class="fas fa-minus-circle"></i>
+            <span>No documents uploaded</span>
+        </div>
+
     @endif
+
+</div>
+
 
 </div>
 

@@ -149,6 +149,10 @@ return [
         'activity_id' => 'गतिविधि आईडी',
         'event_details' => 'इवेंट का विवरण',
         'edit_event_form_placeholder' => 'एडिट फॉर्म यहाँ जोड़ा जाएगा।',
+
+        'event_category' => 'कार्यक्रम श्रेणी',
+        'event_type' => 'कार्यक्रम का प्रकार',
+        'learners_short'=> 'लर्नर'
     ],
 
 ];

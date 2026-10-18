@@ -2,8 +2,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CalendarDays, RefreshCw, Search, CheckCircle2 , XCircle, Clock3 , FilePenLine  } from 'lucide-react';
 import './EventActivitiesPage.css';
+import EventActivitiesSkeleton from './EventActivitiesSkeleton';
+import EditEventActivityPage from '../pages/EditEventActivityPage';
 
 const API_URL = '/api/field-agent/event-activities';
+
 
 const REVIEW_STATUSES = [
     'Open',
@@ -110,14 +113,15 @@ export default function EventActivitiesPage({
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [summary, setSummary] = useState({
-    total: 0,
-    approved: 0,
-    rejected: 0,
-    open: 0,
-    draft: 0,
-});
+                total: 0,
+                approved: 0,
+                rejected: 0,
+                open: 0,
+                draft: 0,
+            });
     const [editingActivity, setEditingActivity] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+    const [selectedActivity, setSelectedActivity] = useState(null);
 
     const handleEdit = (activity) => {
         setEditingActivity(activity);
@@ -239,6 +243,29 @@ export default function EventActivitiesPage({
             String(value ?? '').toLowerCase().includes(term)
         );
     });
+
+
+    if (selectedActivity) {
+        return (
+            <EditEventActivityPage
+                key={selectedActivity.id}
+                activityId={selectedActivity.id}
+                onBack={(message) => {
+                    setSelectedActivity(null);
+
+                    if (message) {
+                        setSuccessMessage(message);
+                    }
+                }}
+                t={t}
+            />
+        );
+    }
+
+    if (loading) {
+        return <EventActivitiesSkeleton />;
+    }
+
 
     return (
         <section className="ea-page">
@@ -382,11 +409,8 @@ export default function EventActivitiesPage({
             )}
 
             {loading ? (
-                <div className="ea-state">
-                    <span className="ea-spinner" />
-                    <p>{t('loading_event_activities')}</p>
-                </div>
-            ) : !error && visibleActivities.length === 0 ? (
+                    <EventActivitiesSkeleton />
+                ) : !error && visibleActivities.length === 0 ? (
                 <div className="ea-state">
                     <div className="ea-empty-icon">
                         <CalendarDays size={28} />
@@ -412,9 +436,7 @@ export default function EventActivitiesPage({
                                         Activity #{activity.id}
                                     </span>
                                     <h2>
-                                        {activity.event_type_name ||
-                                            activity.event_category_name ||
-                                            'Event activity'}
+                                    <strong> {activity.beneficiary_name ?? '—'} | {activity.beneficiary_phone_number || '—'} </strong>
                                     </h2>
                                 </div>
 
@@ -426,15 +448,16 @@ export default function EventActivitiesPage({
 
                             <div className="ea-card-details">
                                 <div>
-                                    <span>{t('learner_id')}</span>
+                                    <span>{t('event_type')}</span>
                                     <strong>
-                                        {activity.learner_id ?? '—'}
+                                        {console.log(activity)}
+                                        {activity.event_master_type.name ?? '—'}
                                     </strong>
                                 </div>
                                 <div>
-                                    <span>{t('beneficiary')}</span>
+                                    <span>{t('event_category')}</span>
                                     <strong>
-                                        {activity.beneficiary_name || '—'}
+                                        {activity.event_master.event_name || '—'}
                                     </strong>
                                 </div>
                                 <div>
@@ -465,14 +488,15 @@ export default function EventActivitiesPage({
                                     {t('submitted')}:{' '}
                                     {formatDate(activity.event_date_submitted, locale)}
                                 </span>
-                                <button
-                                    type="button"
-                                    className="ea-edit-button"
-                                    onClick={() => onEditActivity?.(activity)}
-                                >
-                                    <FilePenLine size={16} />
-                                    {t('edit_event')}
-                                </button>
+                            <button
+                                type="button"
+                                className="ea-edit-button"
+                                onClick={() => setSelectedActivity(activity)}
+                            >
+                                <FilePenLine size={17} strokeWidth={2} />
+                                <span>{t('edit_event')}</span>
+                                <span className="ea-edit-arrow">→</span>
+                            </button>
                             </div>
 
                             {activity.last_comment && (

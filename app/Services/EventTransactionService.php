@@ -67,10 +67,12 @@ class EventTransactionService
 
                 $requestedReviewStatus = $data['review_status'] ?? null;
                 $requestedWorkflowStatus = $data['workflow_status'] ?? null;
-
                 $comment = $data['comment'] ?? null;
 
+                $isResubmission = (bool) ($data['_is_resubmission'] ?? false);
+
                 unset(
+                    $data['_is_resubmission'],
                     $data['review_status'],
                     $data['workflow_status'],
                     $data['comment']
@@ -93,8 +95,20 @@ class EventTransactionService
                 }
 
                 // Update ordinary fields first.
+                // Update ordinary fields first.
                 if (!empty($data)) {
                     $transaction->update($data);
+                }
+
+                // Only Field Agent resubmissions transition back to Submitted.
+                if (
+                    $isResubmission &&
+                    $actorType === 'fieldAgent' &&
+                    $requestedReviewStatus === null &&
+                    $requestedWorkflowStatus === null
+                ) {
+                    $transaction->workflow_status = EventTransactionStatus::SUBMITTED;
+                    $transaction->save();
                 }
 
                 // Process a requested status through the dedicated workflow methods.
@@ -180,7 +194,12 @@ class EventTransactionService
                 if (!empty($data)) {
                     $this->createLog(
                         transaction: $transaction,
-                        action: 'updated',
+                        action: (
+                                    $isResubmission &&
+                                    $actorType === 'fieldAgent' &&
+                                    $requestedReviewStatus === null &&
+                                    $requestedWorkflowStatus === null
+                                ) ? 'resubmitted' : 'updated',
                         oldStatus: $oldWorkflowStatus,
                         newStatus: $transaction->workflow_status,
                         user: $user,

@@ -34,6 +34,7 @@
     import './FieldAgentDashboard.css';
     import EventActivitiesPage from './pages/EventActivitiesPage';
     import EditEventActivityPage from './pages/EditEventActivityPage';
+    import DashboardSkeleton from './DashboardSkeleton';
 
 
     const getFieldAgentTranslations = () => {
@@ -151,6 +152,13 @@
 
     const [editingActivityId, setEditingActivityId] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+    const [dashboardInitialLoading, setDashboardInitialLoading] = useState(true);
+
+    useEffect(() => {
+        if (!statsLoading && !chartsLoading) {
+            setDashboardInitialLoading(false);
+        }
+    }, [statsLoading, chartsLoading]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -275,9 +283,17 @@
 
         const ActiveIcon = activeItem.icon;
 
-    console.log('Agent profile:', agent);
-    console.log('Partner:', agent?.partnerName);
-    console.log('Partner Division:', agent?.centerName);
+        console.log('Agent profile:', agent);
+        console.log('Partner:', agent?.partnerName);
+        console.log('Partner Division:', agent?.centerName);
+
+        if (dashboardInitialLoading) {
+            return (
+                <div className="fa-react-dashboard">
+                    <DashboardSkeleton />
+                </div>
+            );
+        }
 
         return (
             <div className="fa-react-dashboard">

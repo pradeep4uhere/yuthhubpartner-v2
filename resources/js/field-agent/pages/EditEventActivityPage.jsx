@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useCallback  } from 'react';
 import {
     ArrowLeft,
     ClipboardList,
@@ -11,10 +11,12 @@ import {
     Upload,
     Save,
     CheckCircle2,
+    FilePenLine,
     X,
 } from 'lucide-react';
 
 import './EventActivitiesPage.css';
+import ToastNotification from "../../components/ToastNotification";
 
 export default function EditEventActivityPage({
     activityId,
@@ -48,6 +50,9 @@ export default function EditEventActivityPage({
     const [eventCategories, setEventCategories] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
+    const [activityLogs, setActivityLogs] = useState([]);
+    const [loadingLogs, setLoadingLogs] = useState(false);
+
     const [loadingTypes, setLoadingTypes] = useState(false);
     const [loadingCategories, setLoadingCategories] = useState(false);
     const [apiError, setApiError] = useState('');
@@ -59,6 +64,13 @@ export default function EditEventActivityPage({
         document_2: '',
         document_3: '',
     });
+
+    const [toast, setToast] = useState(null);
+    const [currentWorkflowStatus, setCurrentWorkflowStatus] = useState('');
+
+    const closeToast = useCallback(() => {
+        setToast(null);
+    }, []);
 
     const API_BASE = '/api/field-agent';
 
@@ -122,18 +134,37 @@ export default function EditEventActivityPage({
                     result.message || 'Unable to load event activity.'
                 );
             }
-
-            // Support common Laravel response shapes.
             const activity =
                 result.data?.activity ??
                 result.data?.data ??
                 result.data;
+            console.log('Event Transaction Details:', result.data);
+            console.log('Workflow Status:', activity?.workflow_status);
+            // Support common Laravel response shapes.
+
 
             if (!activity || activity.id == null) {
                 throw new Error('Event activity data was not found.');
             }
 
             if (cancelled) return;
+
+            const logs =
+                activity.logs ??
+                activity.activity_logs ??
+                result.data?.logs ??
+                result.logs ??
+                [];
+
+            setActivityLogs(
+                Array.isArray(logs)
+                    ? [...logs].sort(
+                        (a, b) =>
+                            new Date(b.created_at || 0).getTime() -
+                            new Date(a.created_at || 0).getTime()
+                    )
+                    : []
+            );
 
             setFormData({
                 learner_id: activity.learner_id ?? '',
@@ -167,6 +198,11 @@ export default function EditEventActivityPage({
                 document_2: activity.uploaded_doc_2 ?? '',
                 document_3: activity.uploaded_doc_3 ?? '',
             });
+
+            setCurrentWorkflowStatus(
+                String(activity?.workflow_status ?? '').trim().toLowerCase()
+            );
+
         } catch (error) {
             if (!cancelled) {
                 setLoadError(
@@ -455,8 +491,18 @@ export default function EditEventActivityPage({
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         const newErrors = {};
+
+        if (currentWorkflowStatus === 'submitted') {
+            setToast({
+                type: 'error',
+                title: 'Already Submitted',
+                message:
+                    'You have already submitted this event. Please wait for admin review.',
+            });
+            return;
+        }
+
 
         if (!formData.event_type_id) {
             newErrors.event_type_id = 'Please select Event Type.';
@@ -511,7 +557,6 @@ export default function EditEventActivityPage({
 
         setSaving(true);
         setApiError('');
-
         try {
             const response = await fetch(
                 `${API_BASE}/event-activities/${activityId}`,
@@ -532,6 +577,9 @@ export default function EditEventActivityPage({
             const result = await response.json();
 
             if (!response.ok || !result.success) {
+
+                const message = result.message || 'Unable to save event activity.';
+
                 if (response.status === 422 && result.errors) {
                     setErrors((previous) => ({
                         ...previous,
@@ -542,11 +590,14 @@ export default function EditEventActivityPage({
                             ])
                         ),
                     }));
+                    setToast({
+                        type: "error",
+                        title: "Update Failed",
+                        message,
+                    });
                 }
 
-                throw new Error(
-                    result.message || 'Unable to save event activity.'
-                );
+                throw new Error(message);
             }
 
             setApiError('');
@@ -561,17 +612,130 @@ export default function EditEventActivityPage({
                     onBack(message);
                 }
 
+                setToast({
+                    type: 'success',
+                    title: 'Success!',
+                    message: result.message || 'Event activity updated successfully.',
+                });
+
                 return;
             }
 
         } catch (error) {
-            setApiError(error.message || 'Unable to save event activity.');
-        } finally {
-            setSaving(false);
-        }
+                setApiError(error.message || 'Unable to save event activity.');
+
+                setToast({
+                    type: 'error',
+                    title: 'Update Failed',
+                    message: error.message || 'Please try again.',
+                });
+            } finally {
+                setSaving(false);
+            }
     };
 
-    const renderDocumentField = (field, label) => (
+
+    const formatTimelineDate = (date) => {
+    if (!date) return 'Date unavailable';
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+        return date;
+    }
+
+    return parsedDate.toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+    });
+};
+
+const formatTimelineStatus = (status) => {
+    if (!status) return "Unknown";
+
+    return String(status)
+        .replace(/[_-]+/g, " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+
+const getTimelineStatusClass = (status) => {
+    const normalizedStatus = String(status || "")
+        .toLowerCase()
+        .replace(/[\s-]+/g, "_");
+
+    switch (normalizedStatus) {
+        case "approved":
+        case "accepted":
+        case "completed":
+            return "timeline-status-approved";
+
+        case "rejected":
+        case "declined":
+            return "timeline-status-rejected";
+
+        case "pending":
+        case "under_review":
+        case "open":
+            return "timeline-status-pending";
+
+        case "returned":
+        case "return":
+            return "timeline-status-returned";
+
+        default:
+            return "timeline-status-default";
+    }
+};
+
+
+const getTimelineActionClass = (action) => {
+    const normalizedAction = String(action || "")
+        .toLowerCase()
+        .replace(/[\s-]+/g, "_");
+
+    if (normalizedAction.includes("approv") || normalizedAction.includes("accept")) {
+        return "action-approved";
+    }
+
+    if (normalizedAction.includes("reject") || normalizedAction.includes("declin")) {
+        return "action-rejected";
+    }
+
+    if (normalizedAction.includes("return")) {
+        return "action-returned";
+    }
+
+    if (normalizedAction.includes("create") || normalizedAction.includes("submit")) {
+        return "action-created";
+    }
+
+    if (normalizedAction.includes("update") || normalizedAction.includes("edit")) {
+        return "action-updated";
+    }
+
+    if (normalizedAction.includes("delete") || normalizedAction.includes("remov")) {
+        return "action-deleted";
+    }
+
+    return "action-default";
+};
+
+const getTimelineActor = (log) => {
+    if (log.actor_name) return log.actor_name;
+    if (log.user_name) return log.user_name;
+    if (log.user_id) return `User ID: ${log.user_id}`;
+
+    return 'Unknown User';
+};
+
+
+
+const renderDocumentField = (field, label) => (
         <div className="ea-form-field" key={field}>
             <label className="ea-form-label" htmlFor={field}>
                 {label}
@@ -626,16 +790,15 @@ if (loadError) {
     return (
         <section className="ea-page ea-edit-page">
             <div className="ea-form-card">
-                <p className="ea-error-text">{loadError}</p>
-
-                <button
-                    type="button"
-                    className="ea-back-button"
-                    onClick={onBack}
-                >
-                    <ArrowLeft size={18} />
-                    Back
-                </button>
+            <p className="ea-error-text">{loadError}</p>
+            <button
+                type="button"
+                className="ea-back-button"
+                onClick={() => onBack?.()}
+            >
+                <ArrowLeft size={17} />
+                <span>Back to Event List</span>
+            </button>
             </div>
         </section>
     );
@@ -645,15 +808,6 @@ if (loadError) {
         <section className="ea-page ea-edit-page">
             <header className="ea-header">
                 <div className="ea-header-left">
-                    <button
-                        type="button"
-                        className="ea-back-button"
-                        onClick={onBack}
-                    >
-                        <ArrowLeft size={18} />
-                        Back
-                    </button>
-
                     <div>
                         <h1>Edit Event Activity</h1>
                         <p>
@@ -662,11 +816,33 @@ if (loadError) {
                     </div>
                 </div>
 
-                <div className="ea-record-badge">
-                    <ClipboardList size={16} />
-                    Activity #{activityId}
+                <div className="ea-header-actions">
+                    <div className="ea-record-badge">
+                        <ClipboardList size={16} />
+                        Activity #{activityId}
+                    </div>
+
+                    <button
+                        type="button"
+                        className="ea-back-button"
+                        onClick={() => onBack?.()}
+                    >
+                        <ArrowLeft size={17} />
+                        <span>Back to Event List</span>
+                    </button>
                 </div>
             </header>
+
+                 {toast && (
+                        <ToastNotification
+                            type={toast.type}
+                            title={toast.title}
+                            message={toast.message}
+                            onClose={closeToast}
+                        />
+                    )}
+
+
 
                 {successMessage && (
                     <div
@@ -1003,10 +1179,10 @@ if (loadError) {
 
                 {/* Actions */}
                 <div className="ea-form-actions">
-                    <button
+                   <button
                         type="button"
                         className="ea-cancel-button"
-                        onClick={onBack}
+                        onClick={() => onBack?.()}
                     >
                         Cancel
                     </button>
@@ -1026,6 +1202,124 @@ if (loadError) {
                     {apiError}
                 </p>
             )}
+
+
+
+                {/* Activity Timeline / Audit Trail */}
+                <section className="ea-form-card ea-timeline-card">
+                    <div className="ea-form-section-heading">
+                        <div className="ea-section-icon">
+                            <ClipboardList size={19} />
+                        </div>
+
+                        <div>
+                            <h2>Activity Timeline</h2>
+                            <p>
+                                Audit trail of status changes and activity updates.
+                            </p>
+                        </div>
+
+                        <span className="ea-timeline-count">
+                            {activityLogs.length} {activityLogs.length === 1 ? 'Entry' : 'Entries'}
+                        </span>
+                    </div>
+
+                    {loadingLogs ? (
+                        <div className="ea-timeline-empty">
+                            Loading activity history...
+                        </div>
+                    ) : activityLogs.length > 0 ? (
+                        <div className="ea-timeline">
+                            {activityLogs.map((log, index) => {
+                                const oldStatus = log.old_status;
+                                const newStatus = log.new_status;
+
+                                const hasStatusChange =
+                                    Boolean(oldStatus) || Boolean(newStatus);
+
+                                const action = String(
+                                    log.action || 'activity_updated'
+                                )
+                                    .replace(/_/g, ' ')
+                                    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+                                return (
+                                    <article
+                                        className="ea-timeline-item"
+                                        key={log.id ?? `${log.created_at}-${index}`}
+                                    >
+                                        <div className="ea-timeline-marker">
+                                            <span className="ea-timeline-dot" />
+                                            {index !== activityLogs.length - 1 && (
+                                                <span className="ea-timeline-line" />
+                                            )}
+                                        </div>
+
+                                        <div className="ea-timeline-content">
+                                            <div className="ea-timeline-top">
+                                                <div className="ea-timeline-main">
+                                                    <h3 className={`timeline-action-badge ${getTimelineActionClass(action)}`}>
+                                                        {formatTimelineStatus(action)}
+                                                    </h3>
+
+                                                    {hasStatusChange && (
+                                                        <div className="ea-timeline-transition">
+                                                            <span
+                                                                className={`ea-timeline-status ${getTimelineStatusClass(oldStatus)}`}
+                                                            >
+                                                                {formatTimelineStatus(oldStatus)}
+                                                            </span>
+
+                                                            <span
+                                                                className="ea-timeline-arrow"
+                                                                aria-label="changed to"
+                                                            >
+                                                                →
+                                                            </span>
+
+                                                            <span
+                                                                className={`ea-timeline-status ${getTimelineStatusClass(newStatus)}`}
+                                                            >
+                                                                {formatTimelineStatus(newStatus)}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <time className="ea-timeline-date">
+                                                    {formatTimelineDate(log.created_at)}
+                                                </time>
+                                            </div>
+
+                                            <p className="ea-timeline-actor">
+                                                Updated by <strong>{getTimelineActor(log)}</strong>
+                                                {log.user_type && (
+                                                    <span> ({log.user_type})</span>
+                                                )}
+                                            </p>
+
+                                            {log.comment && (
+                                                <div className="ea-timeline-comment">
+                                                    <span className="ea-timeline-comment-label">
+                                                        Comment
+                                                    </span>
+                                                    <p>{log.comment}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="ea-timeline-empty">
+                            <ClipboardList size={26} />
+                            <strong>No activity recorded yet</strong>
+                            <p>Status updates and comments will appear here when available.</p>
+                        </div>
+                    )}
+                </section>
+
         </section>
     );
 }
