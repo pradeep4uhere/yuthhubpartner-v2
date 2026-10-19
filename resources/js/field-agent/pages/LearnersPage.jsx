@@ -16,6 +16,69 @@ import './LearnersPage.css';
 import LearnerStatusDots from './LearnerStatusDots';
 
 /* --------------------------------------------------------------------------
+ | Learners Page Skeleton
+ | Mimics the summary cards, search toolbar, and learners table while loading.
+ * -------------------------------------------------------------------------- */
+function LearnersPageSkeleton() {
+    return (
+        <div className="fa-learners-skeleton" aria-busy="true" aria-label="Loading learners">
+            {/* Summary cards */}
+            <div className="fa-skeleton-summary-grid">
+                {[1, 2, 3, 4].map((item) => (
+                    <div className="fa-skeleton-summary-card" key={item}>
+                        <div className="fa-skeleton fa-skeleton-dot" />
+                        <div className="fa-skeleton-summary-text">
+                            <div className="fa-skeleton fa-skeleton-label" />
+                            <div className="fa-skeleton fa-skeleton-number" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Search and filters */}
+            <div className="fa-skeleton-toolbar">
+                <div className="fa-skeleton fa-skeleton-search" />
+                <div className="fa-skeleton fa-skeleton-filter" />
+                <div className="fa-skeleton fa-skeleton-filter" />
+            </div>
+
+            {/* Table */}
+            <div className="fa-skeleton-table-card">
+                <div className="fa-skeleton-table-heading">
+                    <div className="fa-skeleton fa-skeleton-heading-title" />
+                    <div className="fa-skeleton fa-skeleton-heading-subtitle" />
+                </div>
+
+                {/* Table header */}
+                <div className="fa-skeleton-table-row fa-skeleton-table-header">
+                    {[1, 2, 3, 4, 5, 6].map((item) => (
+                        <div className="fa-skeleton fa-skeleton-cell" key={item} />
+                    ))}
+                </div>
+
+                {/* Placeholder learner rows */}
+                {Array.from({ length: 7 }, (_, index) => (
+                    <div className="fa-skeleton-table-row" key={index}>
+                        <div className="fa-skeleton fa-skeleton-cell fa-skeleton-short" />
+                        <div className="fa-skeleton fa-skeleton-person">
+                            <div className="fa-skeleton fa-skeleton-avatar" />
+                            <div className="fa-skeleton-person-lines">
+                                <div className="fa-skeleton fa-skeleton-name" />
+                                <div className="fa-skeleton fa-skeleton-subtext" />
+                            </div>
+                        </div>
+                        <div className="fa-skeleton fa-skeleton-cell" />
+                        <div className="fa-skeleton fa-skeleton-pill" />
+                        <div className="fa-skeleton fa-skeleton-cell" />
+                        <div className="fa-skeleton fa-skeleton-pill" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+/* --------------------------------------------------------------------------
  | API Configuration
  | Update this URL if the Laravel learners endpoint uses a different route.
  * -------------------------------------------------------------------------- */
@@ -374,6 +437,14 @@ export default function LearnersPage({ t = (key) => key }) {
         }
     };
 
+
+    /* --------------------------------------------------------------------------
+    | Learners Page Loading State
+    | Displays the skeleton while learner data is loading.
+    * -------------------------------------------------------------------------- */
+    if (loading) {
+        return <LearnersPageSkeleton />;
+    }
 
     return (
         <section className="fa-learners-page">

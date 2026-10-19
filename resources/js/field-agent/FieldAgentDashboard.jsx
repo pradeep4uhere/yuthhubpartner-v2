@@ -36,6 +36,7 @@
     import EditEventActivityPage from './pages/EditEventActivityPage';
     import DashboardSkeleton from './DashboardSkeleton';
     import LearnersPage from './pages/LearnersPage';
+    import ProfilePage from './pages/ProfilePage';
 
 
     const getFieldAgentTranslations = () => {
@@ -55,6 +56,7 @@
     const pages = {
         activities: EventActivitiesPage,
         learners: LearnersPage,
+        profile: ProfilePage
     };
 
 

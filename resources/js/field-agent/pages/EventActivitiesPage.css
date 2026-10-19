@@ -103,6 +103,7 @@
     width: 100%;
     min-width: 0;
     height: 44px;
+    margin-top: 24px;
     box-sizing: border-box;
     border: 1px solid #dbe3ef;
     border-radius: 10px;
@@ -115,6 +116,7 @@
     gap: 9px;
     padding: 0 12px;
     color: #94a3b8;
+    margin-top: 24px;
 }
 
 .ea-search input {
@@ -379,7 +381,7 @@
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 2px;
 }
 
 .ea-summary {
@@ -2024,3 +2026,235 @@ textarea.ea-form-control {
         flex: 1;
     }
 }
+
+label.ea-search {
+    margin-top: 49px;
+}
+
+
+/* --------------------------------------------------------------------------
+ | Event Activity Legend Card
+ | Matches the Learners summary section with a clean card layout.
+ * -------------------------------------------------------------------------- */
+.ea-legend-card {
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Legend Content
+ | Organizes status counts, divider, and filters vertically.
+ * -------------------------------------------------------------------------- */
+.ea-legend-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Status Summary
+ | Displays the four status cards in a responsive grid.
+ * -------------------------------------------------------------------------- */
+.ea-legend-statuses {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Summary Card
+ | Keeps each status label and count clearly aligned.
+ * -------------------------------------------------------------------------- */
+.ea-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.ea-summary-card .legend-dot {
+    flex: 0 0 9px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.ea-summary-label {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.ea-summary-card strong {
+    flex-shrink: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Status Colors
+ | Uses distinct colors for each status indicator.
+ * -------------------------------------------------------------------------- */
+.ea-summary-card .legend-dot.action-required {
+    background: #f59e0b;
+}
+
+.ea-summary-card .legend-dot.submitted {
+    background: #3b82f6;
+}
+
+.ea-summary-card .legend-dot.accepted {
+    background: #16a34a;
+}
+
+.ea-summary-card .legend-dot.rejected {
+    background: #ef4444;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Legend Divider
+ | Separates status summaries from the search and filter controls.
+ * -------------------------------------------------------------------------- */
+.ea-legend-divider {
+    width: 100%;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Filters
+ | Aligns search and dropdown controls on the same row.
+ * -------------------------------------------------------------------------- */
+.ea-filters {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.6fr) repeat(2, minmax(180px, 1fr));
+    gap: 14px;
+    align-items: end;
+    width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Search
+ | Keeps the search icon and input aligned inside one control.
+ * -------------------------------------------------------------------------- */
+.ea-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #64748b;
+    box-sizing: border-box;
+}
+
+.ea-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #111827;
+    font: inherit;
+}
+
+.ea-search:focus-within {
+    border-color: #64748b;
+}
+
+/* --------------------------------------------------------------------------
+ | Event Activity Filter Controls
+ | Places each label above its corresponding dropdown.
+ * -------------------------------------------------------------------------- */
+.ea-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.ea-filter > span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.ea-filter select {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+ | Responsive Event Activity Summary
+ | Adapts the cards and filters to tablet and mobile widths.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .ea-legend-statuses {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ea-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ea-search {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 576px) {
+    .ea-legend-card {
+        padding: 14px;
+    }
+
+    .ea-legend-statuses {
+        gap: 10px;
+    }
+
+    .ea-summary-card {
+        gap: 7px;
+        padding: 12px 10px;
+    }
+
+    .ea-summary-label {
+        font-size: 12px;
+    }
+
+    .ea-summary-card strong {
+        font-size: 17px;
+    }
+
+    .ea-filters {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ea-search {
+        grid-column: auto;
+    }
+}
+

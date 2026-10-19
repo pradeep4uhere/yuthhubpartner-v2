@@ -1329,3 +1329,55 @@
     outline-offset: 2px;
 }
 
+
+    /* ------------------------------------------------------------------
+     * Login mode switch and MPIN login controls.
+     * Keeps the existing login button and input styling consistent.
+     * ------------------------------------------------------------------ */
+
+    .fa-login__mode-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-bottom: 24px;
+        padding: 5px;
+        border: 1px solid #dce7f5;
+        border-radius: 11px;
+        background: #f1f6fd;
+    }
+
+    .fa-login__mode-button {
+        min-height: 43px;
+        padding: 10px 12px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #536b8b;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .fa-login__mode-button[aria-pressed="true"] {
+        background: #fff;
+        color: #075bc2;
+        box-shadow: 0 2px 8px rgba(9, 43, 92, .09);
+    }
+
+    .fa-login__mode-button:focus-visible {
+        outline: 3px solid #80b5ff;
+        outline-offset: 2px;
+    }
+
+    .fa-login__form[hidden] {
+        display: none !important;
+    }
+
+    .fa-login__mpin-input {
+        letter-spacing: .35em;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+

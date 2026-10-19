@@ -29,11 +29,36 @@ Route::get('/', HomeController::class)->name('home');
 Route::post('/language', [LanguageController::class, 'update'])->name('language.update');
 
 Route::prefix('field-agent')->name('field-agent.')->group(function (): void {
-    Route::get('/login', [FieldAgentPortalController::class, 'create'])->middleware('guest:field_agent')->name('login');
-    Route::post('/login', [FieldAgentPortalController::class, 'store'])->middleware(['guest:field_agent', 'throttle:5,1'])->name('login.store');
+    Route::get('/login', [FieldAgentPortalController::class, 'create'])
+        ->middleware('guest:field_agent')
+        ->name('login');
+
+    Route::post('/login', [FieldAgentPortalController::class, 'store'])
+        ->middleware(['guest:field_agent', 'throttle:5,1'])
+        ->name('login.store');
+
     Route::middleware('auth:field_agent')->group(function (): void {
-        Route::get('/dashboard', [FieldAgentPortalController::class, 'dashboard'])->name('dashboard');
-        Route::post('/logout', [FieldAgentPortalController::class, 'destroy'])->name('logout');
+        // Dedicated second-step MPIN verification screen.
+        Route::get('/mpin-verification', [
+            FieldAgentPortalController::class,
+            'showMpinVerification',
+        ])->middleware('throttle:10,1')->name('mpin.verify');
+
+        // Submit the MPIN after successful password authentication.
+        Route::post('/mpin-verification', [
+            FieldAgentPortalController::class,
+            'verifyMpin',
+        ])->middleware('throttle:5,1')->name('mpin.verify.submit');
+
+        Route::get('/dashboard', [
+            FieldAgentPortalController::class,
+            'dashboard',
+        ])->name('dashboard');
+
+        Route::post('/logout', [
+            FieldAgentPortalController::class,
+            'destroy',
+        ])->name('logout');
     });
 });
 

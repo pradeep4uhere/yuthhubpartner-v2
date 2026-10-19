@@ -1263,3 +1263,260 @@
     }
 }
 
+
+
+/* --------------------------------------------------------------------------
+ | Learners Skeleton Loading
+ | Shared shimmer animation for all placeholder elements.
+ * -------------------------------------------------------------------------- */
+.fa-learners-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.fa-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: #e9edf3;
+    border-radius: 7px;
+}
+
+.fa-skeleton::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.75),
+        transparent
+    );
+    animation: fa-skeleton-shimmer 1.4s infinite;
+}
+
+@keyframes fa-skeleton-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* --------------------------------------------------------------------------
+ | Skeleton Summary Cards
+ | Matches the four learner status summary cards.
+ * -------------------------------------------------------------------------- */
+.fa-skeleton-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.fa-skeleton-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 92px;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #e8edf3;
+    border-radius: 12px;
+}
+
+.fa-skeleton-dot {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.fa-skeleton-summary-text {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.fa-skeleton-label {
+    width: 75%;
+    height: 12px;
+}
+
+.fa-skeleton-number {
+    width: 42px;
+    height: 22px;
+}
+
+/* --------------------------------------------------------------------------
+ | Skeleton Search Toolbar
+ | Mimics the search box and filter controls.
+ * -------------------------------------------------------------------------- */
+.fa-skeleton-toolbar {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.5fr) repeat(2, minmax(150px, 1fr));
+    gap: 14px;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #e8edf3;
+    border-radius: 12px;
+}
+
+.fa-skeleton-search,
+.fa-skeleton-filter {
+    height: 44px;
+    border-radius: 8px;
+}
+
+.fa-skeleton-search {
+    width: 100%;
+}
+
+.fa-skeleton-filter {
+    width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+ | Skeleton Learners Table
+ | Creates placeholder heading and learner rows.
+ * -------------------------------------------------------------------------- */
+.fa-skeleton-table-card {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e8edf3;
+    border-radius: 12px;
+}
+
+.fa-skeleton-table-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.fa-skeleton-heading-title {
+    width: 180px;
+    height: 18px;
+}
+
+.fa-skeleton-heading-subtitle {
+    width: 250px;
+    max-width: 80%;
+    height: 12px;
+}
+
+.fa-skeleton-table-row {
+    display: grid;
+    grid-template-columns: 0.55fr 1.7fr 1.2fr 0.9fr 1fr 0.9fr;
+    align-items: center;
+    gap: 16px;
+    min-height: 70px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.fa-skeleton-table-header {
+    min-height: 48px;
+    background: #f8fafc;
+}
+
+.fa-skeleton-cell {
+    width: 75%;
+    height: 12px;
+}
+
+.fa-skeleton-short {
+    width: 45%;
+}
+
+.fa-skeleton-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.fa-skeleton-avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.fa-skeleton-person-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+}
+
+.fa-skeleton-name {
+    width: 80%;
+    height: 12px;
+}
+
+.fa-skeleton-subtext {
+    width: 55%;
+    height: 10px;
+}
+
+.fa-skeleton-pill {
+    width: 72px;
+    max-width: 100%;
+    height: 26px;
+    border-radius: 20px;
+}
+
+/* --------------------------------------------------------------------------
+ | Responsive Learners Skeleton
+ | Adapts the skeleton layout for tablet and mobile screens.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .fa-skeleton-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .fa-skeleton-toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .fa-skeleton-search {
+        grid-column: 1 / -1;
+    }
+
+    .fa-skeleton-table-card {
+        overflow-x: auto;
+    }
+
+    .fa-skeleton-table-row {
+        min-width: 700px;
+    }
+}
+
+@media (max-width: 576px) {
+    .fa-skeleton-summary-grid {
+        gap: 10px;
+    }
+
+    .fa-skeleton-summary-card {
+        min-height: 76px;
+        padding: 12px;
+    }
+
+    .fa-skeleton-toolbar {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px;
+    }
+
+    .fa-skeleton-search {
+        grid-column: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fa-skeleton::after {
+        animation: none;
+    }
+}
+

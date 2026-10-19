@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
     'district',
     'status',
     'password',
+    'mpin_hash',
+    'mpin_login_enabled'
 ])]
 #[Hidden(['password', 'remember_token'])]
 class FieldAgent extends Authenticatable
@@ -52,6 +54,8 @@ class FieldAgent extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'mpin_hash' => 'hashed',
+            'mpin_login_enabled' => 'boolean',
         ];
     }
 

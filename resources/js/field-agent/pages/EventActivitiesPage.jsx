@@ -498,10 +498,10 @@ export default function EventActivitiesPage({
                 </div>
             )}
 
+            <div className="card">
             <div className="ea-filters">
 
                 <label className="ea-search">
-
                     <Search size={17} />
                     <input
                         type="search"
@@ -512,7 +512,7 @@ export default function EventActivitiesPage({
                 </label>
 
                 <label className="ea-filter">
-                    <span>{t('review_status')}</span>
+
                     <select
                         value={reviewStatus}
                         onChange={(event) =>
@@ -529,7 +529,7 @@ export default function EventActivitiesPage({
                 </label>
 
                 <label className="ea-filter">
-                    <span>{t('workflow_status')}</span>
+
                     <select
                         value={workflowStatus}
                         onChange={(event) =>
@@ -544,6 +544,7 @@ export default function EventActivitiesPage({
                         ))}
                     </select>
                 </label>
+            </div>
             </div>
 
             {error && (

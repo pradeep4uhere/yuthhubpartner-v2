@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\FieldAgent\EventActivityController;
 use App\Http\Controllers\Api\FieldAgent\DashboardStatsController;
 use App\Http\Controllers\Api\FieldAgent\DashboardChartsController;
 use App\Http\Controllers\Api\FieldAgent\LearnerController;
+use App\Http\Controllers\Api\FieldAgent\ChangePasswordController;
+use App\Http\Controllers\Api\FieldAgent\MpinSettingsController;
 
 
 Route::middleware(['web', 'auth:field_agent'])
@@ -43,9 +45,28 @@ Route::middleware(['web', 'auth:field_agent'])
 
         Route::get('/learners',[LearnerController::class, 'index'])->name('api.field-agent.learners.index');
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Change Field Agent Password
+        |--------------------------------------------------------------------------
+        | Allows only the authenticated Field Agent to update their password.
+        */
+        Route::post('/change-password',[ChangePasswordController::class, 'update'])->name('change-password');
+
         Route::get('/dashboard-stats',[DashboardStatsController::class, 'index'])->name('dashboard-stats');
         Route::get('/dashboard-charts', [DashboardChartsController::class, 'index'])->name('dashboard-charts');
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Field Agent MPIN Settings
+        |--------------------------------------------------------------------------
+        | Read and update MPIN settings for the authenticated Field Agent.
+        | MPIN login remains disabled until a valid MPIN has been configured.
+        */
+        Route::get('/mpin/settings',[MpinSettingsController::class, 'show'])->name('mpin.settings.show');
+        Route::put('/mpin/settings',[MpinSettingsController::class, 'update'])->name('mpin.settings.update');
 
     });
 
