@@ -1,9 +1,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
-import { CalendarDays, RefreshCw, Search, CheckCircle2 , XCircle, Clock3 , FilePenLine  } from 'lucide-react';
+import { CalendarDays, RefreshCw, Search, CheckCircle2 , XCircle, Clock3 , FilePenLine, Plus, FileSpreadsheet  } from 'lucide-react';
 import './EventActivitiesPage.css';
 import EventActivitiesSkeleton from './EventActivitiesSkeleton';
 import EditEventActivityPage from '../pages/EditEventActivityPage';
+import AddEventActivityPage from '../pages/AddEventActivityPage';
 
 const API_URL = '/api/field-agent/event-activities';
 
@@ -18,10 +19,7 @@ const REVIEW_STATUSES = [
 
 const WORKFLOW_STATUSES = [
     'draft',
-    'submitted',
-    'under_review',
-    'approved',
-    'rejected',
+    'submitted'
 ];
 function formatDate(value, locale = 'en-IN') {
     if (!value) return '—';
@@ -122,9 +120,96 @@ export default function EventActivitiesPage({
     const [editingActivity, setEditingActivity] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
     const [selectedActivity, setSelectedActivity] = useState(null);
+    /*
+    |--------------------------------------------------------------------------
+    | Add Event View State
+    |--------------------------------------------------------------------------
+    | Tracks whether the Add Event form should replace the activity list.
+    |--------------------------------------------------------------------------
+    */
+    const [addingActivity, setAddingActivity] = useState(false);
+
+    /* --------------------------------------------------------------------------
+    | Excel Export State
+    | Tracks the export request and prevents duplicate clicks while downloading.
+    * -------------------------------------------------------------------------- */
+    const [exporting, setExporting] = useState(false);
 
     const handleEdit = (activity) => {
         setEditingActivity(activity);
+    };
+
+    /**
+     * Download all event activities matching the current filters as an Excel file.
+     *
+     * The backend export endpoint must return an Excel (.xlsx) file as a binary
+     * response and enforce Field Agent authorization.
+     *
+     * @returns {Promise<void>}
+     */
+    const handleExportExcel = async () => {
+        setExporting(true);
+        setError('');
+
+        try {
+            const params = new URLSearchParams();
+
+            if (reviewStatus) {
+                params.set('review_status', reviewStatus);
+            }
+
+            if (workflowStatus) {
+                params.set('workflow_status', workflowStatus);
+            }
+
+            if (search.trim()) {
+                params.set('search', search.trim());
+            }
+
+            const response = await fetch(
+                `${API_URL}/export?${params.toString()}`,
+                {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                let message = 'Unable to export event activities.';
+
+                try {
+                    const result = await response.json();
+                    message = result.message || message;
+                } catch {
+                    // The server may return a non-JSON error response.
+                }
+
+                throw new Error(message);
+            }
+
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = downloadUrl;
+            link.download = `event-activities-${new Date()
+                .toISOString()
+                .slice(0, 10)}.xlsx`;
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            window.URL.revokeObjectURL(downloadUrl);
+        } catch (err) {
+            setError(err.message || 'Unable to export event activities.');
+        } finally {
+            setExporting(false);
+        }
     };
 
 
@@ -227,10 +312,16 @@ export default function EventActivitiesPage({
         setWorkflowStatus(value);
     };
 
+    /* --------------------------------------------------------------------------
+    | Search Visible Activities
+    | Search across activity IDs, learner details, and nested event relations.
+    * -------------------------------------------------------------------------- */
     const visibleActivities = activities.filter((activity) => {
         const term = search.trim().toLowerCase();
 
-        if (!term) return true;
+        if (!term) {
+            return true;
+        }
 
         return [
             activity.id,
@@ -239,10 +330,40 @@ export default function EventActivitiesPage({
             activity.beneficiary_phone_number,
             activity.event_type_name,
             activity.event_category_name,
+            activity.event_master_type?.name,
+            activity.event_master?.event_name,
+            activity.review_status,
+            activity.workflow_status,
         ].some((value) =>
             String(value ?? '').toLowerCase().includes(term)
         );
     });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render Add Event Form
+    |--------------------------------------------------------------------------
+    | Opens the creation form and refreshes the activity list after returning
+    | from a successful creation.
+    |--------------------------------------------------------------------------
+    */
+    if (addingActivity) {
+        return (
+            <AddEventActivityPage
+                onBack={(message) => {
+                    setAddingActivity(false);
+
+                    if (message) {
+                        setSuccessMessage(message);
+                        setPage(1);
+                        loadActivities(new AbortController().signal);
+                    }
+                }}
+                t={t}
+            />
+        );
+    }
 
 
     if (selectedActivity) {
@@ -269,8 +390,12 @@ export default function EventActivitiesPage({
 
     return (
         <section className="ea-page">
+            {/* --------------------------------------------------------------------------
+            | Event Activities Header
+            | Keeps the heading on the left and groups all action buttons on the right.
+            * -------------------------------------------------------------------------- */}
             <header className="ea-header">
-                <div>
+                <div className="ea-header__content">
                     <p className="ea-eyebrow">{t('field_agent_workspace')}</p>
                     <h1>{t('event_activities')}</h1>
                     <p className="ea-subtitle">
@@ -278,15 +403,42 @@ export default function EventActivitiesPage({
                     </p>
                 </div>
 
-                <button
-                    type="button"
-                    className="ea-refresh-button"
-                    onClick={() => loadActivities(new AbortController().signal)}
-                    disabled={loading}
-                >
-                    <RefreshCw size={16} />
-                    {t('refresh')}
-                </button>
+                {/* ----------------------------------------------------------------------
+                | Event Activity Header Actions
+                | Aligns Refresh, Add Event, and Export Excel consistently in one row.
+                * ---------------------------------------------------------------------- */}
+                <div className="ea-header__actions">
+                    <button
+                        type="button"
+                        className="ea-refresh-button"
+                        onClick={() => loadActivities(new AbortController().signal)}
+                        disabled={loading}
+                    >
+                        <RefreshCw size={16} />
+                        <span>{t('refresh')}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        className="ea-add-button"
+                        onClick={() => setAddingActivity(true)}
+                    >
+                        <Plus size={18} />
+                        <span>{t('add_event') || 'Add Event'}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        className="ea-export-button"
+                        onClick={handleExportExcel}
+                        disabled={exporting}
+                    >
+                        <FileSpreadsheet size={18} />
+                        <span>
+                            {exporting ? 'Exporting...' : 'Export Excel'}
+                        </span>
+                    </button>
+                </div>
             </header>
 
             <div >
@@ -450,14 +602,13 @@ export default function EventActivitiesPage({
                                 <div>
                                     <span>{t('event_type')}</span>
                                     <strong>
-                                        {console.log(activity)}
-                                        {activity.event_master_type.name ?? '—'}
+                                        {activity.event_master_type?.name ?? '—'}
                                     </strong>
                                 </div>
                                 <div>
                                     <span>{t('event_category')}</span>
                                     <strong>
-                                        {activity.event_master.event_name || '—'}
+                                        {activity.event_master?.event_name ?? '—'}
                                     </strong>
                                 </div>
                                 <div>
@@ -488,15 +639,40 @@ export default function EventActivitiesPage({
                                     {t('submitted')}:{' '}
                                     {formatDate(activity.event_date_submitted, locale)}
                                 </span>
-                            <button
-                                type="button"
-                                className="ea-edit-button"
-                                onClick={() => setSelectedActivity(activity)}
-                            >
-                                <FilePenLine size={17} strokeWidth={2} />
-                                <span>{t('edit_event')}</span>
-                                <span className="ea-edit-arrow">→</span>
-                            </button>
+                            {/* -----------------------------------------------------------------------
+                            | Edit / View Event Button
+                            | Approved or accepted activities display a View Event button with
+                            | a distinct color. Other activities retain the Edit Event button.
+                            * ----------------------------------------------------------------------- */}
+                            {(() => {
+                                const isApproved = ['accepted', 'approved'].includes(
+                                    String(activity.review_status ?? '').trim().toLowerCase()
+                                );
+
+                                return (
+                                    <button
+                                        type="button"
+                                        className={`ea-edit-button ${
+                                            isApproved ? 'ea-view-button' : ''
+                                        }`}
+                                        onClick={() => setSelectedActivity(activity)}
+                                    >
+                                        {isApproved ? (
+                                            <CheckCircle2 size={17} strokeWidth={2} />
+                                        ) : (
+                                            <FilePenLine size={17} strokeWidth={2} />
+                                        )}
+
+                                        <span>
+                                            {isApproved ? 'View Event' : t('edit_event')}
+                                        </span>
+
+                                        <span className="ea-edit-arrow">
+                                            →
+                                        </span>
+                                    </button>
+                                );
+                            })()}
                             </div>
 
                             {activity.last_comment && (

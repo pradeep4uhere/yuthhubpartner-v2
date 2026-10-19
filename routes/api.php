@@ -8,38 +8,40 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Http\Controllers\Api\FieldAgent\EventActivityController;
 use App\Http\Controllers\Api\FieldAgent\DashboardStatsController;
 use App\Http\Controllers\Api\FieldAgent\DashboardChartsController;
+use App\Http\Controllers\Api\FieldAgent\LearnerController;
 
 
 Route::middleware(['web', 'auth:field_agent'])
     ->prefix('field-agent')
     ->name('api.field-agent.')
     ->group(function () {
-        Route::get(
-            '/event-activities',
-            [EventActivityController::class, 'index']
-        )->name('event-activities.index');
+        Route::get('/event-activities',[EventActivityController::class, 'index'])->name('event-activities.index');
+        Route::get('/event-activities/{id}',[EventActivityController::class, 'show'])->whereNumber('id')->name('event-activities.show');
+        Route::put('/event-activities/{id}', [EventActivityController::class,'update',])->whereNumber('id')->name('event-activities.update');
+        /**
+         * Store a new event activity for the authenticated Field Agent.
+         *
+         * @return void
+         */
+        Route::post('/event-activities',[EventActivityController::class, 'store'])->name('api.field-agent.event-activities.store');
 
-        Route::get(
-            '/event-activities/{id}',
-            [EventActivityController::class, 'show']
-        )
-            ->whereNumber('id')
-            ->name('event-activities.show');
-
-
-        Route::put('/event-activities/{id}', [
-            EventActivityController::class,
-            'update',
-        ])->whereNumber('id')->name('event-activities.update');
-
+        /*
+        |--------------------------------------------------------------------------
+        | Export Field Agent Event Activities
+        |--------------------------------------------------------------------------
+        | Exports all matching activities as an Excel workbook.
+        | Keep this route before the dynamic /{id} routes.
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/event-activities/export',[EventActivityController::class, 'export']);
 
         Route::get('/event-activity-options',[EventActivityController::class, 'options'])->name('event-activities.options');
         Route::get('/event-activity-categories/{typeId}',[EventActivityController::class, 'categories'])->whereNumber('typeId')->name('event-activities.categories');
         Route::get('/event-activity-types',[EventActivityController::class, 'eventTypes']);
-
         Route::get('/event-activity-types/{typeId}/categories',[EventActivityController::class, 'eventCategories'])->whereNumber('typeId');
-
         Route::get('/learners/search', [EventActivityController::class,'searchLearners'])->name('learners.search');
+
+        Route::get('/learners',[LearnerController::class, 'index'])->name('api.field-agent.learners.index');
 
         Route::get('/dashboard-stats',[DashboardStatsController::class, 'index'])->name('dashboard-stats');
         Route::get('/dashboard-charts', [DashboardChartsController::class, 'index'])->name('dashboard-charts');

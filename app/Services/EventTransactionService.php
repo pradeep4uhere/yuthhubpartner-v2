@@ -21,23 +21,72 @@ class EventTransactionService
         string $actorType = 'frontend'
     ): EventTransaction {
         return DB::transaction(function () use ($data, $user, $actorType) {
-            $data['workflow_status'] = EventTransactionStatus::DRAFT;
+            /*
+            |--------------------------------------------------------------------------
+            | Set Workflow Status for New Transaction
+            |--------------------------------------------------------------------------
+            | Field Agent can create an activity as Draft or Submitted.
+            | Other actors retain the existing default Draft behavior.
+            |--------------------------------------------------------------------------
+            */
+            /*
+            |--------------------------------------------------------------------------
+            | Determine Initial Workflow Status
+            |--------------------------------------------------------------------------
+            | Preserve the Field Agent's selected workflow status and assign the
+            | submission date only when the event is created as Submitted.
+            |--------------------------------------------------------------------------
+            */
+            if ($actorType === 'fieldAgent') {
+                $requestedWorkflowStatus = strtolower(
+                    (string) ($data['workflow_status'] ?? 'draft')
+                );
+
+                $isSubmitted = $requestedWorkflowStatus === 'submitted';
+
+                $data['workflow_status'] = $isSubmitted
+                    ? EventTransactionStatus::SUBMITTED
+                    : EventTransactionStatus::DRAFT;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Set Initial Submitted Date
+                |--------------------------------------------------------------------------
+                | Save today's date for submitted events. Draft events have no submitted
+                | date until they are submitted later.
+                |--------------------------------------------------------------------------
+                */
+                $data['event_date_submitted'] = $isSubmitted
+                    ? now()->toDateString()
+                    : null;
+            } else {
+                /*
+                |--------------------------------------------------------------------------
+                | Preserve Existing Admin Behavior
+                |--------------------------------------------------------------------------
+                | Keep the existing default workflow status for admin-created events.
+                |--------------------------------------------------------------------------
+                */
+                $data['workflow_status'] = EventTransactionStatus::DRAFT;
+            }
             $data['review_status'] = EventTransactionReviewStatus::OPEN;
             $data['status'] = true;
+
+
 
             $transaction = EventTransaction::create($data);
 
             $this->createLog(
                 transaction: $transaction,
                 action: 'created',
-                oldStatus: null,
-                newStatus: EventTransactionStatus::DRAFT,
+                oldStatus: 'Created',
+                newStatus: ucfirst(strtolower($transaction->workflow_status)),
                 user: $user,
                 actorType: $actorType,
                 comment: 'Event transaction created.',
                 newValues: [
-                    'workflow_status' => EventTransactionStatus::DRAFT,
-                    'review_status' => EventTransactionReviewStatus::OPEN,
+                     'workflow_status' => $transaction->workflow_status,
+                    'review_status' => $transaction->review_status,
                 ]
             );
 
@@ -149,46 +198,111 @@ class EventTransactionService
                             break;
 
                        case 'Pending':
-                                // Approved/reviewed transactions should reopen for review.
-                                $targetWorkflowStatus = in_array(
-                                    strtolower(trim((string) $transaction->workflow_status)),
-                                    [
-                                        EventTransactionStatus::APPROVED,
-                                        EventTransactionStatus::RETURNED,
-                                        EventTransactionStatus::REJECTED,
-                                        EventTransactionStatus::UNDER_REVIEW,
-                                    ],
-                                    true
-                                )
-                                    ? EventTransactionStatus::UNDER_REVIEW
-                                    : EventTransactionStatus::SUBMITTED;
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Set Review Status to Pending
+                            |--------------------------------------------------------------------------
+                            | Submitted activities can remain Submitted while their review status
+                            | changes to Pending. Other eligible workflow statuses reopen as needed.
+                            */
+                            $currentWorkflowStatus = strtolower(trim(
+                                (string) $transaction->workflow_status
+                            ));
 
+                            if ($currentWorkflowStatus === EventTransactionStatus::SUBMITTED) {
+                                // Workflow remains Submitted; update review status through the
+                                // centralized status service so the audit log is preserved.
                                 $transaction = $this->changeStatus(
                                     transaction: $transaction,
-                                    newWorkflowStatus: $targetWorkflowStatus,
+                                    newWorkflowStatus: EventTransactionStatus::SUBMITTED,
                                     newReviewStatus: EventTransactionReviewStatus::PENDING,
                                     action: 'status_updated',
                                     user: $user,
                                     actorType: $actorType,
-                                    comment: $comment
+                                    comment: $comment,
+                                    extraData: []
                                 );
+
                                 break;
+                            }
+
+                            $targetWorkflowStatus = in_array(
+                                $currentWorkflowStatus,
+                                [
+                                    EventTransactionStatus::APPROVED,
+                                    EventTransactionStatus::RETURNED,
+                                    EventTransactionStatus::REJECTED,
+                                    EventTransactionStatus::UNDER_REVIEW,
+                                ],
+                                true
+                            )
+                                ? EventTransactionStatus::UNDER_REVIEW
+                                : EventTransactionStatus::SUBMITTED;
+
+                            $transaction = $this->changeStatus(
+                                transaction: $transaction,
+                                newWorkflowStatus: $targetWorkflowStatus,
+                                newReviewStatus: EventTransactionReviewStatus::PENDING,
+                                action: 'status_updated',
+                                user: $user,
+                                actorType: $actorType,
+                                comment: $comment
+                            );
+
+                            break;
 
                         default:
                             throw new RuntimeException(
                                 'Invalid review status: ' . $requestedReviewStatus
                             );
                     }
-                } elseif (
-                    $requestedWorkflowStatus !== null &&
-                    $requestedWorkflowStatus !== $oldWorkflowStatus
-                ) {
-                    throw new RuntimeException(
-                        'Workflow status must be changed through a dedicated workflow action.'
-                    );
-                }
+                } else/*
+                    |--------------------------------------------------------------------------
+                    | Handle Explicit Workflow Status Changes
+                    |--------------------------------------------------------------------------
+                    | Validate Draft -> Submitted against the original status captured
+                    | before any updates, and preserve the centralized audit logging.
+                    */
+                    if ($requestedWorkflowStatus !== null) {
+                        $originalStatus = strtolower(trim(
+                            (string) $oldWorkflowStatus
+                        ));
+
+                        $targetStatus = strtolower(trim(
+                            (string) $requestedWorkflowStatus
+                        ));
+
+                        $isAllowedDraftSubmission =
+                            $actorType === 'fieldAgent'
+                            && $originalStatus === EventTransactionStatus::DRAFT
+                            && $targetStatus === EventTransactionStatus::SUBMITTED;
+
+                        if ($isAllowedDraftSubmission) {
+                            $transaction->workflow_status = EventTransactionStatus::SUBMITTED;
+                            $transaction->save();
+                        } elseif (
+                            $targetStatus !== strtolower(trim(
+                                (string) $transaction->workflow_status
+                            ))
+                        ) {
+                            throw new RuntimeException(
+                                'Workflow status must be changed through a dedicated workflow action.'
+                            );
+                        }
+                    }
 
                 $transaction = $transaction->fresh();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Log Ordinary Field Updates and Workflow Transitions
+                |--------------------------------------------------------------------------
+                | Record the operation when either regular fields or the workflow status
+                | changed, so a status-only submission is not omitted from the audit log.
+                */
+                $workflowStatusChanged =
+                    strtolower(trim((string) $oldWorkflowStatus)) !==
+                    strtolower(trim((string) $transaction->workflow_status));
 
                 // Log ordinary field changes. Workflow methods log their own status changes.
                 if (!empty($data)) {
@@ -405,10 +519,25 @@ class EventTransactionService
                     ] ?? [],
                 ]);
 
-            if (!EventTransactionStatus::canTransition(
-                $oldWorkflowStatus,
-                $newWorkflowStatus
-            )) {
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Workflow Transition
+            |--------------------------------------------------------------------------
+            | A same-status update is allowed when the review status or other
+            | transaction metadata needs updating. Real workflow transitions must
+            | still pass the configured transition rules.
+            */
+            $sameWorkflowStatus =
+                strtolower(trim((string) $oldWorkflowStatus)) ===
+                strtolower(trim((string) $newWorkflowStatus));
+
+                if (
+                    !$sameWorkflowStatus &&
+                    !EventTransactionStatus::canTransition(
+                        $oldWorkflowStatus,
+                        $newWorkflowStatus
+                    )
+                ) {
                 throw new RuntimeException(
                     'Invalid workflow transition: '
                     . EventTransactionStatus::label($oldWorkflowStatus)

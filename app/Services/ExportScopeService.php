@@ -11,6 +11,7 @@ use App\Models\PartnerPlacementUser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
+use App\Models\EventTransaction;
 
 class ExportScopeService
 {
@@ -158,4 +159,61 @@ class ExportScopeService
             get_class($requester)
         );
     }
+
+
+
+    /**
+     * Get event activity query allowed for the requester.
+     *
+     * Admins can access all event activities. Partners can access activities
+     * associated with their field agents. Field agents can access only their
+     * own activities. Placement users can access activities belonging to
+     * their assigned field agents.
+     *
+     * @param Model $requester The authenticated requester.
+     *
+     * @return Builder
+     *
+     * @throws InvalidArgumentException When the requester is unsupported.
+     */
+    public function eventActivityQuery(Model $requester): Builder
+    {
+        return match (true) {
+            $requester instanceof Admin =>
+                EventTransaction::query(),
+
+            $requester instanceof Partner =>
+                EventTransaction::query()
+                    ->whereIn(
+                        'field_agent_id',
+                        FieldAgent::query()
+                            ->select('id')
+                            ->where('partner_id', $requester->id)
+                    ),
+
+            $requester instanceof FieldAgent =>
+                EventTransaction::query()
+                    ->where('field_agent_id', $requester->id),
+
+            $requester instanceof PartnerPlacementUser =>
+                EventTransaction::query()
+                    ->whereIn(
+                        'field_agent_id',
+                        FieldAgent::query()
+                            ->select('id')
+                            ->where(
+                                'placement_partner_user_id',
+                                $requester->id
+                            )
+                    ),
+
+            default =>
+                throw $this->unsupportedRequester($requester),
+        };
+    }
+
+
+
+
+
 }

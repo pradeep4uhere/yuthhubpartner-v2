@@ -68,6 +68,12 @@ export default function EditEventActivityPage({
     const [toast, setToast] = useState(null);
     const [currentWorkflowStatus, setCurrentWorkflowStatus] = useState('');
 
+    /* -----------------------------------------------------------------------
+    | Current Review Status
+    | Stores the review status returned by the event details API.
+    * ----------------------------------------------------------------------- */
+    const [currentReviewStatus, setCurrentReviewStatus] = useState('');
+
     const closeToast = useCallback(() => {
         setToast(null);
     }, []);
@@ -201,6 +207,14 @@ export default function EditEventActivityPage({
 
             setCurrentWorkflowStatus(
                 String(activity?.workflow_status ?? '').trim().toLowerCase()
+            );
+
+            /* -----------------------------------------------------------------------
+            | Set Current Review Status
+            | Normalize the API review status for reliable button visibility checks.
+            * ----------------------------------------------------------------------- */
+            setCurrentReviewStatus(
+                String(activity?.review_status ?? '').trim().toLowerCase()
             );
 
         } catch (error) {
@@ -547,6 +561,7 @@ export default function EditEventActivityPage({
             formData.beneficiary_phone_number.trim()
         );
         payload.append('monthly_income', formData.monthly_income || '');
+        payload.append('workflow_status', formData.workflow_status.trim());
         payload.append('comment', formData.comment || '');
 
         ['document_1', 'document_2', 'document_3'].forEach((field) => {
@@ -773,6 +788,7 @@ const renderDocumentField = (field, label) => (
 
 const workflowStatuses = [
     { value: 'Draft', label: 'Draft' },
+    { value: 'Submitted', label: 'Submitted' },
     { value: 'ReSubmitted', label: 'ReSubmitted' },
 ];
 
@@ -1177,25 +1193,32 @@ if (loadError) {
                     </div>
                 </div>
 
-                {/* Actions */}
+
+                {/* -----------------------------------------------------------------------
+                | Event Form Actions
+                | Hide Save Event when review status is Accepted or Approved.
+                | Keep Cancel available for every review status.
+                * ----------------------------------------------------------------------- */}
+                {!['accepted', 'approved'].includes(currentReviewStatus) && (
                 <div className="ea-form-actions">
-                   <button
+                    <button
                         type="button"
                         className="ea-cancel-button"
                         onClick={() => onBack?.()}
                     >
                         Cancel
                     </button>
-
-                    <button
-                        type="submit"
-                        className="ea-submit-button"
-                        disabled={saving}
-                    >
-                        <Save size={17} />
-                        {saving ? 'Saving...' : 'Save Event'}
-                    </button>
+                        <button
+                            type="submit"
+                            className="ea-submit-button"
+                            disabled={saving}
+                        >
+                            <Save size={17} />
+                            {saving ? 'Saving...' : 'Save Event'}
+                        </button>
                 </div>
+                )}
+
             </form>
             {apiError && (
                 <p className="ea-error-text" role="alert">

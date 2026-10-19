@@ -11,6 +11,14 @@ use App\Models\EventCategoryMaster;
 use App\Models\EventMaster;
 use App\Services\EventTransactionService;
 use DB;
+use Illuminate\Support\Facades\Storage;
+use App\Exports\EventActivitiesExport;
+use App\Services\ExportScopeService;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Services\ExportService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
+use InvalidArgumentException;
 
 
 class EventActivityController extends Controller
@@ -18,71 +26,109 @@ class EventActivityController extends Controller
 
         protected EventTransactionService $service;
 
-        public function __construct(EventTransactionService $service)
+        /**
+         * Create the event activity controller.
+         *
+         * @param ExportScopeService $exportScopeService
+         */
+        public function __construct(EventTransactionService $service,
+            protected ExportScopeService $exportScopeService,
+            protected ExportService $exportService
+        )
         {
             $this->service = $service;
         }
 
-        public function searchLearners(Request $request): JsonResponse
-        {
-            $agent = $request->user('field_agent');
 
-            if (!$agent) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthenticated Field Agent.',
-                ], 401);
-            }
+/**
+ * Search learners assigned to the authenticated field agent.
+ *
+ * Searches by first name, last name, full name, or phone number.
+ * Only returns learners whose unit matches the authenticated
+ * field agent's CSC ID.
+ *
+ * @param Request $request
+ * @return JsonResponse
+ */
+public function searchLearners(Request $request): JsonResponse
+{
+    $agent = $request->user('field_agent');
 
-            $search = trim((string) $request->query('q', ''));
+    if (!$agent) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthenticated Field Agent.',
+        ], 401);
+    }
 
-            if (mb_strlen($search) < 2) {
-                return response()->json([
-                    'success' => true,
-                    'data' => [],
-                ]);
-            }
+    if (empty($agent->csc_id)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Field Agent CSC ID not found.',
+        ], 403);
+    }
 
-            $learners = DB::table('learners')
-                ->select([
-                    'id',
-                    'first_name',
-                    'last_name',
-                    'phone_number',
-                ])
-                ->where(function ($query) use ($search) {
-                    $query->where('first_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhereRaw(
-                            "CONCAT_WS(' ', first_name, last_name) LIKE ?",
-                            ["%{$search}%"]
-                        )
-                        ->orWhere('phone_number', 'like', "%{$search}%");
-                })
-                ->orderBy('first_name')
-                ->limit(10)
-                ->get()
-                ->map(function ($learner) {
-                    $firstName = trim((string) ($learner->first_name ?? ''));
-                    $lastName = trim((string) ($learner->last_name ?? ''));
+    $search = trim((string) $request->query('q', ''));
 
-                    // Ignore placeholders such as NA, N/A and NULL.
-                    if (in_array(strtoupper($lastName), ['NA', 'N/A', 'NULL', '-'], true)) {
-                        $lastName = '';
-                    }
+    if (mb_strlen($search) < 2) {
+        return response()->json([
+            'success' => true,
+            'data' => [],
+        ]);
+    }
 
-                    return [
-                        'id' => $learner->id,
-                        'name' => trim($firstName . ' ' . $lastName),
-                        'phone' => $learner->phone_number ?? '',
-                    ];
-                });
+        /*
+        |--------------------------------------------------------------------------
+        | Search Learners Assigned to This Field Agent
+        |--------------------------------------------------------------------------
+        | Restricts results to learners whose unit matches the agent's CSC ID.
+        */
+        $learners = DB::table('learners')
+            ->select([
+                'id',
+                'first_name',
+                'last_name',
+                'phone_number',
+            ])
+            ->where('unit', $agent->csc_id)
+            ->where(function ($query) use ($search) {
+                $query->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhereRaw(
+                        "CONCAT_WS(' ', first_name, last_name) LIKE ?",
+                        ["%{$search}%"]
+                    )
+                    ->orWhere('phone_number', 'like', "%{$search}%");
+            })
+            ->orderBy('first_name')
+            ->limit(10)
+            ->get()
+            ->map(function ($learner) {
+                $firstName = trim((string) ($learner->first_name ?? ''));
+                $lastName = trim((string) ($learner->last_name ?? ''));
 
-            return response()->json([
-                'success' => true,
-                'data' => $learners,
-            ]);
-        }
+                // Ignore placeholder last names.
+                if (in_array(
+                    strtoupper($lastName),
+                    ['NA', 'N/A', 'NULL', '-'],
+                    true
+                )) {
+                    $lastName = '';
+                }
+
+                return [
+                    'id' => $learner->id,
+                    'name' => trim($firstName . ' ' . $lastName),
+                    'phone' => $learner->phone_number ?? '',
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $learners,
+        ]);
+    }
+
 
 
 
@@ -451,9 +497,13 @@ public function show(Request $request, int $id): JsonResponse
                 (string) $activity->workflow_status
             ));
 
+
+
+
             $editableStatuses = [
                 'draft',
                 'submitted',
+                'resubmitted',
                 'returned',
                 'rejected',
                 'under_review',
@@ -504,6 +554,13 @@ public function show(Request $request, int $id): JsonResponse
                     'max:5000',
                 ],
 
+                'workflow_status' => [
+                        'sometimes',
+                        'nullable',
+                        'string',
+                        'max:50',
+                ],
+
                 'document_1' => [
                     'nullable',
                     'file',
@@ -550,6 +607,38 @@ public function show(Request $request, int $id): JsonResponse
                 ], 422);
             }
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Resolve Requested Workflow Status
+            |--------------------------------------------------------------------------
+            | Use the status submitted by the Field Agent when provided.
+            | If the request omits the status, preserve the existing status.
+            */
+            $requestedWorkflowStatus = strtolower(trim(
+                (string) (
+                    $validated['workflow_status']
+                    ?? $activity->workflow_status
+                )
+            ));
+
+            $allowedWorkflowStatuses = [
+                'draft',
+                'submitted',
+                'resubmitted',
+                'returned',
+                'rejected',
+                'under_review',
+            ];
+
+            if (!in_array($requestedWorkflowStatus, $allowedWorkflowStatuses, true)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid workflow status.',
+                    'workflow_status' => $validated['workflow_status'] ?? null,
+                ], 422);
+            }
+
             // Prepare the data for the centralized transaction service.
             $updateData = [
                 'learner_id' => $validated['learner_id'],
@@ -558,6 +647,7 @@ public function show(Request $request, int $id): JsonResponse
                 'event_type_name' => $eventMaster->eventMasterType->name,
                 'event_category_name' => $eventMaster->eventCategory->name,
                 'beneficiary_name' => $validated['beneficiary_name'],
+                'workflow_status' => $requestedWorkflowStatus,
                 'beneficiary_phone_number' => $validated['beneficiary_phone_number'],
             ];
 
@@ -594,8 +684,14 @@ public function show(Request $request, int $id): JsonResponse
                 ['returned', 'rejected'],
                 true
             );
-            // Centralized update + audit logging.
-            // Workflow status is intentionally not changed by this edit endpoint.
+
+            /*
+            |--------------------------------------------------------------------------
+            | Centralized Update and Audit Logging
+            |--------------------------------------------------------------------------
+            | The service remains responsible for persisting the update and
+            | recording its audit information.
+            */
             $updateData['_is_resubmission'] = $isResubmission;
             $activity = $this->service->update(
                 $activity,
@@ -614,9 +710,269 @@ public function show(Request $request, int $id): JsonResponse
 
 
 
+/**
+ * Create a new event activity for the authenticated Field Agent.
+ *
+ * Validates the submitted learner and event details, verifies that the
+ * selected event type and category are active, handles document uploads,
+ * and creates the event transaction through EventTransactionService.
+ *
+ * The new activity is created with the default workflow and review statuses
+ * configured by the service.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\JsonResponse
+ */
+
+public function store(Request $request): JsonResponse
+{
+    $agent = $request->user('field_agent');
+
+    if (!$agent) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthenticated Field Agent.',
+        ], 401);
+    }
+
+    $validated = $request->validate([
+        'learner_id' => 'required|integer|exists:learners,id',
+        'event_master_id' => 'required|integer|exists:event_master,id',
+        'event_master_type_id' => 'required|integer|exists:event_master_type,id',
+        'beneficiary_name' => 'required|string|max:255',
+        'beneficiary_phone_number' => 'required|string|max:20',
+        'comment' => 'nullable|string|max:5000',
+        'monthly_income' => ['required', 'numeric', 'min:0'],
+        'workflow_status' => ['required', 'in:DRAFT,SUBMITTED'],
+        'document_1' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+        'document_2' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+        'document_3' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+    ]);
+
+    $eventMaster = EventMaster::query()
+        ->with(['eventMasterType', 'eventCategory'])
+        ->whereKey($validated['event_master_id'])
+        ->where('event_master_type_id', $validated['event_master_type_id'])
+        ->where('status', true)
+        ->first();
+
+    if (
+        !$eventMaster ||
+        !$eventMaster->eventMasterType ||
+        !$eventMaster->eventCategory ||
+        !$eventMaster->eventMasterType->status ||
+        !$eventMaster->eventCategory->status
+    ) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid or inactive event type/category combination.',
+        ], 422);
+    }
+
+    $uploadedFiles = [];
+
+    try {
+        $data = [
+            'learner_id' => $validated['learner_id'],
+            'field_agent_id' => $agent->getAuthIdentifier(),
+            // Partner mapping from the FieldAgent table.
+            'partner_id' => $agent->partner_id,
+            'partner_center_id' => $agent->partner_center_id,
+            'partner_placement_user_id' => $agent->placement_partner_user_id,
+
+            'event_master_id' => $eventMaster->id,
+            'event_master_type_id' => $eventMaster->event_master_type_id,
+            'event_type_name' => $eventMaster->eventMasterType->name,
+            'event_category_name' => $eventMaster->eventCategory->name,
+            'event_create_date' => now()->toDateString(),
+            'beneficiary_name' => $validated['beneficiary_name'],
+            'event_value' => $validated['monthly_income'] ?? 0,
+            'beneficiary_phone_number' => $validated['beneficiary_phone_number'],
+        ];
+        $data['workflow_status'] = $validated['workflow_status'];
+
+        if ($request->exists('comment')) {
+            $data['last_comment'] = $validated['comment'] ?? null;
+        }
+
+        foreach ([1, 2, 3] as $number) {
+            $field = "document_{$number}";
+
+            if ($request->hasFile($field)) {
+                $path = $request->file($field)->store(
+                    'uploads/eventtransaction',
+                    'public'
+                );
+
+                if (!$path) {
+                    throw new \RuntimeException(
+                        "Document {$number} upload failed."
+                    );
+                }
+
+                $uploadedFiles[] = $path;
+                $data["uploaded_doc_{$number}"] = $path;
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Duplicate Event Activity
+        |--------------------------------------------------------------------------
+        | A Field Agent cannot create the same event for the same learner more| than once for the same Event Master and Event Master Type combination.
+        |--------------------------------------------------------------------------
+        */
+        $duplicateExists = \App\Models\EventTransaction::query()
+            ->where('learner_id', $validated['learner_id'])
+            ->where('field_agent_id', $agent->getAuthIdentifier())
+            ->where('event_master_id', $eventMaster->id)
+            ->where('event_master_type_id', $eventMaster->event_master_type_id)
+            ->exists();
+
+        if ($duplicateExists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This event has already been recorded for the selected learner.',
+                'errors' => [
+                    'learner_id' => [
+                        'This learner already has a record for this event and event type.',
+                    ],
+                ],
+            ], 422);
+        }
 
 
 
+        $activity = $this->service->create(
+            $data,
+            $agent,
+            'fieldAgent'
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Event activity created successfully.',
+            'data' => $activity->load([
+                'learner',
+                'eventMaster',
+                'eventMasterType',
+                'logs',
+            ]),
+        ], 201);
+
+    } catch (\Throwable $e) {
+        foreach ($uploadedFiles as $path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($path);
+        }
+
+        report($e);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to create event activity.',
+        ], 500);
+    }
+}
+
+
+
+    /**
+     * Export all event activities belonging to the authenticated field agent.
+     *
+     * Applies the optional review status, workflow status, and search filters.
+     * The export is not restricted by the activity listing pagination.
+     *
+     * @param Request $request The incoming export request and optional filters.
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function export(Request $request)
+    {
+        $validated = $request->validate([
+            'review_status' => [
+                'nullable',
+                'string',
+                'in:Open,Pending,Accepted,Rejected,Return',
+            ],
+            'workflow_status' => [
+                'nullable',
+                'string',
+                'in:draft,submitted',
+            ],
+            'search' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Resolve Authenticated Field Agent
+        |--------------------------------------------------------------------------
+        | Restricts the export to the current agent's own records.
+        |--------------------------------------------------------------------------
+        */
+        $agent = $request->user();
+
+        abort_unless($agent, 401, 'Unauthenticated.');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Build Authorized Export Query
+        |--------------------------------------------------------------------------
+        | Apply the centralized requester scope before applying optional filters.
+        |--------------------------------------------------------------------------
+        */
+        $agent = $request->user();
+
+        abort_unless($agent instanceof \Illuminate\Database\Eloquent\Model, 401);
+
+        $query = $this->exportScopeService
+            ->eventActivityQuery($agent)
+            ->with([
+                'eventMasterType',
+                'eventMaster',
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create Centralized Export Request
+            |--------------------------------------------------------------------------
+            | ExportService saves the export record and dispatches ProcessExportJob.
+            |--------------------------------------------------------------------------
+            */
+            try {
+                $export = $this->exportService->create($agent, [
+                    'type' => 'events',
+                    'scope_type' => 'field_agent',
+                    'scope_id' => $agent->getKey(),
+                    'title' => 'Event Transactions Export',
+                    'filters' => array_filter(
+                        $validated,
+                        static fn ($value) => $value !== null && $value !== ''
+                    ),
+                ]);
+            } catch (InvalidArgumentException $exception) {
+                report($exception);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unable to create the export request.',
+                ], 422);
+            }
+        /*
+        |--------------------------------------------------------------------------
+        | Download Excel Workbook
+        |--------------------------------------------------------------------------
+        */
+        $fileName = 'event-activities-' .time().'-'. now()->format('Y-m-d_H-i-s') . '.xlsx';
+        return Excel::download(
+            new EventActivitiesExport($query),
+            $fileName
+        );
+    }
 
 
 

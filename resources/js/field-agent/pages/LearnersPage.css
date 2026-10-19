@@ -1,0 +1,1265 @@
+
+/* ==========================================================================
+   Field Agent Learners Page
+   Main layout, page heading, search, table, pagination and responsive styles.
+   ========================================================================== */
+
+.fa-learners-page {
+    width: 100%;
+    min-width: 0;
+    color: #172033;
+}
+
+/* --------------------------------------------------------------------------
+   Page Header
+   -------------------------------------------------------------------------- */
+
+.fa-learners-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.fa-learners-header__title {
+    min-width: 0;
+}
+
+.fa-learners-eyebrow {
+    display: block;
+    margin-bottom: 7px;
+    color: #4f46e5;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+.fa-learners-header h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 27px;
+    font-weight: 750;
+    letter-spacing: -0.7px;
+}
+
+.fa-learners-header p {
+    margin: 7px 0 0;
+    color: #748096;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.fa-learners-refresh {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+    min-height: 42px;
+    padding: 0 15px;
+    border: 1px solid #e0e5ef;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #344054;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.fa-learners-refresh:hover {
+    border-color: #c7d2fe;
+    background: #f5f6ff;
+}
+
+.fa-learners-refresh:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.fa-spinning {
+    animation: fa-learners-spin 1s linear infinite;
+}
+
+@keyframes fa-learners-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Toolbar and Learner Count
+   -------------------------------------------------------------------------- */
+
+.fa-learners-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+    padding: 18px;
+    border: 1px solid #e9edf5;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.fa-learners-count {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.fa-learners-count__icon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border-radius: 12px;
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.fa-learners-count > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fa-learners-count strong {
+    color: #172033;
+    font-size: 21px;
+    line-height: 1.1;
+}
+
+.fa-learners-count > div > span {
+    color: #7b8497;
+    font-size: 12px;
+}
+
+.fa-learners-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(100%, 440px);
+    min-height: 44px;
+    padding: 0 13px;
+    border: 1px solid #e2e7f0;
+    border-radius: 10px;
+    background: #f9fafc;
+    color: #8791a4;
+}
+
+.fa-learners-search:focus-within {
+    border-color: #818cf8;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgb(99 102 241 / 9%);
+}
+
+.fa-learners-search input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #172033;
+    font: inherit;
+    font-size: 13px;
+}
+
+.fa-learners-search input::placeholder {
+    color: #9aa3b3;
+}
+
+.fa-learners-search input::-webkit-search-cancel-button {
+    cursor: pointer;
+}
+
+.fa-learners-search button {
+    padding: 4px 0 4px 5px;
+    border: 0;
+    background: transparent;
+    color: #4f46e5;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Error Message
+   -------------------------------------------------------------------------- */
+
+.fa-learners-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    background: #fff7f7;
+    color: #b42318;
+    font-size: 13px;
+}
+
+.fa-learners-error span {
+    flex: 1;
+}
+
+.fa-learners-error button {
+    border: 0;
+    background: transparent;
+    color: #b42318;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Table Container and Table
+   -------------------------------------------------------------------------- */
+
+.fa-learners-table-card {
+    overflow: hidden;
+    border: 1px solid #e9edf5;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgb(15 23 42 / 3%);
+}
+
+.fa-learners-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
+.fa-learners-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+}
+
+.fa-learners-table thead th {
+    padding: 15px 18px;
+    border-bottom: 1px solid #e9edf5;
+    background: #f8f9fc;
+    color: #69758a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.55px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    width: 10%;
+}
+
+.fa-learners-table tbody td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #eff2f7;
+    color: #596579;
+    font-size: 13px;
+    vertical-align: middle;
+    width: 10%;
+}
+
+.fa-learners-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.fa-learners-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.fa-learners-table tbody tr:hover {
+    background: #fafbff;
+}
+
+.fa-learner-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 170px;
+}
+
+.fa-learner-avatar {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 10px;
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.fa-learner-name strong {
+    color: #253047;
+    font-size: 13px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.fa-learner-id {
+    display: inline-block;
+    padding: 5px 8px;
+    border: 1px solid #e8ebf2;
+    border-radius: 6px;
+    background: #f8f9fc;
+    color: #465168;
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.fa-learner-contact,
+.fa-learner-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.fa-learner-contact svg,
+.fa-learner-location svg {
+    flex-shrink: 0;
+    color: #8a94a6;
+}
+
+/* --------------------------------------------------------------------------
+   Empty State and Loading Skeleton
+   -------------------------------------------------------------------------- */
+
+.fa-learners-empty {
+    display: flex;
+    min-height: 220px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #929bad;
+    text-align: center;
+}
+
+.fa-learners-empty strong {
+    color: #344054;
+    font-size: 15px;
+}
+
+.fa-learners-empty p {
+    margin: 0;
+    color: #8a94a6;
+    font-size: 13px;
+}
+
+.fa-learners-skeleton-line {
+    display: block;
+    width: 100%;
+    min-width: 65px;
+    height: 13px;
+    border-radius: 5px;
+    background: linear-gradient(
+        90deg,
+        #eef1f6 25%,
+        #f7f8fb 50%,
+        #eef1f6 75%
+    );
+    background-size: 200% 100%;
+    animation: fa-learners-shimmer 1.4s ease infinite;
+}
+
+@keyframes fa-learners-shimmer {
+    from {
+        background-position: 100% 0;
+    }
+
+    to {
+        background-position: -100% 0;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Pagination
+   -------------------------------------------------------------------------- */
+
+.fa-learners-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 18px;
+    border-top: 1px solid #e9edf5;
+    background: #ffffff;
+}
+
+.fa-learners-pagination > span {
+    color: #7b8497;
+    font-size: 12px;
+}
+
+.fa-learners-pagination__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fa-learners-pagination__actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 11px;
+    border: 1px solid #e0e5ef;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #344054;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.fa-learners-pagination__actions button:hover:not(:disabled) {
+    border-color: #c7d2fe;
+    background: #f5f6ff;
+    color: #4338ca;
+}
+
+.fa-learners-pagination__actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Layout
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    .fa-learners-header {
+        align-items: flex-start;
+    }
+
+    .fa-learners-header h2 {
+        font-size: 23px;
+    }
+
+    .fa-learners-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .fa-learners-search {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .fa-learners-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .fa-learners-pagination__actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 480px) {
+    .fa-learners-header {
+        gap: 10px;
+    }
+
+    .fa-learners-header p {
+        font-size: 12px;
+    }
+
+    .fa-learners-refresh {
+        min-height: 38px;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+
+    .fa-learners-count strong {
+        font-size: 19px;
+    }
+}
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Learner Status Circles
+|--------------------------------------------------------------------------
+| Renders exactly three compact, horizontally aligned status circles.
+*/
+
+.learner-status-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.learner-status-dot {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    flex: 0 0 13px;
+    border-radius: 50%;
+    border: 2px solid rgba(15, 23, 42, 0.08);
+}
+
+.learner-status-dot.action-required {
+    background-color: #f59e0b;
+}
+
+.learner-status-dot.submitted {
+    background-color: #3b82f6;
+}
+
+.learner-status-dot.accepted {
+    background-color: #22c55e;
+}
+
+.learner-status-dot.rejected {
+    background-color: #ef4444;
+}
+
+.learner-status-dot.not-started {
+    background-color: #cbd5e1;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Responsive Learners Table
+|--------------------------------------------------------------------------
+| On mobile, show only ID, Name, Contact, and the three activity dots.
+| Desktop columns remain visible on larger screens.
+*/
+
+.learners-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.learners-table th,
+.learners-table td {
+    padding: 10px 12px;
+    vertical-align: middle;
+}
+
+.learners-table .activity-status-column {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.learners-table .learner-name-cell {
+    overflow-wrap: anywhere;
+}
+
+.learners-table .learner-contact-cell {
+    white-space: nowrap;
+}
+
+/* Compact layout for mobile screens */
+@media (max-width: 600px) {
+    .learners-table {
+        width: 100%;
+        table-layout: fixed;
+        font-size: 12px;
+    }
+
+    .learners-table th,
+    .learners-table td {
+        padding: 9px 4px;
+    }
+
+    .learners-table .desktop-only {
+        display: none !important;
+    }
+
+    /* ID */
+    .learners-table th:nth-child(1),
+    .learners-table td:nth-child(1) {
+        width: 12%;
+        text-align: center;
+    }
+
+    /* Name */
+    .learners-table th:nth-child(2),
+    .learners-table td:nth-child(2) {
+        width: 28%;
+    }
+
+    /* Contact */
+    .learners-table th:nth-child(3),
+    .learners-table td:nth-child(3) {
+        width: 36%;
+    }
+
+    /* Three status circles */
+    .learners-table .activity-status-column {
+        width: 24%;
+        text-align: center;
+    }
+
+    .learners-table .learner-status-dots {
+        display: inline-flex;
+        justify-content: center;
+        gap: 5px;
+        min-width: 0;
+    }
+
+    .learners-table .learner-status-dot {
+        width: 10px;
+        height: 10px;
+        flex: 0 0 10px;
+    }
+
+    .learners-table .learner-name-cell,
+    .learners-table .learner-contact-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Modern Learner Activity Legend
+|--------------------------------------------------------------------------
+| Premium dashboard card with status colors, activity numbering,
+| subtle borders, and responsive spacing.
+*/
+
+.learner-legend-card {
+    position: relative;
+    margin-bottom: 18px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+    border: 1px solid #e6eaf2;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.045);
+}
+
+/* Legend heading and activity count */
+.learner-legend-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.learner-legend-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.learner-legend-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    color: #4f46e5;
+    background: #eef2ff;
+    border: 1px solid #e0e7ff;
+    border-radius: 11px;
+    font-size: 16px;
+}
+
+.learner-legend-heading h6 {
+    margin: 0;
+    color: #172033;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+
+.learner-legend-heading p {
+    margin: 3px 0 0;
+    color: #8490a5;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.learner-legend-count {
+    padding: 6px 10px;
+    color: #4f46e5;
+    background: #eef2ff;
+    border: 1px solid #e0e7ff;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Status color key */
+.learner-legend-content {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    padding: 15px 18px;
+}
+
+.learner-legend-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.learner-legend-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    color: #475569;
+    background: #ffffff;
+    border: 1px solid #e8edf4;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.learner-legend-status .legend-dot {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.10);
+}
+
+.learner-legend-status .legend-dot.action-required {
+    background: #f59e0b;
+    box-shadow: 0 0 0 3px #fef3c7;
+}
+
+.learner-legend-status .legend-dot.submitted {
+    background: #3b82f6;
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.learner-legend-status .legend-dot.accepted {
+    background: #22c55e;
+    box-shadow: 0 0 0 3px #dcfce7;
+}
+
+.learner-legend-status .legend-dot.rejected {
+    background: #ef4444;
+    box-shadow: 0 0 0 3px #fee2e2;
+}
+
+/* Divider between statuses and activity order */
+.learner-legend-divider {
+    width: 100%;
+    height: 1px;
+    background: #edf0f6;
+}
+
+/* Circle sequence explanation */
+.learner-legend-activities {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 22px;
+}
+
+.learner-legend-activity {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.activity-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+    color: #4338ca;
+    background: #eef2ff;
+    border: 1px solid #dfe5ff;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Responsive Learner Legend Layout
+|--------------------------------------------------------------------------
+| Desktop: One horizontal row with two columns.
+| Column 1: Status color legend.
+| Column 2: Skills, Job, and Social Protection.
+| Mobile: Two stacked rows.
+*/
+
+.learner-legend-card {
+    width: 100%;
+    margin-bottom: 16px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e6eaf2;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.learner-legend-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.learner-legend-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+.learner-legend-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.learner-legend-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 32px;
+    padding: 6px 10px;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid #e8edf4;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 50%;
+}
+
+.legend-dot.action-required {
+    background: #f59e0b;
+}
+
+.legend-dot.submitted {
+    background: #3b82f6;
+}
+
+.legend-dot.accepted {
+    background: #22c55e;
+}
+
+.legend-dot.rejected {
+    background: #ef4444;
+}
+
+/* Hide the divider because the two-column grid separates the sections. */
+.learner-legend-divider {
+    display: none;
+}
+
+.learner-legend-activities {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    min-width: 0;
+}
+
+.learner-legend-activity {
+    display: inline-flex;
+    min-width: 0;
+}
+
+.learner-legend-activity .learner-legend-status {
+    padding: 6px 10px;
+    background: #ffffff;
+    border-color: #dfe5f0;
+}
+
+/* Tablet and mobile: display the two sections in separate rows. */
+@media (max-width: 768px) {
+    .learner-legend-content {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .learner-legend-statuses {
+        padding-bottom: 10px;
+        border-bottom: 1px solid #edf0f6;
+    }
+
+    .learner-legend-activities {
+        justify-content: flex-start;
+    }
+}
+
+/* Extra compact spacing for narrow mobile screens. */
+@media (max-width: 400px) {
+    .learner-legend-header {
+        padding: 10px 12px;
+    }
+
+    .learner-legend-content {
+        padding: 10px;
+    }
+
+    .learner-legend-statuses,
+    .learner-legend-activities {
+        gap: 6px;
+    }
+
+    .learner-legend-status,
+    .learner-legend-activity .learner-legend-status {
+        min-height: 29px;
+        padding: 5px 7px;
+        gap: 5px;
+        font-size: 10px;
+    }
+}
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Learner Dashboard Summary Cards
+|--------------------------------------------------------------------------
+| Responsive status cards with subtle colored backgrounds, large counts,
+| icon containers, and hover elevation.
+*/
+
+.learner-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.learner-summary-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+    padding: 20px 18px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e8edf4;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.learner-summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+.learner-summary-info {
+    min-width: 0;
+}
+
+.learner-summary-label {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.learner-summary-info h3 {
+    margin: 9px 0 5px;
+    color: #172033;
+    font-size: 30px;
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: -0.8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.learner-summary-caption {
+    display: block;
+    color: #94a3b8;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.learner-summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 12px;
+    font-size: 18px;
+}
+
+/* Action Required: Orange */
+.action-required-card {
+    border-top: 3px solid #f59e0b;
+}
+
+.action-required-card .learner-summary-icon {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+/* Submitted: Blue */
+.submitted-card {
+    border-top: 3px solid #3b82f6;
+}
+
+.submitted-card .learner-summary-icon {
+    color: #2563eb;
+    background: #dbeafe;
+}
+
+/* Accepted: Green */
+.accepted-card {
+    border-top: 3px solid #22c55e;
+}
+
+.accepted-card .learner-summary-icon {
+    color: #16a34a;
+    background: #dcfce7;
+}
+
+/* Rejected: Red */
+.rejected-card {
+    border-top: 3px solid #ef4444;
+}
+
+.rejected-card .learner-summary-icon {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+/* Tablet layout */
+@media (max-width: 992px) {
+    .learner-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .learner-summary-card {
+        padding: 16px;
+    }
+}
+
+/* Mobile layout */
+@media (max-width: 480px) {
+    .learner-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .learner-summary-card {
+        gap: 6px;
+        padding: 13px 11px;
+        border-radius: 11px;
+    }
+
+    .learner-summary-label {
+        font-size: 11px;
+    }
+
+    .learner-summary-info h3 {
+        margin: 7px 0 4px;
+        font-size: 25px;
+    }
+
+    .learner-summary-caption {
+        font-size: 9px;
+    }
+
+    .learner-summary-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+        border-radius: 9px;
+        font-size: 14px;
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Compact Learner Status Legend
+|--------------------------------------------------------------------------
+| Overrides dashboard card styling only inside the legend.
+| Uses compact height and subtle status-specific light backgrounds.
+*/
+
+.learner-legend-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.learner-legend-statuses .learner-summary-card {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 7px 11px;
+    margin: 0;
+    overflow: visible;
+    border: 1px solid transparent;
+    border-top-width: 1px;
+    border-radius: 8px;
+    box-shadow: none;
+    transform: none;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+/* Soft orange background */
+.learner-legend-statuses .action-required-card {
+    background: #fff8e8;
+    border-color: #fde7b0;
+}
+
+/* Soft blue background */
+.learner-legend-statuses .submitted-card {
+    background: #eff6ff;
+    border-color: #dbeafe;
+}
+
+/* Soft green background */
+.learner-legend-statuses .accepted-card {
+    background: #f0fdf4;
+    border-color: #dcfce7;
+}
+
+/* Soft red background */
+.learner-legend-statuses .rejected-card {
+    background: #fff1f2;
+    border-color: #ffe4e6;
+}
+
+/* Small, consistent status dots */
+.learner-legend-statuses .legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border-radius: 50%;
+    box-shadow: none;
+}
+
+/* Compact spacing on mobile */
+@media (max-width: 600px) {
+    .learner-legend-statuses {
+        gap: 6px;
+    }
+
+    .learner-legend-statuses .learner-summary-card {
+        gap: 6px;
+        padding: 6px 8px;
+        font-size: 10px;
+    }
+}
+
+
+/* --------------------------------------------------------------------------
+ | Learner Header Actions
+ | Aligns the Export and Refresh buttons next to each other.
+ * -------------------------------------------------------------------------- */
+.fa-learners-header__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+ | Export Learners Button
+ | Uses a distinct outlined style while matching the existing header controls.
+ * -------------------------------------------------------------------------- */
+.fa-learners-export {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 30px;
+    padding: 8px 10px;
+    border: 1px solid #198754;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #198754;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.fa-learners-export:hover:not(:disabled) {
+    background: #198754;
+    color: #ffffff;
+}
+
+.fa-learners-export:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+ | Responsive Header Actions
+ | Keeps both actions usable on narrow screens.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 576px) {
+    .fa-learners-header__actions {
+        width: 100%;
+    }
+
+    .fa-learners-header__actions > button {
+        flex: 1;
+    }
+}
+
