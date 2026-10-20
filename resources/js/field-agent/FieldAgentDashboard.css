@@ -657,3 +657,218 @@
         height: 270px;
     }
 }
+
+
+/* ==========================================================
+   MODERN FIELD AGENT WELCOME SECTION
+   Responsive greeting card with gradient, user details,
+   decorative accent and mobile-friendly layout.
+   ========================================================== */
+
+.welcomeSection {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    min-height: 180px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    background:
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(255, 255, 255, 0.22),
+            transparent 28%
+        ),
+        linear-gradient(120deg, #4338ca 0%, #6366f1 52%, #818cf8 100%);
+
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.16);
+    color: #ffffff;
+}
+
+.welcomeContent {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    min-width: 0;
+}
+
+.welcomeIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+
+    background: rgba(255, 255, 255, 0.17);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 18px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.welcomeText {
+    min-width: 0;
+}
+
+.welcomeEyebrow {
+    display: inline-block;
+    margin-bottom: 9px;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.welcomeText h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(22px, 2.5vw, 32px);
+    font-weight: 750;
+    line-height: 1.3;
+    letter-spacing: -0.7px;
+    overflow-wrap: anywhere;
+}
+
+.welcomeName {
+    color: #fef3c7;
+}
+
+.welcomeText p {
+    margin: 9px 0 17px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.welcomeMeta {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 13px;
+
+    color: #ffffff;
+    font-size: 12px;
+    background: rgba(30, 27, 75, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+}
+
+.welcomeMeta strong {
+    color: #fef3c7;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.welcomeStatusDot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    background: #86efac;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.14);
+}
+
+.welcomeDecoration {
+    position: absolute;
+    top: -42px;
+    right: 28px;
+    color: rgba(255, 255, 255, 0.13);
+    font-size: 190px;
+    line-height: 1;
+    pointer-events: none;
+    transform: rotate(12deg);
+}
+
+/* ==========================================================
+   RESPONSIVE WELCOME SECTION
+   Keep the greeting readable on tablets and mobile screens.
+   ========================================================== */
+
+@media (max-width: 768px) {
+    .welcomeSection {
+        min-height: auto;
+        padding: 24px 20px;
+        gap: 12px;
+        border-radius: 20px;
+    }
+
+    .welcomeContent {
+        gap: 14px;
+    }
+
+    .welcomeIcon {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+        border-radius: 14px;
+    }
+
+    .welcomeEyebrow {
+        font-size: 9px;
+        letter-spacing: 1.5px;
+    }
+
+    .welcomeText h2 {
+        font-size: 23px;
+    }
+
+    .welcomeText p {
+        font-size: 13px;
+        margin: 8px 0 14px;
+    }
+
+    .welcomeDecoration {
+        top: -15px;
+        right: -15px;
+        font-size: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcomeSection {
+        padding: 20px 16px;
+        border-radius: 16px;
+    }
+
+    .welcomeContent {
+        gap: 12px;
+    }
+
+    .welcomeIcon {
+        width: 42px;
+        height: 42px;
+        font-size: 21px;
+        border-radius: 12px;
+    }
+
+    .welcomeText h2 {
+        font-size: 20px;
+        letter-spacing: -0.4px;
+    }
+
+    .welcomeText p {
+        font-size: 12px;
+    }
+
+    .welcomeMeta {
+        gap: 6px;
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+
+    .welcomeDecoration {
+        font-size: 90px;
+    }
+}
+

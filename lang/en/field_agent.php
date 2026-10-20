@@ -2,7 +2,7 @@
 <?php
 
 return [
-    'brand' => 'YouthHub Field',
+    'brand' => 'YouthHub Partner',
     'workspace' => 'WORKSPACE',
     'account' => 'ACCOUNT',
 
@@ -31,6 +31,13 @@ return [
         'verified' => 'Verified',
         'suspended' => 'Suspended',
     ],
+
+     'support_help' => 'Support & Help',
+    'support_short' => 'Support',
+    'learners_short'=> 'Learner',
+    'profile_short' => 'Profile',
+
+
 
     // Translations used by React components
    'react' => [
@@ -144,7 +151,7 @@ return [
             'event_category' => 'Event Category',
             'event_type' => 'Event Type',
 
-            'learners_short'=> 'Learner',
+
 
             'add_event' => 'Add Event',
             'view_and_search_learners' => 'View and search learners assigned to your account.',
@@ -275,6 +282,171 @@ return [
             'mpin_login_disabled_hint' => 'Password login remains available. MPIN login is disabled.',
             'saving_mpin_settings' => 'Saving settings...',
             'save_mpin_settings' => 'Save MPIN Settings',
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Activity Summary
+            |--------------------------------------------------------------------------
+            */
+
+            'activity_status' => 'Activity Progress',
+            'understand_learner_progress' => 'Overall progress across matching learners',
+            'loading_activity_counts' => 'Loading aggregate activity counts...',
+            'refresh_activity_counts' => 'Refresh activity counts',
+            'showing_last_successful_counts' => 'Showing the last successfully loaded counts.',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Activity Types
+            |--------------------------------------------------------------------------
+            */
+
+            'first_skills' => 'Skills',
+            'second_job' => 'Job',
+            'third_social_protection' => 'Social Protection',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Activity Statuses
+            |--------------------------------------------------------------------------
+            */
+
+            'accepted' => 'Accepted',
+            'pending' => 'Pending',
+            'submitted' => 'Submitted',
+            'rejected' => 'Rejected',
+            'not_started' => 'Not Started',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Activity Counts
+            |--------------------------------------------------------------------------
+            */
+
+            'learners_count' => ':count learners',
+            'activity_status_distribution' => ':activity status distribution',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Actions
+            |--------------------------------------------------------------------------
+            */
+
+            'retry' => 'Retry',
+
+
+               // Support page
+    'support_eyebrow' => 'FIELD AGENT PORTAL',
+    'support_page_title' => 'Support & Help',
+    'support_page_subtitle' => 'Get help, report an issue, and track your support requests.',
+    'support_create_title' => 'Create a Ticket',
+    'support_create_subtitle' => 'Tell us what you need help with. Our team is here for you.',
+    'support_conversation_title' => 'Ticket Conversation',
+    'support_conversation_subtitle' => 'View updates and communicate with our support team.',
+
+    // Actions
+    'support_refresh' => 'Refresh',
+    'support_new_ticket' => 'New Ticket',
+    'support_create_ticket' => 'Create Ticket',
+    'support_create_first_ticket' => 'Create Your First Ticket',
+    'support_back_to_tickets' => 'Back to Tickets',
+    'support_cancel' => 'Cancel',
+    'support_submit_ticket' => 'Submit Ticket',
+    'support_submitting' => 'Submitting...',
+    'support_send_reply' => 'Send Reply',
+    'support_sending' => 'Sending...',
+    'support_dismiss' => 'Dismiss',
+
+    // Ticket statistics
+    'support_total_tickets' => 'Total Tickets',
+    'support_active_tickets' => 'Active Tickets',
+    'support_resolved_tickets' => 'Resolved',
+    'support_all_requests' => 'All your requests',
+    'support_awaiting_attention' => 'Awaiting attention',
+    'support_completed_requests' => 'Completed requests',
+    'support_my_tickets' => 'My Tickets',
+    'support_manage_subtitle' => 'Manage and track your support requests in one place.',
+    'support_tickets_label' => 'tickets',
+    'support_search_placeholder' => 'Search by ticket number, subject or status...',
+    'support_loading_tickets' => 'Loading your tickets...',
+    'support_no_search_results' => 'No matching tickets',
+    'support_try_another_search' => 'Try a different search term.',
+    'support_no_tickets' => 'No support tickets yet',
+    'support_no_tickets_description' => 'If you need assistance, create a ticket and our team will help you.',
+    'support_showing' => 'Showing',
+    'support_of' => 'of',
+    'support_page' => 'Page',
+    'support_created' => 'Created',
+
+    // Status labels
+    'support_status' => 'Status',
+    'support_status_open' => 'Open',
+    'support_status_pending' => 'Pending',
+    'support_status_in_progress' => 'In Progress',
+    'support_status_resolved' => 'Resolved',
+    'support_status_closed' => 'Closed',
+
+    // Priority labels
+    'support_priority' => 'Priority',
+    'support_priority_low' => 'Low',
+    'support_priority_normal' => 'Normal',
+    'support_priority_high' => 'High',
+    'support_priority_urgent' => 'Urgent',
+
+    // Ticket creation form
+    'support_form_heading' => 'Tell us how we can help',
+    'support_form_description' => 'Complete the details below so our team can assist you.',
+    'support_category' => 'Support Category',
+    'support_select_category' => 'Select a category',
+    'support_no_categories' => 'No active categories are available. Please contact your administrator.',
+    'support_subject' => 'Subject',
+    'support_subject_placeholder' => 'Briefly describe your issue',
+    'support_affected_module' => 'Affected Module',
+    'support_optional' => 'Optional',
+    'support_module_placeholder' => 'e.g. Learners, Reports',
+    'support_description' => 'Describe your issue',
+    'support_description_placeholder' => 'Explain what happened, what you expected, and any steps to reproduce the issue...',
+    'support_form_required_note' => 'Fields marked * are required.',
+
+    // Guidance card
+    'support_need_help' => 'Need help?',
+    'support_help_card_description' => 'Give us enough detail to understand your issue. Our support team will review your request and respond in this ticket.',
+    'support_tip_one' => 'Choose the category that best matches your issue.',
+    'support_tip_two' => 'Include the steps that led to the problem.',
+    'support_tip_three' => 'Never include your password or other sensitive credentials.',
+
+    // Ticket details and conversation
+    'support_loading_details' => 'Loading ticket details...',
+    'support_issue_description' => 'Issue Description',
+    'support_conversation' => 'Conversation',
+    'support_conversation_hint' => 'Replies from you and the support team appear here.',
+    'support_no_replies' => 'No replies yet. Send a message below if you need to add more information.',
+    'support_you' => 'You',
+    'support_team' => 'Support Team',
+    'support_ticket_closed_notice' => 'This ticket is closed and cannot receive new replies.',
+    'support_your_reply' => 'Your Reply',
+    'support_reply_placeholder' => 'Write your message here...',
+    'support_reply_visibility' => 'Your reply will be visible to the support team.',
+    'support_ticket_information' => 'Ticket Information',
+    'support_ticket_number' => 'Ticket Number',
+    'support_created_on' => 'Created On',
+    'support_need_more_help' => 'Need more help?',
+    'support_reply_hint' => 'Add a reply to this conversation to provide additional details.',
+    'support_uncategorized' => 'Uncategorized',
+
+    // Success messages
+    'support_success_created' => 'Support ticket created successfully.',
+    'support_success_reply' => 'Reply added successfully.',
+
+    // Errors and validation
+    'support_error_load_tickets' => 'Unable to load support tickets.',
+    'support_error_load_details' => 'Unable to load ticket details.',
+    'support_error_create_ticket' => 'Unable to create the ticket.',
+    'support_error_reply' => 'Unable to send your reply.',
+    'support_validation_category' => 'Please select a support category.',
+    'support_help' => 'Support & Help',
+    'support_short' => 'Support',
 
 
     ]

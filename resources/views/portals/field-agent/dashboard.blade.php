@@ -24,7 +24,7 @@
 
             <a class="portal-brand"
                href="{{ route('field-agent.dashboard') }}">
-                <span class="portal-brand__mark">Y</span>
+                <img src="{{ asset('icon.png') }}" alt="YouthHub Partner logo" height="50px" width="50px">
                 <span>{{ __('field_agent.brand') }}</span>
             </a>
 
@@ -54,10 +54,7 @@
                     <span>{{ __('field_agent.events') }}</span>
                 </button>
 
-                <button type="button" data-section="reports">
-                    <span class="field-agent-nav__icon">▥</span>
-                    <span>{{ __('field_agent.reports') }}</span>
-                </button>
+
             </nav>
 
             <p class="field-agent-drawer__label">
@@ -71,6 +68,12 @@
                     <span class="field-agent-nav__icon">◎</span>
                     <span>{{ __('field_agent.profile') }}</span>
                 </button>
+
+                {{-- Support & Help navigation --}}
+                <button type="button" data-section="support">
+                    <span class="field-agent-nav__icon">ⓘ</span>
+                    <span>{{ __('field_agent.support_help') }}</span>
+                </button>
             </nav>
 
             <div class="field-agent-drawer__bottom">
@@ -79,7 +82,7 @@
                     @csrf
 
                     <button class="field-agent-signout" type="submit">
-                        {{ __('field_agent.sign_out') }}
+                        <i class="bi bi-door-open" aria-hidden="true"></i>
                     </button>
                 </form>
             </div>
@@ -101,7 +104,7 @@
             <a class="portal-brand"
                href="{{ route('field-agent.dashboard') }}"
                aria-label="{{ __('field_agent.field_agent_home') }}">
-                <span class="portal-brand__mark">Y</span>
+                <img src="{{ asset('icon.png') }}" alt="YouthHub Partner logo" height="30px" width="30px">
                 <span>{{ __('field_agent.brand') }}</span>
             </a>
 
@@ -116,9 +119,9 @@
                   class="field-agent-language-form">
                 @csrf
 
-                <label for="field-agent-language" class="sr-only">
-                    {{ __('field_agent.language') }}
-                </label>
+                <div class="language-icon" aria-hidden="true">
+                    <i class="bi bi-translate"></i>
+                </div>
 
                 <select
                     id="field-agent-language"

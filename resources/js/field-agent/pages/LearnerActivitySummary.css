@@ -1,0 +1,321 @@
+
+/* --------------------------------------------------------------------------
+ | Activity Summary Container
+ | Provides a separate responsive layout for aggregate activity progress.
+ * -------------------------------------------------------------------------- */
+.fa-activity-summary {
+    width: 100%;
+    margin: 0 0 24px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+ | Activity Summary Header
+ | Aligns the section title and independent refresh button.
+ * -------------------------------------------------------------------------- */
+.fa-activity-summary__heading,
+.fa-activity-summary__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fa-activity-summary__heading {
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.fa-activity-summary__heading > svg,
+.fa-activity-summary__title > svg {
+    flex-shrink: 0;
+    color: #2563eb;
+}
+
+.fa-activity-summary__title h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.fa-activity-summary__title p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* --------------------------------------------------------------------------
+ | Activity Cards Grid
+ | Displays Skills, Job, and Social Protection in responsive columns.
+ * -------------------------------------------------------------------------- */
+.fa-activity-summary__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.fa-activity-card {
+    min-width: 0;
+    padding: 18px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+ | Activity Card Heading
+ | Displays each activity name and its full aggregate learner total.
+ * -------------------------------------------------------------------------- */
+.fa-activity-card__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.fa-activity-card__heading h4 {
+    margin: 0;
+    color: #111827;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.fa-activity-card__heading > span {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+ | Segmented Progress Bar
+ | Segment widths are calculated from aggregate status counts.
+ * -------------------------------------------------------------------------- */
+.fa-activity-progress {
+    display: flex;
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    background: #e5e7eb;
+    border-radius: 999px;
+}
+
+.fa-activity-progress__segment {
+    display: block;
+    height: 100%;
+    min-width: 0;
+    transition: width 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+ | Activity Status Rows
+ | Aligns status names and counts with percentages.
+ * -------------------------------------------------------------------------- */
+.fa-activity-status-list {
+    display: grid;
+    gap: 13px;
+    margin-top: 20px;
+}
+
+.fa-activity-status-row,
+.fa-activity-status-label,
+.fa-activity-status-value {
+    display: flex;
+    align-items: center;
+}
+
+.fa-activity-status-row {
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.fa-activity-status-label {
+    gap: 8px;
+    min-width: 0;
+    color: #4b5563;
+    font-size: 13px;
+}
+
+.fa-activity-status-label svg {
+    flex-shrink: 0;
+}
+
+.fa-activity-status-value {
+    gap: 6px;
+    flex-shrink: 0;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.fa-activity-status-value small {
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+ | Loading, Error, and Refresh States
+ | Keeps summary feedback isolated from the learners table.
+ * -------------------------------------------------------------------------- */
+.fa-activity-refresh {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: #374151;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.fa-activity-refresh:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.fa-activity-spinning {
+    animation: fa-activity-spin 1s linear infinite;
+}
+
+@keyframes fa-activity-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-activity-skeleton {
+    width: 100%;
+    height: 14px;
+    margin-bottom: 16px;
+    background: #e5e7eb;
+    border-radius: 6px;
+    animation: fa-activity-pulse 1.3s ease-in-out infinite;
+}
+
+.fa-activity-skeleton--short {
+    width: 55%;
+    height: 24px;
+}
+
+@keyframes fa-activity-pulse {
+    50% {
+        opacity: 0.45;
+    }
+}
+
+.fa-activity-error,
+.fa-activity-inline-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+.fa-activity-error button {
+    margin-left: auto;
+    padding: 7px 12px;
+    color: #991b1b;
+    background: #ffffff;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.fa-activity-inline-error {
+    margin-bottom: 16px;
+}
+
+/* --------------------------------------------------------------------------
+ | Responsive Layout
+ | Stacks activity cards on tablet and mobile screens.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 1000px) {
+    .fa-activity-summary__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .fa-activity-summary {
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .fa-activity-summary__grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .fa-activity-card {
+        padding: 15px;
+    }
+
+    .fa-activity-summary__title h3 {
+        font-size: 16px;
+    }
+}
+/* --------------------------------------------------------------------------
+ | Continuous Activity Wave
+ | Repeats the ECG pattern seamlessly to avoid a pause between animations.
+ * -------------------------------------------------------------------------- */
+.fa-activity-wave {
+    display: block;
+    flex-shrink: 0;
+    overflow: hidden;
+    color: #2563eb;
+}
+
+.fa-activity-wave__track {
+    stroke: #bfdbfe;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+}
+
+.fa-activity-wave__line {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 28 28;
+    animation: fa-activity-wave-motion 0.8s linear infinite;
+    filter: drop-shadow(0 0 2px rgba(37, 99, 235, 0.35));
+}
+
+/* --------------------------------------------------------------------------
+ | Infinite Horizontal Motion
+ | Moves the ECG pattern continuously without stopping at the end.
+ * -------------------------------------------------------------------------- */
+@keyframes fa-activity-wave-motion {
+    from {
+        stroke-dashoffset: 56;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* --------------------------------------------------------------------------
+ | Reduced Motion Accessibility
+ | Keeps the waveform static if reduced motion is preferred.
+ * -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    .fa-activity-wave__line {
+        animation: none;
+    }
+}
+

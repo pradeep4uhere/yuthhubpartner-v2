@@ -72,4 +72,24 @@ class FieldAgent extends Authenticatable
     {
         return $this->morphMany(Export::class, 'requested_by');
     }
+
+
+
+    /**
+     * Get all support tickets raised by this Field Agent.
+     *
+     * @return MorphMany
+     */
+    public function supportTickets(): MorphMany
+    {
+        return $this->morphMany(
+            SupportTicket::class,
+            'requester'
+        );
+    }
+
+
+
+
+
 }

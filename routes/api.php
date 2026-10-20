@@ -11,12 +11,66 @@ use App\Http\Controllers\Api\FieldAgent\DashboardChartsController;
 use App\Http\Controllers\Api\FieldAgent\LearnerController;
 use App\Http\Controllers\Api\FieldAgent\ChangePasswordController;
 use App\Http\Controllers\Api\FieldAgent\MpinSettingsController;
+use App\Http\Controllers\Api\SupportTicketController;
 
+Route::middleware(['web', 'auth:partner'])
+    ->prefix('partner')
+    ->name('api.partner.')
+    ->group(function () {
+        Route::post('/support-tickets', [SupportTicketController::class, 'store'])
+            ->name('support-tickets.store');
+    });
+
+Route::middleware(['web', 'auth:partner_center'])
+    ->prefix('partner-center')
+    ->name('api.partner-center.')
+    ->group(function () {
+        Route::post('/support-tickets', [SupportTicketController::class, 'store'])
+            ->name('support-tickets.store');
+    });
+
+Route::middleware(['web', 'auth:partner_placement'])
+    ->prefix('partner-placement')
+    ->name('api.partner-placement.')
+    ->group(function () {
+        Route::post('/support-tickets', [SupportTicketController::class, 'store'])
+            ->name('support-tickets.store');
+    });
 
 Route::middleware(['web', 'auth:field_agent'])
     ->prefix('field-agent')
     ->name('api.field-agent.')
     ->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Allows authenticated Field Agents to create tickets, view ticket lists,
+        | access ticket details, submit replies, view categories, and download
+        | ticket attachments.
+        */
+        Route::post('/support-tickets', [SupportTicketController::class, 'store'])
+            ->name('support-tickets.store');
+
+        Route::get('/support-tickets', [SupportTicketController::class, 'index'])
+            ->name('support-tickets.index');
+
+        Route::get('/support-tickets/{ticketId}', [SupportTicketController::class, 'show'])
+            ->whereNumber('ticketId')
+            ->name('support-tickets.show');
+
+        Route::post('/support-tickets/{ticketId}/replies', [SupportTicketController::class, 'storeReply'])
+            ->whereNumber('ticketId')
+            ->name('support-tickets.replies.store');
+
+        Route::get('/support-ticket-categories', [SupportTicketController::class, 'categories'])
+            ->name('support-tickets.categories');
+
+        Route::get('/support-ticket-attachments/{attachmentId}/download', [SupportTicketController::class, 'downloadAttachment'])
+            ->whereNumber('attachmentId')
+            ->name('support-ticket-attachments.download');
+
+
+
         Route::get('/event-activities',[EventActivityController::class, 'index'])->name('event-activities.index');
         Route::get('/event-activities/{id}',[EventActivityController::class, 'show'])->whereNumber('id')->name('event-activities.show');
         Route::put('/event-activities/{id}', [EventActivityController::class,'update',])->whereNumber('id')->name('event-activities.update');
@@ -45,7 +99,7 @@ Route::middleware(['web', 'auth:field_agent'])
 
         Route::get('/learners',[LearnerController::class, 'index'])->name('api.field-agent.learners.index');
 
-
+        Route::get('/learners/activity-counts',[LearnerController::class, 'activityCounts'])->name('field-agent.learners.activity-counts');
         /*
         |--------------------------------------------------------------------------
         | Change Field Agent Password

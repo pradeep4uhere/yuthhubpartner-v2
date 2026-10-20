@@ -39,4 +39,22 @@ class Partner extends Authenticatable
     {
         return $this->morphMany(Export::class, 'requested_by');
     }
+
+
+
+    /**
+     * Get all support tickets raised by this Partner.
+     *
+     * @return MorphMany
+     */
+    public function supportTickets(): MorphMany
+    {
+        return $this->morphMany(
+            SupportTicket::class,
+            'requester'
+        );
+    }
+
+
+
 }

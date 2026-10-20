@@ -288,6 +288,172 @@ return [
 
 
 
+     /*
+    |--------------------------------------------------------------------------
+    | Activity Summary
+    |--------------------------------------------------------------------------
+    */
+
+    'activity_status' => 'गतिविधि की प्रगति',
+    'understand_learner_progress' => 'फ़िल्टर किए गए सभी शिक्षार्थियों की समग्र प्रगति',
+    'loading_activity_counts' => 'गतिविधियों की कुल संख्या लोड हो रही है...',
+    'refresh_activity_counts' => 'गतिविधियों की संख्या रीफ़्रेश करें',
+    'showing_last_successful_counts' => 'पिछली बार सफलतापूर्वक लोड की गई जानकारी दिखाई जा रही है।',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Activity Types
+    |--------------------------------------------------------------------------
+    */
+
+    'first_skills' => 'कौशल',
+    'second_job' => 'रोज़गार',
+    'third_social_protection' => 'सामाजिक सुरक्षा',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Activity Statuses
+    |--------------------------------------------------------------------------
+    */
+
+    'accepted' => 'स्वीकृत',
+    'pending' => 'लंबित',
+    'submitted' => 'जमा किया गया',
+    'rejected' => 'अस्वीकृत',
+    'not_started' => 'शुरू नहीं हुआ',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Activity Counts
+    |--------------------------------------------------------------------------
+    */
+
+    'learners_count' => ':count शिक्षार्थी',
+    'activity_status_distribution' => ':activity की स्थिति का विवरण',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Actions
+    |--------------------------------------------------------------------------
+    */
+
+    'retry' => 'पुनः प्रयास करें',
+
+      // Support page
+    'support_eyebrow' => 'फील्ड एजेंट पोर्टल',
+    'support_page_title' => 'सहायता और समर्थन',
+    'support_page_subtitle' => 'सहायता प्राप्त करें, समस्या दर्ज करें और अपने अनुरोधों की स्थिति देखें।',
+    'support_create_title' => 'नया टिकट बनाएँ',
+    'support_create_subtitle' => 'बताएँ कि आपको किस समस्या में सहायता चाहिए। हमारी टीम आपकी मदद के लिए है।',
+    'support_conversation_title' => 'टिकट वार्तालाप',
+    'support_conversation_subtitle' => 'अपडेट देखें और सहायता टीम से बातचीत करें।',
+
+    // Actions
+    'support_refresh' => 'रिफ्रेश करें',
+    'support_new_ticket' => 'नया टिकट',
+    'support_create_ticket' => 'टिकट बनाएँ',
+    'support_create_first_ticket' => 'अपना पहला टिकट बनाएँ',
+    'support_back_to_tickets' => 'टिकट सूची पर वापस जाएँ',
+    'support_cancel' => 'रद्द करें',
+    'support_submit_ticket' => 'टिकट सबमिट करें',
+    'support_submitting' => 'सबमिट हो रहा है...',
+    'support_send_reply' => 'जवाब भेजें',
+    'support_sending' => 'भेजा जा रहा है...',
+    'support_dismiss' => 'बंद करें',
+
+    // Ticket statistics
+    'support_total_tickets' => 'कुल टिकट',
+    'support_active_tickets' => 'सक्रिय टिकट',
+    'support_resolved_tickets' => 'समाधान किए गए',
+    'support_all_requests' => 'आपके सभी अनुरोध',
+    'support_awaiting_attention' => 'सहायता की प्रतीक्षा में',
+    'support_completed_requests' => 'पूरे किए गए अनुरोध',
+    'support_my_tickets' => 'मेरे टिकट',
+    'support_manage_subtitle' => 'अपने सभी सहायता अनुरोधों को एक ही जगह देखें और ट्रैक करें।',
+    'support_tickets_label' => 'टिकट',
+    'support_search_placeholder' => 'टिकट नंबर, विषय या स्थिति से खोजें...',
+    'support_loading_tickets' => 'आपके टिकट लोड हो रहे हैं...',
+    'support_no_search_results' => 'कोई मिलता-जुलता टिकट नहीं मिला',
+    'support_try_another_search' => 'कोई दूसरा खोज शब्द इस्तेमाल करें।',
+    'support_no_tickets' => 'अभी कोई सहायता टिकट नहीं है',
+    'support_no_tickets_description' => 'सहायता के लिए टिकट बनाएँ। हमारी टीम आपकी मदद करेगी।',
+    'support_showing' => 'दिखाए जा रहे हैं',
+    'support_of' => 'में से',
+    'support_page' => 'पेज',
+    'support_created' => 'बनाया गया',
+
+    // Status labels
+    'support_status' => 'स्थिति',
+    'support_status_open' => 'खुला',
+    'support_status_pending' => 'लंबित',
+    'support_status_in_progress' => 'कार्य प्रगति पर',
+    'support_status_resolved' => 'समाधान हो गया',
+    'support_status_closed' => 'बंद',
+
+    // Priority labels
+    'support_priority' => 'प्राथमिकता',
+    'support_priority_low' => 'कम',
+    'support_priority_normal' => 'सामान्य',
+    'support_priority_high' => 'उच्च',
+    'support_priority_urgent' => 'अत्यावश्यक',
+
+    // Ticket creation form
+    'support_form_heading' => 'बताएँ, हम आपकी कैसे मदद कर सकते हैं',
+    'support_form_description' => 'हमारी टीम की सहायता के लिए नीचे दी गई जानकारी भरें।',
+    'support_category' => 'सहायता श्रेणी',
+    'support_select_category' => 'श्रेणी चुनें',
+    'support_no_categories' => 'कोई सक्रिय श्रेणी उपलब्ध नहीं है। कृपया व्यवस्थापक से संपर्क करें।',
+    'support_subject' => 'विषय',
+    'support_subject_placeholder' => 'अपनी समस्या संक्षेप में बताएँ',
+    'support_affected_module' => 'प्रभावित मॉड्यूल',
+    'support_optional' => 'वैकल्पिक',
+    'support_module_placeholder' => 'जैसे: Learners, Reports',
+    'support_description' => 'समस्या का विवरण',
+    'support_description_placeholder' => 'बताएँ कि क्या हुआ, आप क्या अपेक्षा कर रहे थे और समस्या दोबारा कैसे आ सकती है...',
+    'support_form_required_note' => '* से चिह्नित फ़ील्ड भरना आवश्यक है।',
+
+    // Guidance card
+    'support_need_help' => 'सहायता चाहिए?',
+    'support_help_card_description' => 'अपनी समस्या का पर्याप्त विवरण दें। हमारी सहायता टीम आपके अनुरोध की समीक्षा करके इसी टिकट पर जवाब देगी।',
+    'support_tip_one' => 'अपनी समस्या से संबंधित सही श्रेणी चुनें।',
+    'support_tip_two' => 'समस्या आने से पहले किए गए चरणों का विवरण दें।',
+    'support_tip_three' => 'अपना पासवर्ड या अन्य संवेदनशील जानकारी साझा न करें।',
+
+    // Ticket details and conversation
+    'support_loading_details' => 'टिकट का विवरण लोड हो रहा है...',
+    'support_issue_description' => 'समस्या का विवरण',
+    'support_conversation' => 'बातचीत',
+    'support_conversation_hint' => 'आपके और सहायता टीम के जवाब यहाँ दिखाई देंगे।',
+    'support_no_replies' => 'अभी कोई जवाब नहीं है। अतिरिक्त जानकारी देने के लिए नीचे संदेश भेजें।',
+    'support_you' => 'आप',
+    'support_team' => 'सहायता टीम',
+    'support_ticket_closed_notice' => 'यह टिकट बंद है और इस पर नया जवाब नहीं भेजा जा सकता।',
+    'support_your_reply' => 'आपका जवाब',
+    'support_reply_placeholder' => 'अपना संदेश यहाँ लिखें...',
+    'support_reply_visibility' => 'आपका जवाब सहायता टीम को दिखाई देगा।',
+    'support_ticket_information' => 'टिकट की जानकारी',
+    'support_ticket_number' => 'टिकट नंबर',
+    'support_created_on' => 'बनाने की तारीख',
+    'support_need_more_help' => 'और सहायता चाहिए?',
+    'support_reply_hint' => 'अतिरिक्त जानकारी देने के लिए इस बातचीत में जवाब भेजें।',
+    'support_uncategorized' => 'बिना श्रेणी के',
+
+    // Success messages
+    'support_success_created' => 'सहायता टिकट सफलतापूर्वक बनाया गया।',
+    'support_success_reply' => 'जवाब सफलतापूर्वक भेजा गया।',
+
+    // Errors and validation
+    'support_error_load_tickets' => 'सहायता टिकट लोड नहीं हो सके।',
+    'support_error_load_details' => 'टिकट का विवरण लोड नहीं हो सका।',
+    'support_error_create_ticket' => 'टिकट नहीं बनाया जा सका।',
+    'support_error_reply' => 'आपका जवाब नहीं भेजा जा सका।',
+    'support_validation_category' => 'कृपया सहायता श्रेणी चुनें।',
+    'support_help' => 'सहायता और समर्थन',
+    'support_short' => 'सहायता',
+
+
+
+
     ],
 
 

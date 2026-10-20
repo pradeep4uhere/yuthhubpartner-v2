@@ -14,6 +14,7 @@ import {
 
 import './LearnersPage.css';
 import LearnerStatusDots from './LearnerStatusDots';
+import LearnerActivitySummary from './LearnerActivitySummary';
 
 /* --------------------------------------------------------------------------
  | Learners Page Skeleton
@@ -560,84 +561,17 @@ export default function LearnersPage({ t = (key) => key }) {
                     </button>
                 </div>
             )}
+                {/* --------------------------------------------------------------------------
+                | Independent Activity Summary
+                | Fetches aggregate activity counts separately from the paginated listing.
+                * -------------------------------------------------------------------------- */}
+                <LearnerActivitySummary
+                    t={t}
+                    search={search}
+                    refreshKey={refreshKey}
+                />
 
 
-
-                {/*
-                |--------------------------------------------------------------------------
-                | Learner Status Summary Cards
-                |--------------------------------------------------------------------------
-                | Displays dashboard-style counts for Action Required, Submitted,
-                | Accepted, and Rejected learners.
-                | Replace the example count values with counts calculated from your API.
-                */}
-
-                <div className="learner-summary-grid">
-                    <div className="learner-summary-card action-required-card">
-                        <div className="learner-summary-info">
-                            <span className="learner-summary-label">{t('action_required')}</span>
-                            <h3>{statusCounts?.action_required ?? 0}</h3>
-                            <span className="learner-summary-caption">{t('needs_attention')}</span>
-                        </div>
-                        <div className="learner-summary-icon">
-                            <i className="fas fa-clock" aria-hidden="true" />
-                        </div>
-                    </div>
-
-                   {/* --------------------------------------------------------------------------
-                    | Submitted Learners Summary Card
-                    * -------------------------------------------------------------------------- */}
-                    <div className="learner-summary-card submitted-card">
-                        <div className="learner-summary-info">
-                            <span className="learner-summary-label">
-                                {t('submitted')}
-                            </span>
-                            <h3>{statusCounts?.submitted ?? 0}</h3>
-                            <span className="learner-summary-caption">
-                                {t('awaiting_review')}
-                            </span>
-                        </div>
-                        <div className="learner-summary-icon">
-                            <i className="fas fa-paper-plane" aria-hidden="true" />
-                        </div>
-                    </div>
-
-                    {/* --------------------------------------------------------------------------
-                    | Accepted Learners Summary Card
-                    * -------------------------------------------------------------------------- */}
-                    <div className="learner-summary-card accepted-card">
-                        <div className="learner-summary-info">
-                            <span className="learner-summary-label">
-                                {t('accepted')}
-                            </span>
-                            <h3>{statusCounts?.accepted ?? 0}</h3>
-                            <span className="learner-summary-caption">
-                                {t('successfully_accepted')}
-                            </span>
-                        </div>
-                        <div className="learner-summary-icon">
-                            <i className="fas fa-check-circle" aria-hidden="true" />
-                        </div>
-                    </div>
-
-                    {/* --------------------------------------------------------------------------
-                    | Rejected Learners Summary Card
-                    * -------------------------------------------------------------------------- */}
-                    <div className="learner-summary-card rejected-card">
-                        <div className="learner-summary-info">
-                            <span className="learner-summary-label">
-                                {t('rejected')}
-                            </span>
-                            <h3>{statusCounts?.rejected ?? 0}</h3>
-                            <span className="learner-summary-caption">
-                                {t('requires_follow_up')}
-                            </span>
-                        </div>
-                        <div className="learner-summary-icon">
-                            <i className="fas fa-times-circle" aria-hidden="true" />
-                        </div>
-                    </div>
-                </div>
 
 
 
@@ -736,7 +670,20 @@ export default function LearnersPage({ t = (key) => key }) {
                     </thead>
 
                     <tbody>
-                        {learners.map((learner) => (
+                          {loading ? (
+                        <tr>
+                            <td colSpan={7} style={{ textAlign: 'center', padding: '24px' }}>
+                                Loading learners...
+                            </td>
+                        </tr>
+                    ) : learners.length === 0 ? (
+                        <tr>
+                            <td colSpan={7} style={{ textAlign: 'center', padding: '24px' }}>
+                                No learners found.
+                            </td>
+                        </tr>
+                    ) : (
+                        learners.map((learner) => (
                             <tr key={learner.id}>
                                 <td>{learner.id}</td>
                                 <td className="learner-name-cell">
@@ -761,7 +708,8 @@ export default function LearnersPage({ t = (key) => key }) {
                                     <LearnerStatusDots learner={learner} />
                                 </td>
                             </tr>
-                        ))}
+                        ))
+                    )}
                     </tbody>
                 </table>
                 </div>

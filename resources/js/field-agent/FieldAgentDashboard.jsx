@@ -29,6 +29,7 @@
         ArrowUpRight,
         Menu,
         CalendarDays,
+        LifeBuoy
     } from 'lucide-react';
 
     import './FieldAgentDashboard.css';
@@ -37,6 +38,8 @@
     import DashboardSkeleton from './DashboardSkeleton';
     import LearnersPage from './pages/LearnersPage';
     import ProfilePage from './pages/ProfilePage';
+    import SupportTicketsPage from './pages/SupportTicketsPage';
+    import OverviewPage from './pages/OverviewPage';
 
 
     const getFieldAgentTranslations = () => {
@@ -56,7 +59,8 @@
     const pages = {
         activities: EventActivitiesPage,
         learners: LearnersPage,
-        profile: ProfilePage
+        profile: ProfilePage,
+        support: SupportTicketsPage,
     };
 
 
@@ -66,6 +70,7 @@
         { id: 'activities', labelKey: 'activities', icon: ClipboardCheck },
         { id: 'reports', labelKey: 'reports', icon: ChartNoAxesCombined },
         { id: 'profile', labelKey: 'profile', icon: UserRound },
+        { id: 'support', labelKey: 'support_help', icon: LifeBuoy },
     ];
 
     function SummaryCard({ icon: Icon, label, value, description, tone }) {
@@ -303,8 +308,10 @@
             <div className="fa-react-dashboard">
 
 
+
                 {activeSection === 'overview' && (
                     <>
+                    <OverviewPage  name={agent?.name} sakhiid={agent?.sakhiId} contactNumber={agent?.contactNumber}/>
                         <div className="fa-summary-grid">
                     <SummaryCard
                             icon={Users}

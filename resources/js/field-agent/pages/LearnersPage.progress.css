@@ -1,0 +1,102 @@
+
+.progress-dot {
+    display: inline-block;
+    flex: 0 0 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+.progress-dot.completed { background: #16a34a; }
+.progress-dot.pending { background: #f59e0b; }
+.progress-dot.not-submitted { background: #94a3b8; }
+.progress-dot.other { background: #8b5cf6; }
+
+.learner-progress-eligible {
+    flex-basis: 100%;
+    padding-top: 0.6rem;
+    border-top: 1px solid #e8edf4;
+    color: #64748b;
+    font-size: 0.72rem;
+}
+
+.learner-progress-empty {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #475569;
+}
+
+.learner-progress-empty > svg {
+    flex: 0 0 auto;
+    margin-top: 0.1rem;
+    color: #64748b;
+}
+
+.learner-progress-empty strong {
+    display: block;
+    font-size: 0.86rem;
+}
+
+.learner-progress-empty p {
+    margin: 0.35rem 0 0;
+    color: #64748b;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.learner-progress-empty code {
+    padding: 0.1rem 0.25rem;
+    border-radius: 4px;
+    background: #e2e8f0;
+    font-size: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+ | Learner Activity Progress Responsive Layout
+ | Stacks activity panels on tablets and smaller screens for readable counts.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+    .learner-progress-list {
+        grid-template-columns: 1fr;
+    }
+
+    .learner-progress-item {
+        padding: 1rem 1.1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .learner-progress-card {
+        padding: 1rem;
+        border-radius: 14px;
+    }
+
+    .learner-progress-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    .learner-progress-item-top {
+        gap: 0.65rem;
+    }
+
+    .learner-progress-icon {
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .learner-progress-percent strong {
+        font-size: 1.05rem;
+    }
+
+    .learner-progress-metrics {
+        gap: 0.6rem 0.8rem;
+    }
+}
