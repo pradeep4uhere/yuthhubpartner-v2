@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\DownloadController;
 use App\Http\Controllers\Admin\LogHistoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\Api\Partner\PartnerDashboardApiController;
 
 
 Route::get('/', HomeController::class)->name('home');
@@ -77,6 +78,7 @@ Route::prefix('partner')->name('partner.')->group(function (): void {
     Route::middleware('auth:partner')->group(function (): void {
         Route::get('/dashboard', [PartnerPortalController::class, 'dashboard'])->name('dashboard');
         Route::post('/logout', [PartnerPortalController::class, 'destroy'])->name('logout');
+
     });
 });
 

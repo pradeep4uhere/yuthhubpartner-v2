@@ -5,11 +5,13 @@ import { createRoot } from 'react-dom/client';
 import PartnerWorkspace from './components/PartnerWorkspace.jsx';
 import AdminDashboard from './components/AdminDashboard.jsx';
 import FieldAgentDashboard from './field-agent/FieldAgentDashboard.jsx';
+import PartnerDashboard from './partner/PartnerDashboard.jsx';
 
 const components = {
     'partner-workspace': PartnerWorkspace,
     'admin-dashboard': AdminDashboard,
     'field-agent-dashboard': FieldAgentDashboard,
+    'partner-dashboard': PartnerDashboard,
 };
 
 document.querySelectorAll('[data-react-app]').forEach((element) => {

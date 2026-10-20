@@ -1,0 +1,1 @@
+export default function Reports() { return <section className="yp-panel yp-placeholder"><span className="yp-eyebrow">YOUTHHUB PARTNER</span><h2>Reports</h2><p>Access analytics and exports.</p><span className="yp-coming">Page integration coming next</span></section>; }

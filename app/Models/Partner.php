@@ -56,5 +56,14 @@ class Partner extends Authenticatable
     }
 
 
+    public function fieldAgents(): HasMany
+    {
+        return $this->hasMany(
+            FieldAgent::class,
+            'partner_id'
+        );
+    }
+
+
 
 }

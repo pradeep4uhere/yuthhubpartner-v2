@@ -1,0 +1,2 @@
+import {ArrowUpRight,ChevronRight} from 'lucide-react';
+export default function StatCard({label,value,icon:Icon,tone='blue',description,onClick}){return <article className={`yp-stat yp-stat--${tone}`}><div className="yp-stat-icon"><Icon size={28}/></div><div className="yp-stat-copy"><span>{label}</span><strong>{value}</strong><small>{description||'Live total'}</small></div>{onClick&&<button type="button" onClick={onClick} className="yp-stat-arrow" aria-label={`View ${label}`}><ChevronRight size={20}/></button>}</article>}

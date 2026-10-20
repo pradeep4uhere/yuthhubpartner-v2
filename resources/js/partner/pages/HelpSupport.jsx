@@ -1,0 +1,1 @@
+export default function HelpSupport() { return <section className="yp-panel yp-placeholder"><span className="yp-eyebrow">YOUTHHUB PARTNER</span><h2>Help & Support</h2><p>Find help and manage support requests.</p><span className="yp-coming">Page integration coming next</span></section>; }

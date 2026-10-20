@@ -89,6 +89,16 @@ class FieldAgent extends Authenticatable
     }
 
 
+    public function learners(): HasMany
+    {
+        return $this->hasMany(
+            Learner::class,
+            'unit',    // Foreign key in learners table
+            'csc_id'  // Local key in field_agents table
+        );
+    }
+
+
 
 
 

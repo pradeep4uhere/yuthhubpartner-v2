@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\FieldAgent\LearnerController;
 use App\Http\Controllers\Api\FieldAgent\ChangePasswordController;
 use App\Http\Controllers\Api\FieldAgent\MpinSettingsController;
 use App\Http\Controllers\Api\SupportTicketController;
+use App\Http\Controllers\Api\Partner\PartnerDashboardApiController;
 
 Route::middleware(['web', 'auth:partner'])
     ->prefix('partner')
@@ -19,6 +20,26 @@ Route::middleware(['web', 'auth:partner'])
     ->group(function () {
         Route::post('/support-tickets', [SupportTicketController::class, 'store'])
             ->name('support-tickets.store');
+        Route::get('/dashboard/summary',[PartnerDashboardApiController::class, 'summary'])->name('dashboard.summary');
+        Route::get('/dashboard/growth-overview',[PartnerDashboardApiController::class, 'growthOverview'])->name('dashboard.growth');
+        // Get transaction distribution grouped by event transaction type.
+        Route::get('/dashboard/event-transactions-by-type',[PartnerDashboardApiController::class, 'eventTransactionsByType'])->name('dashboard.event-transactions-by-type');
+        // Returns the latest five activities for the authenticated partner.
+        Route::get('/dashboard/recent-activities',[PartnerDashboardApiController::class, 'recentActivities']
+        )->name('dashboard.recent-activities');
+
+        Route::get('/dashboard/top-10-field-agents',[PartnerDashboardApiController::class, 'top10FieldAgents'])->name('dashboard.top-10-field-agents');
+
+        Route::get('/dashboard/learner-age-distribution',[PartnerDashboardApiController::class, 'learnerAgeDistribution'])->name('dashboard.learner-age-distribution');
+        Route::get('/dashboard/event-transaction-status',[PartnerDashboardApiController::class, 'eventReviewPerformance'])->name('dashboard.event-transaction-status');
+        Route::get('/learners', [PartnerDashboardApiController::class,'indexLearners'])->name('learners.index');
+
+
+
+
+
+
+
     });
 
 Route::middleware(['web', 'auth:partner_center'])

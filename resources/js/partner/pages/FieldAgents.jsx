@@ -1,0 +1,1 @@
+export default function FieldAgents() { return <section className="yp-panel yp-placeholder"><span className="yp-eyebrow">YOUTHHUB PARTNER</span><h2>Field Agents</h2><p>Manage your field-agent network.</p><span className="yp-coming">Page integration coming next</span></section>; }
