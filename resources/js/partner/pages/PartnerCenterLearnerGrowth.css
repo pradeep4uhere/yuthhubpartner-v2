@@ -1,0 +1,372 @@
+
+.pclg-card {
+    width: 100%;
+    min-width: 0;
+    padding: 26px;
+    background: #fff;
+    border: 1px solid #e9edf4;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.045);
+    font-family: inherit;
+}
+
+.pclg-header,
+.pclg-heading,
+.pclg-filters,
+.pclg-chart-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.pclg-header {
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+}
+
+.pclg-heading {
+    justify-content: flex-start;
+}
+
+.pclg-heading__icon {
+    display: grid;
+    place-items: center;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    color: #4f46e5;
+    background: #eef2ff;
+}
+
+.pclg-heading h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 750;
+    letter-spacing: -0.4px;
+    color: #0f172a;
+}
+
+.pclg-heading p,
+.pclg-chart-heading p {
+    margin: 5px 0 0;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.pclg-filters {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pclg-select {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.pclg-select select {
+    appearance: none;
+    min-width: 145px;
+    height: 40px;
+    padding: 0 35px 0 13px;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    outline: none;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.pclg-select select:hover {
+    border-color: #a5b4fc;
+}
+
+.pclg-select select:focus {
+    border-color: #6366f1;
+    background: #fff;
+    box-shadow: 0 0 0 3px #eef2ff;
+}
+
+.pclg-select svg {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    color: #64748b;
+}
+
+/* KPI Cards */
+
+.pclg-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+    margin-bottom: 30px;
+}
+
+.pclg-metric {
+    min-width: 0;
+    padding: 17px;
+    background: #fafbfd;
+    border: 1px solid #edf0f5;
+    border-radius: 14px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pclg-metric:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+}
+
+.pclg-metric__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 13px;
+}
+
+.pclg-metric__top span {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.pclg-metric__icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 10px;
+}
+
+.pclg-metric strong {
+    display: block;
+    color: #0f172a;
+    font-size: clamp(19px, 2vw, 26px);
+    font-weight: 750;
+    letter-spacing: -0.7px;
+    overflow-wrap: anywhere;
+}
+
+.pclg-metric small {
+    display: block;
+    margin-top: 7px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.pclg-metric--indigo .pclg-metric__icon {
+    color: #4f46e5;
+    background: #e0e7ff;
+}
+
+.pclg-metric--green .pclg-metric__icon {
+    color: #059669;
+    background: #d1fae5;
+}
+
+.pclg-metric--positive .pclg-metric__icon {
+    color: #059669;
+    background: #d1fae5;
+}
+
+.pclg-metric--negative .pclg-metric__icon {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+.pclg-metric--neutral .pclg-metric__icon {
+    color: #64748b;
+    background: #e2e8f0;
+}
+
+.pclg-metric--amber .pclg-metric__icon {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+/* Chart */
+
+.pclg-chart-heading {
+    flex-wrap: wrap;
+    padding-top: 22px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.pclg-chart-heading h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.pclg-date {
+    padding: 7px 11px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 7px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.pclg-chart {
+    width: 100%;
+    min-width: 0;
+    margin-top: 20px;
+}
+
+.pclg-tooltip {
+    min-width: 165px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.12);
+}
+
+.pclg-tooltip__date {
+    display: block;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pclg-tooltip__value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.pclg-tooltip__value strong {
+    margin-left: auto;
+    color: #4f46e5;
+    font-size: 13px;
+}
+
+.pclg-tooltip__dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #6366f1;
+}
+
+/* Loading and empty states */
+
+.pclg-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 300px;
+    color: #64748b;
+    font-size: 13px;
+    text-align: center;
+}
+
+.pclg-error {
+    color: #dc2626;
+}
+
+.pclg-spinner {
+    width: 27px;
+    height: 27px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: pclg-spin 0.7s linear infinite;
+}
+
+@keyframes pclg-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Footer */
+
+.pclg-footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 17px;
+    border-top: 1px solid #f1f5f9;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.pclg-footer__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+    .pclg-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .pclg-card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .pclg-header {
+        align-items: stretch;
+    }
+
+    .pclg-filters {
+        width: 100%;
+    }
+
+    .pclg-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .pclg-select select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .pclg-metrics {
+        gap: 9px;
+    }
+
+    .pclg-metric {
+        padding: 12px;
+    }
+
+    .pclg-metric strong {
+        font-size: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pclg-spinner {
+        animation: none;
+    }
+
+    .pclg-metric {
+        transition: none;
+    }
+}

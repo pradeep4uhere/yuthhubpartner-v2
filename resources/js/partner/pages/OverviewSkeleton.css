@@ -1,0 +1,250 @@
+
+/* ==========================================
+   YOUTHHUB OVERVIEW SKELETON
+========================================== */
+
+.ovs-skeleton {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    max-width: 100%;
+    overflow: hidden;
+    vertical-align: middle;
+    background: #e5ebf4;
+    border-radius: 6px;
+}
+
+.ovs-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.88) 48%,
+        transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: ovs-shimmer 1.5s ease-in-out infinite;
+}
+
+.ovs-skeleton--circle {
+    border-radius: 50%;
+}
+
+@keyframes ovs-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Summary cards */
+
+.ovs-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.ovs-stat__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    min-width: 0;
+}
+
+.ovs-stat--blue {
+    background: #eef5ff;
+    border-color: #cfe3ff;
+}
+
+.ovs-stat--green {
+    background: #eafaf5;
+    border-color: #c3eee1;
+}
+
+.ovs-stat--amber {
+    background: #fff8e9;
+    border-color: #ffe6b2;
+}
+
+.ovs-stat--blue .ovs-skeleton {
+    background: #d5e6fc;
+}
+
+.ovs-stat--green .ovs-skeleton {
+    background: #cceee3;
+}
+
+.ovs-stat--amber .ovs-skeleton {
+    background: #f8e6be;
+}
+
+/* Growth skeleton */
+
+.ovs-growth {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    width: 100%;
+    min-height: 185px;
+}
+
+.ovs-growth__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+
+.ovs-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ovs-chart {
+    display: flex;
+    flex: 1;
+    min-height: 145px;
+    gap: 10px;
+}
+
+.ovs-chart__axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 5px;
+}
+
+.ovs-chart__body {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+.ovs-chart__grid {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ovs-chart__grid > div {
+    width: 100%;
+    border-top: 1px dashed #e1e9f4;
+}
+
+.ovs-chart__bars {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+
+.ovs-chart__bar {
+    border-radius: 5px 5px 0 0;
+    background: #dbe9fb;
+}
+
+.ovs-chart__months {
+    display: flex;
+    justify-content: space-around;
+    padding-left: 35px;
+}
+
+/* Donut skeleton */
+
+.ovs-donut-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    min-height: 175px;
+}
+
+.ovs-donut {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    flex: 0 0 150px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #d5e6ff 0deg 105deg,
+        #e5edf8 105deg 190deg,
+        #d5e6ff 190deg 275deg,
+        #e5edf8 275deg 360deg
+    );
+    animation: ovs-donut-pulse 1.5s ease-in-out infinite;
+}
+
+.ovs-donut__hole {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.ovs-donut__legend {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.ovs-donut__item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.ovs-donut__item .ovs-skeleton:last-child {
+    margin-left: auto;
+}
+
+@keyframes ovs-donut-pulse {
+    0%, 100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .ovs-donut-layout {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .ovs-donut__legend {
+        flex-basis: 100%;
+    }
+
+    .ovs-growth__legend {
+        gap: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ovs-skeleton::after,
+    .ovs-donut {
+        animation: none;
+    }
+}

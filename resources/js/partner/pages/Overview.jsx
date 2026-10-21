@@ -30,6 +30,12 @@ import RecentActivities from "../../partner/pages/RecentActivities.jsx";
 import Top10FieldAgentsChart from "../../partner/pages/Top10FieldAgentsChart";
 import LearnerAgePieChart from "../../partner/pages/LearnerAgePieChart";
 import EventTransactionPieChart from "../../partner/pages/EventTransactionPieChart";
+import PartnerCenterLearnerGrowth from "../../partner/pages/PartnerCenterLearnerGrowth";
+import {
+    OverviewStatsSkeleton,
+    OverviewGrowthSkeleton,
+    OverviewDonutSkeleton,
+} from "../../partner/pages/OverviewSkeleton.jsx";
 const fmt = (v) =>
     typeof v === "number" ? new Intl.NumberFormat("en-IN").format(v) : "—";
 const colors = ["#0877f8", "#08b384", "#ffb41f", "#8e46ef"];
@@ -162,7 +168,9 @@ export default function Overview({ partnerName, onNavigate }) {
     }, [retry]);
     // Optional analytics keys are rendered only when the backend supplies them; no fabricated chart values.
 
-    const centers = Array.isArray(data?.centers) ? data.centers : [];
+    const [centers, setCenters] = useState(
+        () => window.partnerDashboardData?.centers ?? [],
+    );
     const totalTypes = types.reduce(
         (sum, item) => sum + Number(item.value || 0),
         0,
@@ -205,31 +213,40 @@ export default function Overview({ partnerName, onNavigate }) {
                     </div>
                 )}
                 <section className="yp-stats" aria-busy={!data && !error}>
-                    <StatCard
-                        label="Total Learners"
-                        value={fmt(data?.total_learners)}
-                        icon={GraduationCap}
-                        tone="blue"
-                        description="Learners in your network"
-                        onClick={() => onNavigate("learners")}
-                    />
-                    <StatCard
-                        label="Field Agents"
-                        value={fmt(data?.total_field_agents)}
-                        icon={UsersRound}
-                        tone="green"
-                        description="Agents in your network"
-                        onClick={() => onNavigate("agents")}
-                    />
-                    <StatCard
-                        label="Event Transactions"
-                        value={fmt(data?.total_event_transactions)}
-                        icon={CalendarDays}
-                        tone="amber"
-                        description="Transactions recorded"
-                        onClick={() => onNavigate("transactions")}
-                    />
+                    {!data && !error ? (
+                        <OverviewStatsSkeleton />
+                    ) : (
+                        <>
+                            <StatCard
+                                label="Total Learners"
+                                value={fmt(data?.total_learners)}
+                                icon={GraduationCap}
+                                tone="blue"
+                                description="Learners in your network"
+                                onClick={() => onNavigate("learners")}
+                            />
+
+                            <StatCard
+                                label="Field Agents"
+                                value={fmt(data?.total_field_agents)}
+                                icon={UsersRound}
+                                tone="green"
+                                description="Agents in your network"
+                                onClick={() => onNavigate("agents")}
+                            />
+
+                            <StatCard
+                                label="Event Transactions"
+                                value={fmt(data?.total_event_transactions)}
+                                icon={CalendarDays}
+                                tone="amber"
+                                description="Transactions recorded"
+                                onClick={() => onNavigate("transactions")}
+                            />
+                        </>
+                    )}
                 </section>
+
                 <div className="yp-dashboard-grid">
                     <section className="yp-panel yp-growth">
                         <div className="yp-panel-heading">
@@ -269,9 +286,7 @@ export default function Overview({ partnerName, onNavigate }) {
                         </div>
 
                         {growthLoading ? (
-                            <div className="yp-empty">
-                                Loading growth analytics...
-                            </div>
+                            <OverviewGrowthSkeleton />
                         ) : growthError ? (
                             <div className="yp-empty">{growthError}</div>
                         ) : growth.length ? (
@@ -309,7 +324,7 @@ export default function Overview({ partnerName, onNavigate }) {
                                                         stopOpacity={0.17}
                                                     />
                                                     <stop
-                                                        offset="95%"
+                                                        offset="100%"
                                                         stopColor={color}
                                                         stopOpacity={0}
                                                     />
@@ -369,6 +384,11 @@ export default function Overview({ partnerName, onNavigate }) {
                         )}
                     </section>
 
+                    <RecentActivities onNavigate={onNavigate} />
+
+                    <LearnerAgePieChart onNavigate={onNavigate} />
+                    <Top10FieldAgentsChart onNavigate={onNavigate} />
+
                     <section className="yp-panel yp-types">
                         <div className="yp-panel-heading">
                             <h2>
@@ -378,9 +398,7 @@ export default function Overview({ partnerName, onNavigate }) {
                         </div>
 
                         {typesLoading ? (
-                            <div className="yp-empty">
-                                Loading transaction breakdown...
-                            </div>
+                            <OverviewDonutSkeleton />
                         ) : typesError ? (
                             <div className="yp-empty">{typesError}</div>
                         ) : totalTypes > 0 ? (
@@ -459,112 +477,134 @@ export default function Overview({ partnerName, onNavigate }) {
                             </div>
                         )}
                     </section>
+                    {growthLoading ? (
+                        <OverviewDonutSkeleton />
+                    ) : (
+                        <PartnerCenterLearnerGrowth onNavigate={onNavigate} />
+                    )}
 
-                    <RecentActivities onNavigate={onNavigate} />
-                    <Top10FieldAgentsChart onNavigate={onNavigate} />
-                    <LearnerAgePieChart onNavigate={onNavigate} />
-
-                    <section className="yp-panel yp-centers">
+                    {growthLoading ? (
+                        <OverviewDonutSkeleton />
+                    ) : (
                         <EventTransactionPieChart onNavigate={onNavigate} />
-                    </section>
+                    )}
 
-                    <section className="yp-panel yp-centers">
-                        <div className="yp-panel-heading">
-                            <div>
-                                <h2>
-                                    <Building2 size={22} /> Your Centers
-                                </h2>
-                                <p>Centers linked to this partner account.</p>
+                    {growthLoading ? (
+                        <OverviewDonutSkeleton />
+                    ) : (
+                        <section className="yp-panel yp-centers">
+                            <div className="yp-panel-heading">
+                                <div>
+                                    <h2>
+                                        <Building2 size={22} /> Your Centers
+                                    </h2>
+                                    <p>
+                                        Centers linked to this partner account.
+                                    </p>
+                                </div>
+                                <span className="yp-count-pill">
+                                    {centers.length} total
+                                </span>
                             </div>
-                            <span className="yp-count-pill">
-                                {centers.length} total
-                            </span>
-                        </div>
-                        {centers.length ? (
-                            <div className="yp-table-wrap">
-                                <table className="yp-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Center Name</th>
-                                            <th>Partner Code</th>
-                                            <th>Status</th>
-                                            <th>Learners</th>
-                                            <th>Field Agents</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {centers.map((c, i) => (
-                                            <tr key={c.id || i}>
-                                                <td>
-                                                    <span className="yp-center-name">
-                                                        <span className="yp-center-icon">
-                                                            <Building2
-                                                                size={17}
-                                                            />
-                                                        </span>
-                                                        {c.name}
-                                                    </span>
-                                                </td>
-                                                <td>{c.code || "—"}</td>
-                                                <td>
-                                                    <span
-                                                        className={`yp-status ${String(c.status || "").toLowerCase() === "active" ? "is-active" : ""}`}
-                                                    >
-                                                        {c.status || "—"}
-                                                    </span>
-                                                </td>
-                                                <td>{fmt(c.learners_count)}</td>
-                                                <td>
-                                                    {fmt(c.field_agents_count)}
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        type="button"
-                                                        className="yp-link"
-                                                        onClick={() =>
-                                                            onNavigate("agents")
-                                                        }
-                                                    >
-                                                        View Details{" "}
-                                                        <ArrowRight size={14} />
-                                                    </button>
-                                                </td>
+                            {centers.length ? (
+                                <div className="yp-table-wrap">
+                                    <table className="yp-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Center Name</th>
+                                                <th>Partner Code</th>
+                                                <th>Status</th>
+                                                <th>Learners</th>
+                                                <th>Field Agents</th>
+                                                <th>Actions</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {centers.map((c, i) => (
+                                                <tr key={c.id || i}>
+                                                    <td>
+                                                        <span className="yp-center-name">
+                                                            <span className="yp-center-icon">
+                                                                <Building2
+                                                                    size={17}
+                                                                />
+                                                            </span>
+                                                            {c.name}
+                                                        </span>
+                                                    </td>
+                                                    <td>{c.code || "—"}</td>
+                                                    <td>
+                                                        <span
+                                                            className={`yp-status ${String(c.status || "").toLowerCase() === "active" ? "is-active" : ""}`}
+                                                        >
+                                                            {c.status || "—"}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {fmt(c.learners_count)}
+                                                    </td>
+                                                    <td>
+                                                        {fmt(
+                                                            c.field_agents_count,
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            className="yp-link"
+                                                            onClick={() =>
+                                                                onNavigate(
+                                                                    "agents",
+                                                                )
+                                                            }
+                                                        >
+                                                            View Details{" "}
+                                                            <ArrowRight
+                                                                size={14}
+                                                            />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="yp-empty yp-empty--short">
+                                    Centers will appear here when included in
+                                    the dashboard API.
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    {growthLoading ? (
+                        <OverviewDonutSkeleton />
+                    ) : (
+                        <section className="yp-promo">
+                            <div>
+                                <Target size={29} />
+                                <h2>
+                                    Empowering
+                                    <br />
+                                    Young Talent Together
+                                </h2>
+                                <p>
+                                    Your partnership helps create opportunities,
+                                    build skills and shape brighter futures.
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => onNavigate("reports")}
+                                >
+                                    View Reports <ArrowRight size={17} />
+                                </button>
                             </div>
-                        ) : (
-                            <div className="yp-empty yp-empty--short">
-                                Centers will appear here when included in the
-                                dashboard API.
+                            <div className="yp-promo-plant">
+                                <Leaf size={90} />
                             </div>
-                        )}
-                    </section>
-                    <section className="yp-promo">
-                        <div>
-                            <Target size={29} />
-                            <h2>
-                                Empowering
-                                <br />
-                                Young Talent Together
-                            </h2>
-                            <p>
-                                Your partnership helps create opportunities,
-                                build skills and shape brighter futures.
-                            </p>
-                            <button
-                                type="button"
-                                onClick={() => onNavigate("reports")}
-                            >
-                                View Reports <ArrowRight size={17} />
-                            </button>
-                        </div>
-                        <div className="yp-promo-plant">
-                            <Leaf size={90} />
-                        </div>
-                    </section>
+                        </section>
+                    )}
                 </div>
             </div>
         </>

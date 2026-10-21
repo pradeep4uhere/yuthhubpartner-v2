@@ -1,0 +1,43 @@
+
+/* Loader for individual dashboard pages */
+
+.yhl-loader--content {
+    position: relative;
+    width: 100%;
+    min-height: 480px;
+    height: 100%;
+    padding: 35px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        135deg,
+        #f5f9ff 0%,
+        #ffffff 50%,
+        #f0fcf8 100%
+    );
+
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.yhl-loader--content .yhl-loader__content {
+    padding: 25px 35px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #e3edf8;
+    box-shadow: 0 12px 35px rgba(20, 60, 120, 0.05);
+}
+
+@media (max-width: 600px) {
+    .yhl-loader--content {
+        min-height: 350px;
+        padding: 20px 12px;
+    }
+
+    .yhl-loader--content .yhl-loader__content {
+        padding: 20px;
+    }
+}

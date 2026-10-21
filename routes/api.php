@@ -34,9 +34,9 @@ Route::middleware(['web', 'auth:partner'])
         Route::get('/dashboard/event-review-performance',[PartnerDashboardApiController::class, 'eventReviewPerformance'])->name('dashboard.event-transaction-status');
         Route::get('/learners', [PartnerDashboardApiController::class,'indexLearners'])->name('learners.index');
 
+        Route::get('/dashboard/partner-center-earnings',[PartnerDashboardApiController::class, 'partnerCenterEarnings']);
 
-
-
+        Route::get('/dashboard/learner-registration-growth',[PartnerDashboardApiController::class, 'learnerRegistrationGrowth']);
 
 
 

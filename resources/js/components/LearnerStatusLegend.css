@@ -1,0 +1,324 @@
+
+/* =========================================
+   LEARNER STATUS LEGEND
+========================================= */
+
+.lsl-legend {
+    --lsl-border: #e7edf5;
+    --lsl-muted: #78869d;
+
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    background: #ffffff;
+    border: 1px solid var(--lsl-border);
+    border-radius: 1px;
+
+    box-shadow: 0 5px 22px rgba(35, 65, 110, 0.045);
+
+    font-family: inherit;
+    margin-bottom: 5px;
+}
+
+/* Header */
+
+.lsl-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 16px 20px;
+
+    background: linear-gradient(
+        110deg,
+        #f7faff 0%,
+        #ffffff 65%,
+        #f4fbff 100%
+    );
+
+    border-bottom: 1px solid var(--lsl-border);
+}
+
+.lsl-header-left {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.lsl-header-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #2477e8;
+    background: #e8f1ff;
+    border-radius: 10px;
+}
+
+.lsl-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 750;
+    color: #213653;
+}
+
+.lsl-header p {
+    margin: 4px 0 0;
+    font-size: 11px;
+    color: var(--lsl-muted);
+}
+
+.lsl-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 6px 10px;
+
+    border: 1px solid #dce9fb;
+    border-radius: 30px;
+
+    background: #ffffff;
+    color: #5280bb;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Main body */
+
+.lsl-body {
+    display: flex;
+    align-items: center;
+    gap: 23px;
+    padding: 18px 20px;
+}
+
+.lsl-statuses {
+    flex: 1;
+    min-width: 0;
+}
+
+.lsl-activities {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.lsl-section-label {
+    display: block;
+    margin-bottom: 11px;
+
+    color: #94a1b4;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+}
+
+/* Status pills */
+
+.lsl-status-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.lsl-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.lsl-status:hover {
+    transform: translateY(-2px);
+}
+
+.lsl-dot {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 3px currentColor;
+}
+
+/* Action Required */
+
+.lsl-status--action-required {
+    color: #d38b12;
+    background: #fff8e9;
+    border-color: #f8e6b9;
+}
+
+.lsl-status--action-required .lsl-dot {
+    box-shadow: 0 0 0 3px #ffedc6;
+}
+
+/* Submitted */
+
+.lsl-status--submitted {
+    color: #347be7;
+    background: #edf5ff;
+    border-color: #d5e6ff;
+}
+
+.lsl-status--submitted .lsl-dot {
+    box-shadow: 0 0 0 3px #d8e8ff;
+}
+
+/* Accepted */
+
+.lsl-status--accepted {
+    color: #10a779;
+    background: #eafaf3;
+    border-color: #c9f0df;
+}
+
+.lsl-status--accepted .lsl-dot {
+    box-shadow: 0 0 0 3px #c9f1df;
+}
+
+/* Rejected */
+
+.lsl-status--rejected {
+    color: #e05262;
+    background: #fff0f1;
+    border-color: #ffdadd;
+}
+
+.lsl-status--rejected .lsl-dot {
+    box-shadow: 0 0 0 3px #ffd9de;
+}
+
+/* Divider */
+
+.lsl-divider {
+    align-self: stretch;
+    width: 1px;
+    flex-shrink: 0;
+    background: #e9eef5;
+}
+
+/* Activity indicators */
+
+.lsl-activity-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.lsl-activity {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 10px;
+
+    background: #f6f8fc;
+    border: 1px solid #edf0f6;
+    border-radius: 8px;
+
+    color: #526681;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.lsl-activity-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6086bd;
+}
+
+/* Compact variant */
+
+.lsl-legend--compact .lsl-header {
+    padding: 11px 15px;
+}
+
+.lsl-legend--compact .lsl-body {
+    padding: 13px 15px;
+    gap: 15px;
+}
+
+.lsl-legend--compact .lsl-header p {
+    display: none;
+}
+
+/* Responsive */
+
+@media (max-width: 1000px) {
+    .lsl-body {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .lsl-divider {
+        width: 100%;
+        height: 1px;
+    }
+
+    .lsl-activities {
+        flex: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .lsl-header {
+        padding: 13px;
+    }
+
+    .lsl-body {
+        padding: 14px;
+    }
+
+    .lsl-header-badge {
+        display: none;
+    }
+
+    .lsl-status-list {
+        gap: 7px;
+    }
+
+    .lsl-status {
+        padding: 7px 9px;
+        font-size: 10px;
+    }
+
+    .lsl-activity-list {
+        gap: 7px;
+    }
+
+    .lsl-activity {
+        font-size: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lsl-status {
+        transition: none;
+    }
+
+    .lsl-status:hover {
+        transform: none;
+    }
+}

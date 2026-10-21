@@ -600,14 +600,10 @@ class PartnerDashboardApiController extends Controller
 
 
 
-        /**
-         * Get paginated learners for authenticated partner.
-         *
-         * @return \Illuminate\Http\JsonResponse
-         */
+
+
         public function indexLearners(Request $request): JsonResponse
         {
-            // Authenticated Partner
             $partner = $request->user('partner');
 
             if (!$partner) {
@@ -619,57 +615,352 @@ class PartnerDashboardApiController extends Controller
 
             $partnerId = $partner->id;
 
-            // Base Partner Query
+            /*
+            |--------------------------------------------------------------------------
+            | Validate Filters
+            |--------------------------------------------------------------------------
+            */
+
+            $validated = $request->validate([
+                'page' => ['sometimes', 'integer', 'min:1'],
+                'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+
+                'search' => ['nullable', 'string', 'max:255'],
+                'status' => ['nullable', 'string', 'max:50'],
+                'agent' => ['nullable', 'string', 'max:255'],
+
+                // Advanced filters
+                'name' => ['nullable', 'string', 'max:255'],
+                'mobile' => ['nullable', 'string', 'max:30'],
+                'email' => ['nullable', 'string', 'max:255'],
+                'unit' => ['nullable', 'string', 'max:255'],
+                'state' => ['nullable', 'string', 'max:255'],
+                'city' => ['nullable', 'string', 'max:255'],
+                'digital' => ['nullable', 'string', 'max:255'],
+                'english' => ['nullable', 'string', 'max:255'],
+            ]);
+
+            $search = trim((string) ($validated['search'] ?? ''));
+            $status = trim((string) ($validated['status'] ?? 'all'));
+            $agent = trim((string) ($validated['agent'] ?? 'all'));
+
+            $perPage = (int) ($validated['per_page'] ?? 10);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Partner Summary
+            |--------------------------------------------------------------------------
+            */
+
             $baseQuery = DB::table('learners as l')
                 ->where('l.partner_id', $partnerId);
 
-            // Total Learners
             $total = (clone $baseQuery)->count();
 
-            // Current Month Date Range
             $monthStart = now()->startOfMonth();
             $nextMonthStart = $monthStart->copy()->addMonth();
 
-            // This Month Learners
             $thisMonth = (clone $baseQuery)
                 ->where('l.created_at', '>=', $monthStart)
                 ->where('l.created_at', '<', $nextMonthStart)
                 ->count();
 
-            // Total Unique Field Agents
-            $fieldAgents = (clone $baseQuery)
-                ->whereNotNull('l.field_agent_id')
+            $certificationDone = (clone $baseQuery)
+                ->where('l.course_completed', 1)
+                ->count();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Field Agent Dropdown Options
+            |--------------------------------------------------------------------------
+            |
+            | Your existing React dropdown expects an array of agent names.
+            | Returning this separately avoids collecting names from only page 1.
+            |
+            */
+
+            $agents = DB::table('field_agents')
+                ->where('partner_id', $partnerId)
+                ->whereNotNull('name')
+                ->where('name', '<>', '')
                 ->distinct()
-                ->count('l.field_agent_id');
+                ->orderBy('name')
+                ->pluck('name')
+                ->values();
 
-            // Pagination Limit
-            $perPage = min(
-                max((int) $request->input('per_page', 10), 1),
-                100
-            );
+            /*
+            |--------------------------------------------------------------------------
+            | Base Learners Listing
+            |--------------------------------------------------------------------------
+            */
 
-            // Partner-wise Learners List
-            $learners = (clone $baseQuery)
+            $query = (clone $baseQuery)
                 ->leftJoin('field_agents as fa', function ($join) use ($partnerId) {
-
-                    $join->on('fa.id', '=', 'l.field_agent_id')
+                    $join->on('fa.csc_id', '=', 'l.unit')
                         ->where('fa.partner_id', '=', $partnerId);
+                });
 
-                })
+            /*
+            |--------------------------------------------------------------------------
+            | Quick Search - Search Across All Confirmed Fields
+            |--------------------------------------------------------------------------
+            */
+
+            if ($search !== '') {
+
+                $like = "%{$search}%";
+
+                $query->where(function ($q) use ($like) {
+
+                    $q->where('l.first_name', 'LIKE', $like)
+                        ->orWhere('l.last_name', 'LIKE', $like)
+
+                        // Full name
+                        ->orWhereRaw(
+                            "CONCAT_WS(' ', l.first_name, l.last_name) LIKE ?",
+                            [$like]
+                        )
+
+                        // Name + mobile combined
+                        ->orWhereRaw(
+                            "CONCAT_WS('-', CONCAT_WS(' ', l.first_name, l.last_name), l.phone_number) LIKE ?",
+                            [$like]
+                        )
+
+                        // Contact details
+                        ->orWhere('l.phone_number', 'LIKE', $like)
+                        ->orWhere('l.email', 'LIKE', $like)
+
+                        // Location
+                        ->orWhere('l.city', 'LIKE', $like)
+                        ->orWhere('l.state', 'LIKE', $like)
+                        ->orWhere('l.unit', 'LIKE', $like)
+
+                        // Proficiency
+                        ->orWhere('l.digital_proficiency_level', 'LIKE', $like)
+                        ->orWhere('l.english_proficiency_level', 'LIKE', $like)
+
+                        // Field agent
+                        ->orWhere('fa.name', 'LIKE', $like)
+                        ->orWhere('fa.sakhi_id', 'LIKE', $like);
+                });
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Advanced Search - Learner Name
+            |--------------------------------------------------------------------------
+            */
+
+            $name = trim((string) ($validated['name'] ?? ''));
+
+            if ($name !== '') {
+                $query->where(function ($q) use ($name) {
+
+                    $like = "%{$name}%";
+
+                    $q->where('l.first_name', 'LIKE', $like)
+                        ->orWhere('l.last_name', 'LIKE', $like)
+                        ->orWhereRaw(
+                            "CONCAT_WS(' ', l.first_name, l.last_name) LIKE ?",
+                            [$like]
+                        );
+                });
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Advanced Search - Individual Fields
+            |--------------------------------------------------------------------------
+            */
+
+            $advancedFilters = [
+                'mobile' => 'l.phone_number',
+                'email' => 'l.email',
+                'unit' => 'l.unit',
+                'state' => 'l.state',
+                'city' => 'l.city',
+                'digital' => 'l.digital_proficiency_level',
+                'english' => 'l.english_proficiency_level',
+            ];
+
+            foreach ($advancedFilters as $parameter => $column) {
+
+                $value = trim((string) ($validated[$parameter] ?? ''));
+
+                if ($value !== '') {
+                    $query->where(
+                        $column,
+                        'LIKE',
+                        "%{$value}%"
+                    );
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Registration Status Filter
+            |--------------------------------------------------------------------------
+            */
+
+            if ($status !== '' && $status !== 'all') {
+                $query->where('l.status', $status);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Field Agent Filter
+            |--------------------------------------------------------------------------
+            |
+            | Your current React sends agent NAME, not agent ID.
+            |
+            */
+
+            if ($agent !== '' && $agent !== 'all') {
+                $query->where('fa.name', $agent);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Select and Paginate With Learner Activity Statuses
+            |--------------------------------------------------------------------------
+            */
+
+            $learners = $query
                 ->select([
                     'l.id',
                     'l.first_name',
                     'l.last_name',
-                    'l.source_created_at',
+                    'l.email',
                     'l.phone_number',
+                    'l.city',
+                    'l.state',
+                    'l.unit',
+                    'l.digital_proficiency_level',
+                    'l.english_proficiency_level',
+                    'l.source_created_at',
+                    'l.course_completed',
                     'l.created_at',
                     'l.status',
-                    'l.unit',
+
                     'fa.name as field_agent',
+                    'fa.sakhi_id as sakhi_id',
                 ])
+
+                /*
+                |--------------------------------------------------------------------------
+                | Skills Status
+                |--------------------------------------------------------------------------
+                */
+
+                ->selectRaw("
+                    CASE
+                        WHEN l.course_completed = 1 THEN 'accepted'
+                        ELSE 'not_started'
+                    END AS skills_status
+                ")
+
+                /*
+                |--------------------------------------------------------------------------
+                | Job Status
+                |--------------------------------------------------------------------------
+                | Latest transaction among event_master_type_id 1, 2, 5
+                */
+
+                ->selectSub(function ($subquery) {
+
+                    $subquery
+                        ->from('event_transactions as et')
+                        ->selectRaw("
+                            CASE
+                                WHEN LOWER(TRIM(et.review_status)) = 'accepted'
+                                    THEN 'accepted'
+
+                                WHEN LOWER(TRIM(et.review_status)) = 'rejected'
+                                    THEN 'rejected'
+
+                                WHEN LOWER(TRIM(et.review_status))
+                                    IN ('pending', 'under_review')
+                                    THEN 'pending'
+
+                                WHEN LOWER(TRIM(et.review_status)) = 'open'
+                                    AND LOWER(TRIM(et.workflow_status)) = 'submitted'
+                                    THEN 'submitted'
+
+                                ELSE 'not_started'
+                            END
+                        ")
+                        ->whereColumn('et.learner_id', 'l.id')
+                        ->whereIn('et.event_master_type_id', [1, 2, 5])
+                        ->orderByDesc('et.id')
+                        ->limit(1);
+
+                }, 'job_status')
+
+                /*
+                |--------------------------------------------------------------------------
+                | Social Protection Status
+                |--------------------------------------------------------------------------
+                | Latest transaction with event_master_type_id = 3
+                */
+
+                ->selectSub(function ($subquery) {
+
+                    $subquery
+                        ->from('event_transactions as et')
+                        ->selectRaw("
+                            CASE
+                                WHEN LOWER(TRIM(et.review_status)) = 'accepted'
+                                    THEN 'accepted'
+
+                                WHEN LOWER(TRIM(et.review_status)) = 'rejected'
+                                    THEN 'rejected'
+
+                                WHEN LOWER(TRIM(et.review_status))
+                                    IN ('pending', 'under_review')
+                                    THEN 'pending'
+
+                                WHEN LOWER(TRIM(et.review_status)) = 'open'
+                                    AND LOWER(TRIM(et.workflow_status)) = 'submitted'
+                                    THEN 'submitted'
+
+                                ELSE 'not_started'
+                            END
+                        ")
+                        ->whereColumn('et.learner_id', 'l.id')
+                        ->where('et.event_master_type_id', 3)
+                        ->orderByDesc('et.id')
+                        ->limit(1);
+
+                }, 'social_protection_status')
+
                 ->orderByDesc('l.created_at')
                 ->orderByDesc('l.id')
                 ->paginate($perPage);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Normalize Missing Transaction Statuses
+            |--------------------------------------------------------------------------
+            | A scalar subquery returns NULL if no matching transaction exists.
+            */
+
+            $learners->getCollection()->transform(function ($learner) {
+
+                $learner->job_status =
+                    $learner->job_status ?? 'not_started';
+
+                $learner->social_protection_status =
+                    $learner->social_protection_status ?? 'not_started';
+
+                return $learner;
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | JSON Response
+            |--------------------------------------------------------------------------
+            */
 
             return response()->json([
                 'success' => true,
@@ -677,8 +968,14 @@ class PartnerDashboardApiController extends Controller
                 'summary' => [
                     'total' => $total,
                     'this_month' => $thisMonth,
-                    'field_agents' => $fieldAgents,
+
+                    // Preserved for compatibility with existing React.
+                    // This currently represents completed certifications.
+                    'field_agents' => $certificationDone,
+                    'certification_completed' => $certificationDone,
                 ],
+
+                'agents' => $agents,
 
                 'data' => $learners->items(),
 
@@ -695,6 +992,331 @@ class PartnerDashboardApiController extends Controller
 
 
 
+
+
+        public function partnerCenterEarnings(Request $request): JsonResponse
+        {
+            $partner = $request->user('partner');
+
+            if (!$partner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                ], 401);
+            }
+
+            $partnerId = $partner->id;
+
+            $validated = $request->validate([
+                'period' => 'nullable|in:day,week,month,year',
+                'partner_center_id' => 'nullable|integer',
+            ]);
+
+            $period = $validated['period'] ?? 'month';
+            $centerId = $validated['partner_center_id'] ?? null;
+
+            // All centers belonging to authenticated partner
+            $centers = DB::table('partner_centers')
+                ->where('partner_id', $partnerId)
+                ->select('id', 'name')
+                ->orderBy('name')
+                ->get();
+
+            // Validate center ownership
+            if ($centerId !== null &&
+                !$centers->contains('id', (int) $centerId)) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid partner center.',
+                ], 403);
+            }
+
+            $now = now();
+
+            $start = match ($period) {
+                'day' => $now->copy()->subDays(29)->startOfDay(),
+
+                'week' => $now->copy()
+                    ->startOfWeek()
+                    ->subWeeks(11),
+
+                'year' => $now->copy()
+                    ->startOfYear()
+                    ->subYears(4),
+
+                default => $now->copy()
+                    ->startOfMonth()
+                    ->subMonths(11),
+            };
+
+            // Earnings from field agents of this partner's centers
+            $rows = DB::table('event_transactions as et')
+                ->join('field_agents as fa', function ($join) use ($partnerId) {
+                    $join->on('fa.id', '=', 'et.field_agent_id')
+                        ->where('fa.partner_id', '=', $partnerId);
+                })
+                ->join('partner_centers as pc', function ($join) use ($partnerId) {
+                    $join->on('pc.id', '=', 'fa.partner_center_id')
+                        ->where('pc.partner_id', '=', $partnerId);
+                })
+                ->where('et.partner_id', $partnerId)
+                ->when($centerId !== null, function ($query) use ($centerId) {
+                    $query->where('pc.id', $centerId);
+                })
+                ->whereBetween('et.created_at', [$start, $now])
+                ->select(
+                    'pc.id as partner_center_id',
+                    'pc.name as center_name'
+                )
+                ->selectRaw('COUNT(et.id) AS transactions')
+                ->selectRaw(
+                    'COALESCE(SUM(et.event_value), 0) AS total_earnings'
+                )
+                ->groupBy('pc.id', 'pc.name')
+                ->get()
+                ->keyBy('partner_center_id');
+
+            // Include centers with zero transactions
+            $data = $centers
+                ->filter(function ($center) use ($centerId) {
+                    return $centerId === null ||
+                        (int) $center->id === (int) $centerId;
+                })
+                ->map(function ($center) use ($rows) {
+                    $row = $rows->get($center->id);
+
+                    $transactions = (int) ($row->transactions ?? 0);
+                    $earnings = round(
+                        (float) ($row->total_earnings ?? 0),
+                        2
+                    );
+
+                    return [
+                        'partner_center_id' => $center->id,
+                        'center_name' => $center->name,
+                        'total_earnings' => $earnings,
+                        'transactions' => $transactions,
+                        'average_value' => $transactions > 0
+                            ? round($earnings / $transactions, 2)
+                            : 0,
+                    ];
+                })
+                ->sortByDesc('total_earnings')
+                ->values();
+
+            $totalEarnings = round(
+                (float) $data->sum('total_earnings'),
+                2
+            );
+
+            $totalTransactions = (int) $data->sum('transactions');
+
+            $topCenter = $data
+                ->filter(fn ($item) => $item['total_earnings'] > 0)
+                ->first();
+
+            return response()->json([
+                'success' => true,
+                'period' => $period,
+                'from' => $start->toDateString(),
+                'to' => $now->toDateString(),
+                'selected_center_id' => $centerId,
+                'centers' => $centers,
+
+                'summary' => [
+                    'total_earnings' => $totalEarnings,
+                    'total_transactions' => $totalTransactions,
+                    'average_transaction_value' => $totalTransactions > 0
+                        ? round($totalEarnings / $totalTransactions, 2)
+                        : 0,
+                    'top_center' => $topCenter
+                        ? $topCenter['center_name']
+                        : null,
+                ],
+
+                'data' => $data,
+            ]);
+        }
+
+
+
+
+            public function learnerRegistrationGrowth(Request $request): JsonResponse
+            {
+                $partner = $request->user('partner');
+
+                if (!$partner) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Unauthenticated.',
+                    ], 401);
+                }
+
+                $partnerId = $partner->id;
+
+                $validated = $request->validate([
+                    'period' => 'nullable|in:day,week,month,year',
+                    'partner_center_id' => 'nullable|integer',
+                ]);
+
+                $period = $validated['period'] ?? 'month';
+                $centerId = $validated['partner_center_id'] ?? null;
+
+                // Dropdown: only authenticated partner's centers
+                $centers = DB::table('partner_centers')
+                    ->where('partner_id', $partnerId)
+                    ->select('id', 'name')
+                    ->orderBy('name')
+                    ->get();
+
+                // Prevent access to another partner's center
+                if (
+                    $centerId !== null &&
+                    !$centers->contains('id', (int) $centerId)
+                ) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid partner center.',
+                    ], 403);
+                }
+
+                $now = now();
+
+                $start = match ($period) {
+                    'day' => $now->copy()
+                        ->subDays(29)
+                        ->startOfDay(),
+
+                    'week' => $now->copy()
+                        ->startOfWeek()
+                        ->subWeeks(11),
+
+                    'year' => $now->copy()
+                        ->startOfYear()
+                        ->subYears(4),
+
+                    default => $now->copy()
+                        ->startOfMonth()
+                        ->subMonths(11),
+                };
+
+                // End-exclusive range
+                $endExclusive = $now->copy()->addSecond();
+
+                // MySQL grouping expression
+                $groupExpression = match ($period) {
+                    'day' => "DATE_FORMAT(l.created_at, '%Y-%m-%d')",
+
+                    'week' => "DATE_FORMAT(
+                        DATE_SUB(
+                            DATE(l.created_at),
+                            INTERVAL WEEKDAY(l.created_at) DAY
+                        ),
+                        '%Y-%m-%d'
+                    )",
+
+                    'year' => "DATE_FORMAT(l.created_at, '%Y')",
+
+                    default => "DATE_FORMAT(l.created_at, '%Y-%m')",
+                };
+
+                // Registration growth query
+                $rows = DB::table('learners as l')
+                    ->where('l.partner_id', $partnerId)
+                    ->when($centerId !== null, function ($query) use ($centerId) {
+                        $query->where('l.partner_center_id', $centerId);
+                    })
+                    ->where('l.created_at', '>=', $start)
+                    ->where('l.created_at', '<', $endExclusive)
+                    ->selectRaw("$groupExpression AS period_key")
+                    ->selectRaw('COUNT(*) AS registrations')
+                    ->groupByRaw($groupExpression)
+                    ->orderBy('period_key')
+                    ->get()
+                    ->keyBy('period_key');
+
+                // Generate every date/week/month/year, including zero records
+                $cursor = $start->copy();
+                $data = [];
+
+                while ($cursor <= $now) {
+                    $key = match ($period) {
+                        'day', 'week' => $cursor->format('Y-m-d'),
+                        'year' => $cursor->format('Y'),
+                        default => $cursor->format('Y-m'),
+                    };
+
+                    $label = match ($period) {
+                        'day' => $cursor->format('d M'),
+                        'week' => $cursor->format('d M'),
+                        'year' => $cursor->format('Y'),
+                        default => $cursor->format('M Y'),
+                    };
+
+                    $registrations = (int) (
+                        $rows->get($key)->registrations ?? 0
+                    );
+
+                    $data[] = [
+                        'period_key' => $key,
+                        'label' => $label,
+                        'registrations' => $registrations,
+                    ];
+
+                    match ($period) {
+                        'day' => $cursor->addDay(),
+                        'week' => $cursor->addWeek(),
+                        'year' => $cursor->addYear(),
+                        default => $cursor->addMonth(),
+                    };
+                }
+
+                $total = array_sum(
+                    array_column($data, 'registrations')
+                );
+
+                $peak = collect($data)
+                    ->sortByDesc('registrations')
+                    ->first();
+
+                $previousCount = count($data) > 1
+                    ? $data[count($data) - 2]['registrations']
+                    : 0;
+
+                $currentCount = count($data) > 0
+                    ? $data[count($data) - 1]['registrations']
+                    : 0;
+
+                $growthPercentage = $previousCount > 0
+                    ? round(
+                        (($currentCount - $previousCount) / $previousCount) * 100,
+                        1
+                    )
+                    : null;
+
+                return response()->json([
+                    'success' => true,
+
+                    'period' => $period,
+                    'from' => $start->toDateString(),
+                    'to' => $now->toDateString(),
+
+                    'selected_center_id' => $centerId,
+                    'centers' => $centers,
+
+                    'summary' => [
+                        'total_registrations' => $total,
+                        'current_period' => $currentCount,
+                        'previous_period' => $previousCount,
+                        'growth_percentage' => $growthPercentage,
+                        'peak_registrations' => $peak['registrations'] ?? 0,
+                        'peak_period' => $peak['label'] ?? null,
+                    ],
+
+                    'data' => $data,
+                ]);
+            }
 
 
 }

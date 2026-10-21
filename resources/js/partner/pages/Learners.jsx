@@ -15,8 +15,116 @@ import {
 } from "lucide-react";
 
 import "./PartnerLearnerList.css";
+import LearnerStatusDots from "../../field-agent/pages/LearnerStatusDots";
+import LearnerStatusLegend from "../../components/LearnerStatusLegend";
 
 const PAGE_SIZE = 10;
+/* =========================================
+   LEARNER LIST SKELETON COMPONENTS
+========================================= */
+
+const Skeleton = ({ width, height, circle = false, className = "" }) => (
+    <span
+        className={`pl-skeleton ${circle ? "pl-skeleton--circle" : ""} ${className}`}
+        style={{ width, height }}
+        aria-hidden="true"
+    />
+);
+
+const SummarySkeleton = ({ color }) => (
+    <article className={`pl-summary-card pl-summary-card--${color}`}>
+        <Skeleton width={42} height={42} circle />
+
+        <div className="pl-summary-content">
+            <Skeleton width="105px" height={11} />
+            <Skeleton width="85px" height={25} />
+            <Skeleton width="135px" height={10} />
+        </div>
+
+        <Skeleton width={24} height={24} circle />
+    </article>
+);
+
+const LearnerTableSkeleton = ({ rows = PAGE_SIZE }) => (
+    <>
+        {Array.from({ length: rows }, (_, index) => (
+            <tr className="pl-skeleton-row" key={index}>
+                <td>
+                    <div className="pl-learner">
+                        <Skeleton width={36} height={36} circle />
+
+                        <div className="pl-skeleton-stack">
+                            <Skeleton width={125} height={12} />
+                            <Skeleton width={75} height={9} />
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <Skeleton width={110} height={12} />
+                </td>
+
+                <td>
+                    <Skeleton width={105} height={12} />
+                </td>
+
+                <td>
+                    <Skeleton width={100} height={12} />
+                </td>
+
+                <td>
+                    <Skeleton width={95} height={12} />
+                </td>
+
+                <td>
+                    <Skeleton
+                        width={62}
+                        height={24}
+                        className="pl-skeleton-pill"
+                    />
+                </td>
+            </tr>
+        ))}
+    </>
+);
+
+const EMPTY_ADVANCED_FILTERS = {
+    name: "",
+    mobile: "",
+    email: "",
+    unit: "",
+    state: "",
+    city: "",
+    digital: "",
+    english: "",
+};
+
+const ADVANCED_SEARCH_FIELDS = [
+    { key: "name", label: "Learner Name", placeholder: "Search full name" },
+    {
+        key: "mobile",
+        label: "Mobile Number",
+        placeholder: "Enter mobile number",
+    },
+    {
+        key: "email",
+        label: "Email Address",
+        placeholder: "Enter email address",
+    },
+    { key: "unit", label: "Unit / Institute", placeholder: "Enter unit" },
+    { key: "state", label: "State", placeholder: "Enter state" },
+    { key: "city", label: "City", placeholder: "Enter city" },
+    {
+        key: "digital",
+        label: "Digital Proficiency",
+        placeholder: "Enter proficiency",
+    },
+    {
+        key: "english",
+        label: "English Proficiency",
+        placeholder: "Enter English level",
+    },
+];
 
 const formatDate = (date) => {
     if (!date) return "—";
@@ -46,6 +154,26 @@ const initials = (name = "") =>
 const escapeCsv = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
 
 export default function PartnerLearnerList() {
+    // Advanced Search Panel
+    const [showAdvanced, setShowAdvanced] = useState(false);
+
+    // Values currently entered by the user
+    const [advancedDraft, setAdvancedDraft] = useState({
+        ...EMPTY_ADVANCED_FILTERS,
+    });
+
+    // Values actually applied to the API
+    const [advancedFilters, setAdvancedFilters] = useState({
+        ...EMPTY_ADVANCED_FILTERS,
+    });
+
+    const updateAdvanced = (field, value) => {
+        setAdvancedDraft((previous) => ({
+            ...previous,
+            [field]: value,
+        }));
+    };
+
     const [learners, setLearners] = useState([]);
 
     const [summary, setSummary] = useState({
@@ -60,6 +188,7 @@ export default function PartnerLearnerList() {
     const [page, setPage] = useState(1);
 
     const [loading, setLoading] = useState(true);
+    const [initialLoading, setInitialLoading] = useState(true);
     const [exporting, setExporting] = useState(false);
     const [error, setError] = useState("");
     const [refreshKey, setRefreshKey] = useState(0);
@@ -72,6 +201,17 @@ export default function PartnerLearnerList() {
     });
 
     const [allAgents, setAllAgents] = useState([]);
+
+    const applyAdvancedFilters = () => {
+        setPage(1);
+        setAdvancedFilters({ ...advancedDraft });
+    };
+
+    const clearAdvancedFilters = () => {
+        setAdvancedDraft({ ...EMPTY_ADVANCED_FILTERS });
+        setAdvancedFilters({ ...EMPTY_ADVANCED_FILTERS });
+        setPage(1);
+    };
 
     useEffect(() => {
         const controller = new AbortController();
@@ -87,6 +227,14 @@ export default function PartnerLearnerList() {
                     search: search.trim(),
                     status,
                     agent,
+                });
+
+                Object.entries(advancedFilters).forEach(([key, value]) => {
+                    const normalized = String(value ?? "").trim();
+
+                    if (normalized !== "") {
+                        params.set(key, normalized);
+                    }
                 });
 
                 const response = await fetch(
@@ -159,6 +307,7 @@ export default function PartnerLearnerList() {
             } finally {
                 if (!controller.signal.aborted) {
                     setLoading(false);
+                    setInitialLoading(false);
                 }
             }
         }
@@ -166,7 +315,7 @@ export default function PartnerLearnerList() {
         loadLearners();
 
         return () => controller.abort();
-    }, [page, search, status, agent, refreshKey]);
+    }, [page, search, status, agent, advancedFilters, refreshKey]);
 
     const currentPage = pagination.current_page;
     const totalPages = pagination.last_page;
@@ -186,6 +335,8 @@ export default function PartnerLearnerList() {
         setSearch("");
         setStatus("all");
         setAgent("all");
+        setAdvancedDraft({ ...EMPTY_ADVANCED_FILTERS });
+        setAdvancedFilters({ ...EMPTY_ADVANCED_FILTERS });
         setPage(1);
     };
 
@@ -245,8 +396,16 @@ export default function PartnerLearnerList() {
         }
     };
 
+    const hasActiveFilters =
+        search.trim() !== "" ||
+        status !== "all" ||
+        agent !== "all" ||
+        Object.values(advancedFilters).some(
+            (value) => String(value ?? "").trim() !== "",
+        );
+
     return (
-        <main className="partner-learners">
+        <main className="partner-learners pl-page-loading-wrapper">
             <header className="pl-page-header">
                 <div>
                     <div className="pl-breadcrumb">
@@ -274,45 +433,89 @@ export default function PartnerLearnerList() {
                 </button>
             </header>
 
-            <section className="pl-summary">
-                <article className="pl-summary-card">
-                    <div className="pl-summary-card__top">
-                        <span>Total Learners</span>
-                        <span className="pl-summary-icon pl-summary-icon--blue">
-                            <Users size={20} />
-                        </span>
-                    </div>
-                    <strong>{formatNumber(summary.total)}</strong>
-                    <span className="pl-summary-caption">
-                        Registered learners
-                    </span>
-                </article>
+            <section className="pl-summary" aria-busy={initialLoading}>
+                {initialLoading ? (
+                    <>
+                        <SummarySkeleton color="blue" />
+                        <SummarySkeleton color="green" />
+                        <SummarySkeleton color="purple" />
+                    </>
+                ) : (
+                    <>
+                        {/* Total Learners */}
+                        <article className="pl-summary-card pl-summary-card--blue">
+                            <span className="pl-summary-icon">
+                                <Users size={20} />
+                            </span>
 
-                <article className="pl-summary-card">
-                    <div className="pl-summary-card__top">
-                        <span>Registered This Month</span>
-                        <span className="pl-summary-icon pl-summary-icon--green">
-                            <UserPlus size={20} />
-                        </span>
-                    </div>
-                    <strong>{formatNumber(summary.thisMonth)}</strong>
-                    <span className="pl-summary-caption">
-                        New learner registrations
-                    </span>
-                </article>
+                            <div className="pl-summary-content">
+                                <span className="pl-summary-label">
+                                    Total Learners
+                                </span>
 
-                <article className="pl-summary-card">
-                    <div className="pl-summary-card__top">
-                        <span>Field Agents</span>
-                        <span className="pl-summary-icon pl-summary-icon--purple">
-                            <GraduationCap size={20} />
-                        </span>
-                    </div>
-                    <strong>{formatNumber(summary.fieldAgents)}</strong>
-                    <span className="pl-summary-caption">
-                        Agents with learner records
-                    </span>
-                </article>
+                                <strong>{formatNumber(summary.total)}</strong>
+
+                                <span className="pl-summary-caption">
+                                    Registered learners
+                                </span>
+                            </div>
+
+                            <span className="pl-summary-arrow">
+                                <ChevronRight size={17} />
+                            </span>
+                        </article>
+
+                        {/* Registered This Month */}
+                        <article className="pl-summary-card pl-summary-card--green">
+                            <span className="pl-summary-icon">
+                                <UserPlus size={20} />
+                            </span>
+
+                            <div className="pl-summary-content">
+                                <span className="pl-summary-label">
+                                    Registered This Month
+                                </span>
+
+                                <strong>
+                                    {formatNumber(summary.thisMonth)}
+                                </strong>
+
+                                <span className="pl-summary-caption">
+                                    New learner registrations
+                                </span>
+                            </div>
+
+                            <span className="pl-summary-arrow">
+                                <ChevronRight size={17} />
+                            </span>
+                        </article>
+
+                        {/* Certification Completed */}
+                        <article className="pl-summary-card pl-summary-card--purple">
+                            <span className="pl-summary-icon">
+                                <GraduationCap size={20} />
+                            </span>
+
+                            <div className="pl-summary-content">
+                                <span className="pl-summary-label">
+                                    Certification Completed
+                                </span>
+
+                                <strong>
+                                    {formatNumber(summary.fieldAgents)}
+                                </strong>
+
+                                <span className="pl-summary-caption">
+                                    Certification Completion records
+                                </span>
+                            </div>
+
+                            <span className="pl-summary-arrow">
+                                <ChevronRight size={17} />
+                            </span>
+                        </article>
+                    </>
+                )}
             </section>
 
             <section className="pl-table-card">
@@ -363,49 +566,111 @@ export default function PartnerLearnerList() {
                             </button>
                         )}
                     </label>
-
-                    <label className="pl-select-wrap">
-                        <SlidersHorizontal size={16} />
-
-                        <select
-                            value={status}
-                            onChange={(event) => {
-                                setStatus(event.target.value);
-                                setPage(1);
-                            }}
-                            aria-label="Filter by registration status"
+                    <div className="pl-advanced-toolbar">
+                        <button
+                            type="button"
+                            className="pl-button pl-button--secondary"
+                            onClick={() => setShowAdvanced((value) => !value)}
                         >
-                            <option value="all">All statuses</option>
-                            <option value="registered">Registered</option>
-                            <option value="pending">Pending</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </label>
-
-                    <label className="pl-select-wrap">
-                        <Users size={16} />
-
-                        <select
-                            value={agent}
-                            onChange={(event) => {
-                                setAgent(event.target.value);
-                                setPage(1);
-                            }}
-                            aria-label="Filter by field agent"
-                        >
-                            <option value="all">All field agents</option>
-
-                            {allAgents.map((name) => (
-                                <option value={name} key={name}>
-                                    {name}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                            <SlidersHorizontal size={16} />
+                            Advanced Search
+                            {showAdvanced ? " −" : " +"}
+                        </button>
+                    </div>
                 </div>
 
-                {(search || status !== "all" || agent !== "all") && (
+                {showAdvanced && (
+                    <div className="pl-advanced-panel">
+                        <div className="pl-advanced-heading">
+                            <div>
+                                <h3>Advanced Learner Search</h3>
+                                <p>
+                                    Combine multiple filters to find matching
+                                    learners.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="pl-advanced-grid">
+                            {ADVANCED_SEARCH_FIELDS.map((field) => (
+                                <label
+                                    className="pl-advanced-field"
+                                    key={field.key}
+                                >
+                                    <span>{field.label}</span>
+
+                                    <input
+                                        type="text"
+                                        value={advancedDraft[field.key]}
+                                        placeholder={field.placeholder}
+                                        onChange={(event) =>
+                                            updateAdvanced(
+                                                field.key,
+                                                event.target.value,
+                                            )
+                                        }
+                                    />
+                                </label>
+                            ))}
+                        </div>
+
+                        <div className="pl-advanced-actions">
+                            {/* Left: Colorful Result Count */}
+                            <div className="pl-result-count">
+                                <div className="pl-result-count__icon">
+                                    <Users size={20} />
+                                </div>
+
+                                <div className="pl-result-count__info">
+                                    <span className="pl-result-count__label">
+                                        Search Results
+                                    </span>
+
+                                    <strong>
+                                        {loading ? (
+                                            <Skeleton width={65} height={23} />
+                                        ) : (
+                                            formatNumber(pagination.total)
+                                        )}
+                                    </strong>
+
+                                    <span className="pl-result-count__caption">
+                                        {loading
+                                            ? "Searching learners..."
+                                            : "Matching learner records"}
+                                    </span>
+                                </div>
+
+                                <span className="pl-result-count__arrow">
+                                    <ChevronRight size={17} />
+                                </span>
+                            </div>
+
+                            {/* Right: Action Buttons */}
+                            <div className="pl-advanced-action-buttons">
+                                <button
+                                    type="button"
+                                    className="pl-button pl-button--secondary pl-clear-btn"
+                                    onClick={clearAdvancedFilters}
+                                >
+                                    <X size={15} />
+                                    Clear All
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="pl-button pl-button--primary pl-apply-btn"
+                                    onClick={applyAdvancedFilters}
+                                    disabled={loading}
+                                >
+                                    <Search size={16} />
+                                    Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {hasActiveFilters && (
                     <button
                         type="button"
                         className="pl-button pl-button--secondary"
@@ -427,32 +692,25 @@ export default function PartnerLearnerList() {
                         </button>
                     </div>
                 )}
-
-                <div className="pl-table-scroll">
+                <LearnerStatusLegend />
+                <div className="pl-table-scroll" aria-busy={loading}>
                     <table className="pl-table">
                         <thead>
                             <tr>
                                 <th>Learner</th>
-                                <th>Registration Date</th>
+
                                 <th>Mobile Number</th>
                                 <th>Field Agent</th>
                                 <th>Registered On</th>
+                                <th>Certification</th>
                                 <th>Status</th>
-                                <th aria-label="Actions" />
+                                {/* <th aria-label="Actions" /> */}
                             </tr>
                         </thead>
 
                         <tbody>
                             {loading ? (
-                                <tr>
-                                    <td colSpan={7} className="pl-empty">
-                                        <RefreshCw
-                                            size={20}
-                                            className="pl-spin"
-                                        />
-                                        Loading learner records...
-                                    </td>
-                                </tr>
+                                <LearnerTableSkeleton rows={PAGE_SIZE} />
                             ) : error ? (
                                 <tr>
                                     <td colSpan={7} className="pl-empty">
@@ -494,18 +752,9 @@ export default function PartnerLearnerList() {
                                             </td>
 
                                             <td>
-                                                <span className="pl-reg-id">
-                                                    {learner.source_created_at ||
-                                                        "—"}
-                                                </span>
-                                            </td>
-
-                                            <td>
                                                 {learner.phone_number || "—"}
                                             </td>
-                                            <td>
-                                                {learner.field_agent || "—"}
-                                            </td>
+                                            <td>{learner.unit || "—"}</td>
 
                                             <td>
                                                 <span className="pl-date">
@@ -518,28 +767,27 @@ export default function PartnerLearnerList() {
 
                                             <td>
                                                 <span
-                                                    className={`pl-status pl-status--${safeStatus}`}
+                                                    className={`pl-status ${
+                                                        Number(
+                                                            learner.course_completed,
+                                                        ) === 1
+                                                            ? "pl-status--active"
+                                                            : "pl-status--inactive"
+                                                    }`}
                                                 >
                                                     <span />
-                                                    {learner.status ||
-                                                        "Unknown"}
+                                                    {Number(
+                                                        learner.course_completed,
+                                                    ) === 1
+                                                        ? "Yes"
+                                                        : "No"}
                                                 </span>
                                             </td>
 
                                             <td>
-                                                <button
-                                                    type="button"
-                                                    className="pl-icon-button"
-                                                    title="More actions"
-                                                    aria-label={`More actions for ${fullName}`}
-                                                    onClick={() =>
-                                                        window.alert(
-                                                            "Learner details and actions can be connected here.",
-                                                        )
-                                                    }
-                                                >
-                                                    <MoreHorizontal size={19} />
-                                                </button>
+                                                <LearnerStatusDots
+                                                    learner={learner}
+                                                />
                                             </td>
                                         </tr>
                                     );

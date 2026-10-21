@@ -558,3 +558,667 @@
         padding: 16px;
     }
 }
+
+
+/* Advanced Learner Search */
+
+.pl-advanced-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 12px 0;
+}
+
+.pl-advanced-panel {
+    padding: 18px;
+    margin: 12px 0 18px;
+    background: #f8fbff;
+    border: 1px solid #dce7f7;
+    border-radius: 1px;
+}
+
+.pl-advanced-heading {
+    margin-bottom: 16px;
+}
+
+.pl-advanced-heading h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #102e60;
+}
+
+.pl-advanced-heading p {
+    margin: 5px 0 0;
+    font-size: 11px;
+    color: #7389ab;
+}
+
+.pl-advanced-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.pl-advanced-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.pl-advanced-field > span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #45628d;
+}
+
+.pl-advanced-field input {
+    width: 100%;
+    min-width: 0;
+    height: 39px;
+    padding: 0 11px;
+    border: 1px solid #d7e3f3;
+    border-radius: 7px;
+    background: #fff;
+    color: #173765;
+    font-size: 12px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.pl-advanced-field input:focus {
+    border-color: #0874ef;
+    box-shadow: 0 0 0 3px rgba(8, 116, 239, .09);
+}
+
+.pl-advanced-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 17px;
+    padding-top: 15px;
+    border-top: 1px solid #e3ebf6;
+}
+
+@media (max-width: 1050px) {
+    .pl-advanced-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .pl-advanced-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pl-advanced-panel {
+        padding: 13px;
+    }
+
+    .pl-advanced-actions {
+        flex-wrap: wrap;
+    }
+}
+
+
+/* =====================================
+   MODERN ADVANCED SEARCH FOOTER
+===================================== */
+
+.pl-advanced-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 16px;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 17px;
+    border-top: 1px solid #e3ebf6;
+}
+
+
+/* Right Aligned Buttons */
+
+.pl-advanced-action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.pl-advanced-action-buttons .pl-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 110px;
+    height: 40px;
+    margin: 0;
+    white-space: nowrap;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+/* Clear Button */
+
+.pl-advanced-action-buttons .pl-clear-btn {
+    background: #ffffff;
+    color: #64748b;
+    border: 1px solid #dbe3ef;
+}
+
+.pl-advanced-action-buttons .pl-clear-btn:hover {
+    background: #fff1f2;
+    border-color: #fda4af;
+    color: #e11d48;
+}
+
+/* Apply Button */
+
+.pl-advanced-action-buttons .pl-apply-btn {
+    min-width: 135px;
+    color: #ffffff;
+    border: none;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.18);
+}
+
+.pl-advanced-action-buttons .pl-apply-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+    .pl-advanced-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pl-result-count {
+        width: 100%;
+    }
+
+    .pl-advanced-action-buttons {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+
+    .pl-advanced-action-buttons .pl-button {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+
+
+/* =====================================
+   SEARCH RESULTS - FIELD AGENTS DESIGN
+===================================== */
+
+.pl-result-count {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: 355px;
+    max-width: 100%;
+    min-height: 65px;
+    padding: 5px 13px;
+
+    background: linear-gradient(110deg, #effcf8, #e8f9f5);
+    border: 1px solid #a8eee0;
+    border-radius: 9px;
+
+    box-shadow: none;
+}
+
+/* Green Circular Icon */
+
+.pl-result-count__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 39px;
+    height: 39px;
+    flex: 0 0 39px;
+
+    background: #08b88b;
+    color: #ffffff;
+    border-radius: 50%;
+}
+
+.pl-result-count__icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Count Information */
+
+.pl-result-count__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+}
+
+.pl-result-count__label {
+    font-size: 10px;
+    font-weight: 800;
+    color: #082d66;
+    line-height: 1.2;
+}
+
+.pl-result-count__info strong {
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.6px;
+    color: #092d65;
+}
+
+.pl-result-count__caption {
+    font-size: 10px;
+    font-weight: 400;
+    color: #6888b2;
+    line-height: 1.3;
+}
+
+/* Right Arrow */
+
+.pl-result-count__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+
+    margin-left: auto;
+    border-radius: 50%;
+
+    background: #e0faf3;
+    border: 1px solid #a5eedd;
+    color: #08b88b;
+}
+
+/* Footer Alignment */
+
+.pl-advanced-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+}
+
+.pl-advanced-action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-left: auto;
+}
+
+/* Mobile */
+
+@media (max-width: 650px) {
+    .pl-advanced-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pl-result-count {
+        width: 100%;
+    }
+
+    .pl-advanced-action-buttons {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+}
+
+
+
+/* =========================================
+   COLORFUL DASHBOARD SUMMARY CARDS
+========================================= */
+
+.pl-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+/* Common Card Design */
+
+.pl-summary-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+    min-height: 88px;
+    padding: 14px 15px;
+
+    border: 1px solid;
+    border-radius: 10px;
+
+    box-shadow: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pl-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(20, 50, 100, 0.07);
+}
+
+/* Left Circular Icon */
+
+.pl-summary-card .pl-summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+
+    border-radius: 50%;
+    color: #ffffff;
+}
+
+.pl-summary-card .pl-summary-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Center Content */
+
+.pl-summary-content {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+}
+
+.pl-summary-label {
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.25;
+    color: #082d66;
+}
+
+.pl-summary-content strong {
+    font-size: 23px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+    color: #092d65;
+}
+
+.pl-summary-card .pl-summary-caption {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: #6888b2;
+}
+
+/* Right Arrow */
+
+.pl-summary-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    margin-left: auto;
+
+    border: 1px solid;
+    border-radius: 50%;
+}
+
+/* =========================================
+   BLUE - TOTAL LEARNERS
+========================================= */
+
+.pl-summary-card--blue {
+    background: linear-gradient(110deg, #eff6ff, #e8f1ff);
+    border-color: #b9d8ff;
+}
+
+.pl-summary-card--blue .pl-summary-icon {
+    background: #2784ed;
+}
+
+.pl-summary-card--blue .pl-summary-arrow {
+    background: #e1efff;
+    border-color: #b9d8ff;
+    color: #2784ed;
+}
+
+/* =========================================
+   GREEN - REGISTERED THIS MONTH
+========================================= */
+
+.pl-summary-card--green {
+    background: linear-gradient(110deg, #effcf8, #e8f9f5);
+    border-color: #a8eee0;
+}
+
+.pl-summary-card--green .pl-summary-icon {
+    background: #08b88b;
+}
+
+.pl-summary-card--green .pl-summary-arrow {
+    background: #e0faf3;
+    border-color: #a5eedd;
+    color: #08b88b;
+}
+
+/* =========================================
+   PURPLE - CERTIFICATION COMPLETED
+========================================= */
+
+.pl-summary-card--purple {
+    background: linear-gradient(110deg, #f6f2ff, #f0eaff);
+    border-color: #dacbff;
+}
+
+.pl-summary-card--purple .pl-summary-icon {
+    background: #8655e9;
+}
+
+.pl-summary-card--purple .pl-summary-arrow {
+    background: #eee5ff;
+    border-color: #dacbff;
+    color: #8655e9;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1050px) {
+    .pl-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pl-summary-card:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .pl-summary {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .pl-summary-card:last-child {
+        grid-column: auto;
+    }
+
+    .pl-summary-card {
+        min-height: 82px;
+        padding: 12px;
+    }
+}
+
+
+/* ==========================================
+   YOUTHHUB LEARNER LIST - SKELETON LOADING
+========================================== */
+
+.pl-skeleton {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+
+    max-width: 100%;
+    overflow: hidden;
+
+    background: #e7edf5;
+    border-radius: 6px;
+
+    vertical-align: middle;
+}
+
+/* Animated shimmer */
+
+.pl-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.85) 48%,
+        transparent 100%
+    );
+
+    transform: translateX(-100%);
+    animation: pl-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes pl-skeleton-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Circle */
+
+.pl-skeleton--circle {
+    border-radius: 50%;
+}
+
+/* Status pill */
+
+.pl-skeleton-pill {
+    border-radius: 30px;
+}
+
+/* Skeleton stack */
+
+.pl-skeleton-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* Summary Cards */
+
+.pl-summary-card .pl-skeleton {
+    background: rgba(110, 139, 180, 0.17);
+}
+
+.pl-summary-card--blue .pl-skeleton {
+    background: #d6e8ff;
+}
+
+.pl-summary-card--green .pl-skeleton {
+    background: #ccefe6;
+}
+
+.pl-summary-card--purple .pl-skeleton {
+    background: #e8dcff;
+}
+
+/* Table Skeleton */
+
+.pl-skeleton-row {
+    pointer-events: none;
+}
+
+.pl-skeleton-row td {
+    height: 61px;
+    vertical-align: middle;
+}
+
+.pl-skeleton-row .pl-learner {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+/* Prevent layout jump */
+
+.pl-table-scroll {
+    min-height: 250px;
+}
+
+/* Smooth loaded content */
+
+.pl-summary-card,
+.pl-table tbody tr {
+    transition:
+        background-color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+    .pl-skeleton-row td {
+        height: 56px;
+    }
+
+    .pl-skeleton-stack {
+        gap: 6px;
+    }
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+    .pl-skeleton::after {
+        animation: none;
+        display: none;
+    }
+}
