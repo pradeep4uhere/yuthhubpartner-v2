@@ -31,7 +31,7 @@ Route::middleware(['web', 'auth:partner'])
         Route::get('/dashboard/top-10-field-agents',[PartnerDashboardApiController::class, 'top10FieldAgents'])->name('dashboard.top-10-field-agents');
 
         Route::get('/dashboard/learner-age-distribution',[PartnerDashboardApiController::class, 'learnerAgeDistribution'])->name('dashboard.learner-age-distribution');
-        Route::get('/dashboard/event-transaction-status',[PartnerDashboardApiController::class, 'eventReviewPerformance'])->name('dashboard.event-transaction-status');
+        Route::get('/dashboard/event-review-performance',[PartnerDashboardApiController::class, 'eventReviewPerformance'])->name('dashboard.event-transaction-status');
         Route::get('/learners', [PartnerDashboardApiController::class,'indexLearners'])->name('learners.index');
 
 

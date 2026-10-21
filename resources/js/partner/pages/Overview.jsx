@@ -463,7 +463,11 @@ export default function Overview({ partnerName, onNavigate }) {
                     <RecentActivities onNavigate={onNavigate} />
                     <Top10FieldAgentsChart onNavigate={onNavigate} />
                     <LearnerAgePieChart onNavigate={onNavigate} />
-                    <EventTransactionPieChart onNavigate={onNavigate} />
+
+                    <section className="yp-panel yp-centers">
+                        <EventTransactionPieChart onNavigate={onNavigate} />
+                    </section>
+
                     <section className="yp-panel yp-centers">
                         <div className="yp-panel-heading">
                             <div>

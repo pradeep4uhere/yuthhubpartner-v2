@@ -39,81 +39,97 @@ class PartnerDashboardApiController extends Controller
 
 
 
-    public function growthOverview(Request $request)
-    {
-        $months = (int) $request->query('months', 6);
 
-        if (!in_array($months, [3, 6, 12])) {
-            $months = 6;
-        }
-
-        $startDate = now()
-            ->startOfMonth()
-            ->subMonths($months - 1);
-
-        // Replace table names and date columns with your actual schema.
-        $learners = DB::table('learners')
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total")
-            ->where('created_at', '>=', $startDate)
-            ->groupBy('month')
-            ->pluck('total', 'month');
-
-        $fieldAgents = DB::table('field_agents')
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total")
-            ->where('created_at', '>=', $startDate)
-            ->groupBy('month')
-            ->pluck('total', 'month');
-
-        $transactions = DB::table('event_transactions')
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total")
-            ->where('created_at', '>=', $startDate)
-            ->groupBy('month')
-            ->pluck('total', 'month');
-
-        $growth = [];
-
-        for ($i = 0; $i < $months; $i++) {
-
-            $date = $startDate->copy()->addMonths($i);
-            $key = $date->format('Y-m');
-
-            $growth[] = [
-                'month' => $date->format('M Y'),
-                'learners' => (int) ($learners[$key] ?? 0),
-                'field_agents' => (int) ($fieldAgents[$key] ?? 0),
-                'event_transactions' => (int) ($transactions[$key] ?? 0),
-            ];
-        }
-
-        return response()->json([
-            'success' => true,
-            'period' => $months,
-            'growth' => $growth,
-        ]);
-    }
-
-
-
-    /**
-     * Get the event transaction breakdown grouped by transaction type.
-     *
-     * Returns each transaction type with its total transaction count
-     * for the authenticated partner.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    /**
-     * Get event transaction counts grouped by master event type.
-     *
-     * Fetches event type names from event_master_type table
-     * and calculates transaction counts for the authenticated partner.
-     *
-     * @return \Illuminate\Http\JsonResponse
-        */
-        public function eventTransactionsByType()
+        public function growthOverview(Request $request): JsonResponse
         {
-            $partnerId = auth('partner')->id();
+            // Authenticated Partner
+            $partner = $request->user('partner');
+            $partnerId = $partner->id;
 
+            // Allowed periods: 3, 6, 12 months
+            $months = (int) $request->query('months', 6);
+
+            if (!in_array($months, [3, 6, 12], true)) {
+                $months = 6;
+            }
+
+            $startDate = now()
+                ->startOfMonth()
+                ->subMonths($months - 1);
+
+            // Learners Growth (Partner Wise)
+            $learners = DB::table('learners')
+                ->selectRaw("
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as total
+                ")
+                ->where('partner_id', $partnerId)
+                ->where('created_at', '>=', $startDate)
+                ->groupBy('month')
+                ->pluck('total', 'month');
+
+            // Field Agents Growth (Partner Wise)
+            $fieldAgents = DB::table('field_agents')
+                ->selectRaw("
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as total
+                ")
+                ->where('partner_id', $partnerId)
+                ->where('created_at', '>=', $startDate)
+                ->groupBy('month')
+                ->pluck('total', 'month');
+
+            // Event Transactions Growth (Partner Wise)
+            $transactions = DB::table('event_transactions')
+                ->selectRaw("
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as total
+                ")
+                ->where('partner_id', $partnerId)
+                ->where('created_at', '>=', $startDate)
+                ->groupBy('month')
+                ->pluck('total', 'month');
+
+            // Prepare Monthly Growth Data
+            $growth = [];
+
+            for ($i = 0; $i < $months; $i++) {
+
+                $date = $startDate->copy()->addMonths($i);
+                $key = $date->format('Y-m');
+
+                $growth[] = [
+                    'month' => $date->format('M Y'),
+                    'learners' => (int) ($learners[$key] ?? 0),
+                    'field_agents' => (int) ($fieldAgents[$key] ?? 0),
+                    'event_transactions' => (int) ($transactions[$key] ?? 0),
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'period' => $months,
+                'growth' => $growth,
+            ]);
+        }
+
+
+
+
+
+        /**
+         * Get event transaction counts grouped by master event type
+         * for the authenticated partner.
+         *
+         * @return \Illuminate\Http\JsonResponse
+         */
+        public function eventTransactionsByType(Request $request): JsonResponse
+        {
+            // Authenticated Partner
+            $partner = $request->user('partner');
+            $partnerId = $partner->id;
+
+            // Partner-wise Event Transactions
             $transactions = DB::table('event_transactions as et')
                 ->leftJoin(
                     'event_master_type as emt',
@@ -123,10 +139,13 @@ class PartnerDashboardApiController extends Controller
                 )
                 ->select(
                     'et.event_master_type_id',
-                    'emt.name as type_name',
-                    DB::raw('COUNT(et.id) as total')
+                    'emt.name as type_name'
                 )
+                ->selectRaw('COUNT(et.id) as total')
+
+                // Only authenticated partner transactions
                 ->where('et.partner_id', $partnerId)
+
                 ->groupBy(
                     'et.event_master_type_id',
                     'emt.name'
@@ -134,7 +153,7 @@ class PartnerDashboardApiController extends Controller
                 ->orderByDesc('total')
                 ->get();
 
-            // Convert database records into Recharts-compatible data.
+            // Recharts Compatible Data
             $types = $transactions->map(function ($item) {
                 return [
                     'name' => $item->type_name ?: 'Unknown',
@@ -154,102 +173,143 @@ class PartnerDashboardApiController extends Controller
 
 
 
-/**
- * Fetch the five most recent event transactions
- * belonging to the authenticated partner.
- *
- * @return \Illuminate\Http\JsonResponse
- */
-public function recentActivities()
-{
-    $partnerId = auth('partner')->id();
 
-    $activities = DB::table('event_transactions as et')
-        ->leftJoin(
-            'event_master_type as emt',
-            'et.event_master_type_id',
-            '=',
-            'emt.id'
-        )
-        ->where('et.partner_id', $partnerId)
-        ->select(
-            'et.id',
-            'et.created_at',
-            'emt.name as event_type'
-        )
-        ->orderByDesc('et.created_at')
-        ->limit(4)
-        ->get()
-        ->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'title' => $item->event_type ?: 'Event Transaction',
-                'description' => 'New event transaction recorded',
-                'time_label' => Carbon::parse(
-                    $item->created_at
-                )->diffForHumans(),
-            ];
-        });
+        /**
+         * Fetch the four most recent event transactions
+         * belonging to the authenticated partner.
+         *
+         * @return \Illuminate\Http\JsonResponse
+         */
+        public function recentActivities(Request $request): JsonResponse
+        {
+            // Authenticated Partner
+            $partner = $request->user('partner');
+            $partnerId = $partner->id;
 
-    return response()->json([
-        'success' => true,
-        'activities' => $activities,
-    ]);
-}
+            // Fetch Partner-wise Recent Activities
+            $activities = DB::table('event_transactions as et')
+                ->leftJoin(
+                    'event_master_type as emt',
+                    'et.event_master_type_id',
+                    '=',
+                    'emt.id'
+                )
+                ->where('et.partner_id', $partnerId)
+                ->select(
+                    'et.id',
+                    'et.created_at',
+                    'emt.name as event_type'
+                )
+                ->orderByDesc('et.created_at')
+                ->orderByDesc('et.id')
+                ->limit(4)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'title' => $item->event_type ?: 'Event Transaction',
+                        'description' => 'New event transaction recorded',
+                        'time_label' => Carbon::parse(
+                            $item->created_at
+                        )->diffForHumans(),
+                    ];
+                });
 
-
-
-
-    public function top10FieldAgents()
-    {
-        $partner = auth('partner')->user();
-
-        if (!$partner) {
             return response()->json([
-                'success' => false,
-                'message' => 'Unauthenticated.',
-            ], 401);
+                'success' => true,
+                'activities' => $activities,
+            ]);
         }
 
-        $agents = DB::table('field_agents as fa')
-            ->leftJoin('learners as l', 'l.unit', '=', 'fa.csc_id')
-            ->where('fa.partner_id', $partner->id)
-            ->select(
-                'fa.id',
-                'fa.name',
-                DB::raw('COUNT(l.id) as learners')
-            )
-            ->groupBy('fa.id', 'fa.name')
-            ->orderByDesc('learners')
-            ->orderBy('fa.name')
-            ->limit(10)
-            ->get()
-            ->values()
-            ->map(function ($agent, $index) {
-                return [
-                    'rank' => $index + 1,
-                    'name' => $agent->name,
-                    'learners' => (int) $agent->learners,
-                ];
-            });
-
-        return response()->json([
-            'success' => true,
-            'data' => $agents,
-        ]);
-}
 
 
 
 
-/**
- * Overall learner age distribution.
- */
-public function learnerAgeDistribution()
-{
-    $ageGroups = DB::query()
-        ->fromSub(function ($query) {
-            $query->from('learners')
+        /**
+         * Fetch top 10 field agents based on learner count
+         * for the authenticated partner.
+         *
+         * @return \Illuminate\Http\JsonResponse
+         */
+        public function top10FieldAgents(Request $request): JsonResponse
+        {
+            // Authenticated Partner
+            $partner = $request->user('partner');
+
+            if (!$partner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                ], 401);
+            }
+
+            $partnerId = $partner->id;
+
+            // Partner-wise Top 10 Field Agents
+            $agents = DB::table('field_agents as fa')
+                ->leftJoin('learners as l', function ($join) use ($partnerId) {
+
+                    $join->on('l.unit', '=', 'fa.csc_id')
+                        ->where('l.partner_id', '=', $partnerId);
+
+                })
+                ->where('fa.partner_id', $partnerId)
+                ->select(
+                    'fa.id',
+                    'fa.name'
+                )
+                ->selectRaw('COUNT(l.id) as learners')
+                ->groupBy(
+                    'fa.id',
+                    'fa.name'
+                )
+                ->orderByDesc('learners')
+                ->orderBy('fa.name')
+                ->limit(10)
+                ->get()
+                ->values()
+                ->map(function ($agent, $index) {
+
+                    return [
+                        'rank' => $index + 1,
+                        'name' => $agent->name,
+                        'learners' => (int) $agent->learners,
+                    ];
+
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $agents,
+            ]);
+        }
+
+
+
+
+
+        /**
+         * Get learner age distribution for authenticated partner.
+         *
+         * @return \Illuminate\Http\JsonResponse
+         */
+        public function learnerAgeDistribution(Request $request): JsonResponse
+        {
+            // Authenticated Partner
+            $partner = $request->user('partner');
+
+            if (!$partner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                ], 401);
+            }
+
+            $partnerId = $partner->id;
+
+            // Partner-wise Age Distribution
+            $ageGroups = DB::table('learners')
+                ->where('partner_id', $partnerId)
                 ->selectRaw("
                     CASE
                         WHEN date_of_birth IS NULL
@@ -278,242 +338,359 @@ public function learnerAgeDistribution()
                         THEN '35-44'
 
                         ELSE '45+'
-                    END AS age_group
-                ");
-        }, 'learner_age_data')
-        ->selectRaw('age_group, COUNT(*) AS total')
-        ->groupBy('age_group')
-        ->orderByRaw("
-            CASE age_group
-                WHEN 'Below 18' THEN 1
-                WHEN '18-24' THEN 2
-                WHEN '25-34' THEN 3
-                WHEN '35-44' THEN 4
-                WHEN '45+' THEN 5
-                ELSE 6
-            END
-        ")
-        ->get();
+                    END AS age_group,
+                    COUNT(*) AS total
+                ")
+                ->groupBy('age_group')
+                ->orderByRaw("
+                    CASE age_group
+                        WHEN 'Below 18' THEN 1
+                        WHEN '18-24' THEN 2
+                        WHEN '25-34' THEN 3
+                        WHEN '35-44' THEN 4
+                        WHEN '45+' THEN 5
+                        ELSE 6
+                    END
+                ")
+                ->get();
 
-    $total = (int) $ageGroups->sum('total');
+            // Total Learners
+            $total = (int) $ageGroups->sum('total');
 
-    $data = $ageGroups->map(function ($row) use ($total) {
-        return [
-            'age_group' => $row->age_group,
-            'count' => (int) $row->total,
-            'percentage' => $total > 0
-                ? round(($row->total / $total) * 100, 1)
-                : 0,
-        ];
-    });
+            // Format Response
+            $data = $ageGroups->map(function ($row) use ($total) {
 
-    return response()->json([
-        'success' => true,
-        'total' => $total,
-        'data' => $data,
-    ]);
-}
+                return [
+                    'age_group' => $row->age_group,
+                    'count' => (int) $row->total,
+                    'percentage' => $total > 0
+                        ? round(
+                            ((int) $row->total / $total) * 100,
+                            1
+                        )
+                        : 0,
+                ];
 
+            })->values();
 
-
-
-public function eventReviewPerformance(Request $request)
-{
-    $validated = $request->validate([
-        'period' => 'nullable|in:day,week,month,year',
-    ]);
-
-    $period = $validated['period'] ?? 'month';
-    $now = \Carbon\Carbon::now();
-
-    switch ($period) {
-        case 'day':
-            $start = $now->copy()->subDays(29)->startOfDay();
-            break;
-
-        case 'week':
-            $start = $now->copy()->startOfWeek()->subWeeks(11);
-            break;
-
-        case 'month':
-            $start = $now->copy()->startOfMonth()->subMonths(11);
-            break;
-
-        case 'year':
-            $start = $now->copy()->startOfYear()->subYears(4);
-            break;
-
-        default:
-            $start = $now->copy()->startOfMonth()->subMonths(11);
-    }
-
-    $rows = \Illuminate\Support\Facades\DB::table('event_transactions')
-        ->join(
-            'learners',
-            'event_transactions.learner_id',
-            '=',
-            'learners.id'
-        )
-        ->join(
-            'partners',
-            'event_transactions.partner_id',
-            '=',
-            'partners.id'
-        )
-        ->whereNotNull('learners.source_created_at')
-        ->whereColumn(
-            'learners.program_code',
-            'partners.name'
-        )
-        ->whereBetween('event_transactions.created_at', [
-            $start,
-            $now,
-        ])
-        ->selectRaw("
-            learners.program_code AS program_code,
-            LOWER(TRIM(event_transactions.review_status)) AS status_key,
-            COUNT(*) AS total
-        ")
-        ->groupBy(
-            'learners.program_code',
-            \Illuminate\Support\Facades\DB::raw(
-                'LOWER(TRIM(event_transactions.review_status))'
-            )
-        )
-        ->orderBy('learners.program_code')
-        ->get();
-
-    $programs = [];
-
-    $statusTotals = [
-        'open' => 0,
-        'pending' => 0,
-        'accepted' => 0,
-        'rejected' => 0,
-        'returned' => 0,
-    ];
-
-    foreach ($rows as $row) {
-        $program = $row->program_code;
-
-        if (!isset($programs[$program])) {
-            $programs[$program] = [
-                'program_code' => $program,
-                'total' => 0,
-                'open' => 0,
-                'pending' => 0,
-                'accepted' => 0,
-                'rejected' => 0,
-                'returned' => 0,
-            ];
+            return response()->json([
+                'success' => true,
+                'total' => $total,
+                'data' => $data,
+            ]);
         }
 
-        $status = match ($row->status_key) {
-            'open' => 'open',
-            'pending' => 'pending',
-            'accepted' => 'accepted',
-            'rejected' => 'rejected',
-            'return', 'returned' => 'returned',
-            default => null,
-        };
 
-        $count = (int) $row->total;
 
-        $programs[$program]['total'] += $count;
 
-        if ($status !== null) {
-            $programs[$program][$status] += $count;
-            $statusTotals[$status] += $count;
+
+
+            /**
+             * Partner Center Wise Event Review Performance.
+             *
+             * Supports:
+             * - All Centers
+             * - Specific Partner Center
+             * - Day, Week, Month, Year
+             */
+            public function eventReviewPerformance(Request $request): JsonResponse
+            {
+                $partner = $request->user('partner');
+
+                if (!$partner) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Unauthenticated.',
+                    ], 401);
+                }
+
+                $partnerId = $partner->id;
+
+                // Validate Filters
+                $validated = $request->validate([
+                    'period' => 'nullable|in:day,week,month,year',
+                    'partner_center_id' => [
+                        'nullable',
+                        'integer',
+                        'exists:partner_centers,id',
+                    ],
+                ]);
+
+                $period = $validated['period'] ?? 'month';
+
+                $centerId = $validated['partner_center_id'] ?? null;
+
+                // Verify selected center belongs to logged-in partner
+                if ($centerId !== null) {
+
+                    $centerExists = DB::table('partner_centers')
+                        ->where('id', $centerId)
+                        ->where('partner_id', $partnerId)
+                        ->exists();
+
+                    if (!$centerExists) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Invalid partner center.',
+                        ], 403);
+                    }
+                }
+
+                $now = now();
+
+                // Date Range
+                switch ($period) {
+                    case 'day':
+                        $start = $now->copy()
+                            ->subDays(29)
+                            ->startOfDay();
+                        break;
+
+                    case 'week':
+                        $start = $now->copy()
+                            ->startOfWeek()
+                            ->subWeeks(11);
+                        break;
+
+                    case 'year':
+                        $start = $now->copy()
+                            ->startOfYear()
+                            ->subYears(4);
+                        break;
+
+                    default:
+                        $start = $now->copy()
+                            ->startOfMonth()
+                            ->subMonths(11);
+                }
+
+                // Fetch Partner Centers for Dropdown
+                $centers = DB::table('partner_centers')
+                    ->where('partner_id', $partnerId)
+                    ->select('id', 'name')
+                    ->orderBy('name')
+                    ->get();
+
+                // Partner Center Wise Event Transactions
+                $rows = DB::table('event_transactions as et')
+
+                    ->join('field_agents as fa', function ($join) {
+                        $join->on(
+                            'et.field_agent_id',
+                            '=',
+                            'fa.id'
+                        );
+                    })
+
+                    ->join('partner_centers as pc', function ($join) {
+                        $join->on(
+                            'fa.partner_center_id',
+                            '=',
+                            'pc.id'
+                        );
+                    })
+
+                    // Security: logged-in partner only
+                    ->where('et.partner_id', $partnerId)
+                    ->where('fa.partner_id', $partnerId)
+                    ->where('pc.partner_id', $partnerId)
+
+                    // Optional Center Filter
+                    ->when($centerId !== null, function ($query) use ($centerId) {
+                        $query->where('pc.id', $centerId);
+                    })
+
+                    // Date Filter
+                    ->whereBetween('et.created_at', [
+                        $start,
+                        $now,
+                    ])
+
+                    ->select(
+                        'pc.id as partner_center_id',
+                        'pc.name as center_name'
+                    )
+
+                    ->selectRaw("
+                        LOWER(TRIM(et.review_status)) AS status_key,
+                        COUNT(*) AS total
+                    ")
+
+                    ->groupBy(
+                        'pc.id',
+                        'pc.name',
+                        DB::raw('LOWER(TRIM(et.review_status))')
+                    )
+
+                    ->orderBy('pc.name')
+                    ->get();
+
+                // Status Totals
+                $statusTotals = [
+                    'open' => 0,
+                    'pending' => 0,
+                    'accepted' => 0,
+                    'rejected' => 0,
+                    'returned' => 0,
+                ];
+
+                $centerData = [];
+
+                // Process Results
+                foreach ($rows as $row) {
+
+                    $id = $row->partner_center_id;
+
+                    if (!isset($centerData[$id])) {
+
+                        $centerData[$id] = [
+                            'partner_center_id' => $id,
+                            'center_name' => $row->center_name,
+                            'total' => 0,
+                            'open' => 0,
+                            'pending' => 0,
+                            'accepted' => 0,
+                            'rejected' => 0,
+                            'returned' => 0,
+                        ];
+                    }
+
+                    $status = match ($row->status_key) {
+                        'open' => 'open',
+                        'pending' => 'pending',
+                        'accepted' => 'accepted',
+                        'rejected' => 'rejected',
+                        'return', 'returned' => 'returned',
+                        default => null,
+                    };
+
+                    $count = (int) $row->total;
+
+                    $centerData[$id]['total'] += $count;
+
+                    if ($status !== null) {
+                        $centerData[$id][$status] += $count;
+                        $statusTotals[$status] += $count;
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+
+                    'period' => $period,
+
+                    'from' => $start->toDateString(),
+                    'to' => $now->toDateString(),
+
+                    'selected_center_id' => $centerId,
+
+                    'centers' => $centers,
+
+                    'total' => array_sum(
+                        array_column($centerData, 'total')
+                    ),
+
+                    'status_totals' => $statusTotals,
+
+                    'data' => array_values($centerData),
+                ]);
+            }
+
+
+
+
+
+        /**
+         * Get paginated learners for authenticated partner.
+         *
+         * @return \Illuminate\Http\JsonResponse
+         */
+        public function indexLearners(Request $request): JsonResponse
+        {
+            // Authenticated Partner
+            $partner = $request->user('partner');
+
+            if (!$partner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                ], 401);
+            }
+
+            $partnerId = $partner->id;
+
+            // Base Partner Query
+            $baseQuery = DB::table('learners as l')
+                ->where('l.partner_id', $partnerId);
+
+            // Total Learners
+            $total = (clone $baseQuery)->count();
+
+            // Current Month Date Range
+            $monthStart = now()->startOfMonth();
+            $nextMonthStart = $monthStart->copy()->addMonth();
+
+            // This Month Learners
+            $thisMonth = (clone $baseQuery)
+                ->where('l.created_at', '>=', $monthStart)
+                ->where('l.created_at', '<', $nextMonthStart)
+                ->count();
+
+            // Total Unique Field Agents
+            $fieldAgents = (clone $baseQuery)
+                ->whereNotNull('l.field_agent_id')
+                ->distinct()
+                ->count('l.field_agent_id');
+
+            // Pagination Limit
+            $perPage = min(
+                max((int) $request->input('per_page', 10), 1),
+                100
+            );
+
+            // Partner-wise Learners List
+            $learners = (clone $baseQuery)
+                ->leftJoin('field_agents as fa', function ($join) use ($partnerId) {
+
+                    $join->on('fa.id', '=', 'l.field_agent_id')
+                        ->where('fa.partner_id', '=', $partnerId);
+
+                })
+                ->select([
+                    'l.id',
+                    'l.first_name',
+                    'l.last_name',
+                    'l.source_created_at',
+                    'l.phone_number',
+                    'l.created_at',
+                    'l.status',
+                    'l.unit',
+                    'fa.name as field_agent',
+                ])
+                ->orderByDesc('l.created_at')
+                ->orderByDesc('l.id')
+                ->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+
+                'summary' => [
+                    'total' => $total,
+                    'this_month' => $thisMonth,
+                    'field_agents' => $fieldAgents,
+                ],
+
+                'data' => $learners->items(),
+
+                'pagination' => [
+                    'current_page' => $learners->currentPage(),
+                    'last_page' => $learners->lastPage(),
+                    'per_page' => $learners->perPage(),
+                    'total' => $learners->total(),
+                ],
+            ]);
         }
-    }
 
-    $programs = array_values($programs);
-
-    return response()->json([
-        'period' => $period,
-        'from' => $start->toDateString(),
-        'to' => $now->toDateString(),
-        'total' => array_sum(array_column($programs, 'total')),
-        'status_totals' => $statusTotals,
-        'programs' => $programs,
-    ]);
-}
-
-
-
-
-public function indexLearners(\Illuminate\Http\Request $request)
-{
-    $partner = auth('partner')->user();
-
-    if (!$partner) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Unauthenticated.',
-        ], 401);
-    }
-
-    $baseQuery = DB::table('learners')
-        ->where('learners.partner_id', $partner->id);
-
-    // Summary counts
-    $total = (clone $baseQuery)->count();
-
-    $thisMonth = (clone $baseQuery)
-        ->whereMonth('learners.created_at', now()->month)
-        ->whereYear('learners.created_at', now()->year)
-        ->count();
-
-    $fieldAgents = (clone $baseQuery)
-        ->whereNotNull('learners.field_agent_id')
-        ->distinct()
-        ->count('learners.field_agent_id');
-
-    // Limit page size to a maximum of 100
-    $perPage = min(
-        max((int) $request->input('per_page', 10), 1),
-        100
-    );
-
-    // Fetch only the current page
-    $learners = (clone $baseQuery)
-        ->leftJoin(
-            'field_agents as fa',
-            'fa.id',
-            '=',
-            'learners.field_agent_id'
-        )
-        ->select([
-            'learners.id',
-            'learners.first_name',
-            'learners.last_name',
-            'learners.source_created_at',
-            'learners.phone_number',
-            'learners.created_at',
-            'learners.status',
-            'learners.unit',
-            'fa.name as field_agent',
-        ])
-        ->orderByDesc('learners.created_at')
-        ->orderByDesc('learners.id')
-        ->paginate($perPage);
-
-    return response()->json([
-        'success' => true,
-        'summary' => [
-            'total' => $total,
-            'this_month' => $thisMonth,
-            'field_agents' => $fieldAgents,
-        ],
-        'data' => $learners->items(),
-        'pagination' => [
-            'current_page' => $learners->currentPage(),
-            'last_page' => $learners->lastPage(),
-            'per_page' => $learners->perPage(),
-            'total' => $learners->total(),
-        ],
-    ]);
-}
 
 
 
