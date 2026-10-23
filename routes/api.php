@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\FieldAgent\ChangePasswordController;
 use App\Http\Controllers\Api\FieldAgent\MpinSettingsController;
 use App\Http\Controllers\Api\SupportTicketController;
 use App\Http\Controllers\Api\Partner\PartnerDashboardApiController;
+use App\Http\Controllers\Api\Partner\EventTransactionController as PartnerEventTransactionController ;
+use App\Http\Controllers\Api\Partner\PartnerFieldAgentController;
 
 Route::middleware(['web', 'auth:partner'])
     ->prefix('partner')
@@ -37,8 +39,15 @@ Route::middleware(['web', 'auth:partner'])
         Route::get('/dashboard/partner-center-earnings',[PartnerDashboardApiController::class, 'partnerCenterEarnings']);
 
         Route::get('/dashboard/learner-registration-growth',[PartnerDashboardApiController::class, 'learnerRegistrationGrowth']);
+        Route::get('/event-transactions',[PartnerEventTransactionController::class, 'index']);
 
+        Route::get('/event-transactions/{id}',[PartnerEventTransactionController::class, 'show'])->whereNumber('id');
 
+        Route::get('/field-agents',[PartnerFieldAgentController::class, 'index'])->name('field-agents.index');
+
+        Route::get('/field-agents/filters',[PartnerFieldAgentController::class, 'filters'])->name('field-agents.filters');
+
+        Route::get('/field-agents/{id}/transactions',[PartnerFieldAgentController::class, 'fieldAgentDetails'])->whereNumber('id');
 
     });
 
