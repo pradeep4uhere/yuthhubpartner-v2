@@ -21,15 +21,27 @@ document.querySelectorAll('[data-react-app]').forEach((element) => {
         return;
     }
 
+    // Field Agent Object
     const agent = element.dataset.agent
         ? JSON.parse(element.dataset.agent)
         : {};
+
+    const partner = element.dataset.partner
+        ? JSON.parse(element.dataset.partner)
+        : {};
+
+    const centers = element.dataset.centers
+        ? JSON.parse(element.dataset.centers)
+        : [];
 
     createRoot(element).render(
         createElement(Component, {
             partnerName: element.dataset.partnerName,
             adminName: element.dataset.adminName,
+
             agent,
+            partner,
+            centers,
 
             canManageAdmins:
                 element.dataset.canManageAdmins === 'true',

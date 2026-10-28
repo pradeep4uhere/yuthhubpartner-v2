@@ -1222,3 +1222,194 @@
         display: none;
     }
 }
+/* ==========================================
+   PREMIUM EXPORT NOTIFICATION
+========================================== */
+
+.pl-toast-container {
+    position: fixed;
+    top: 88px;
+    right: 26px;
+    z-index: 99999;
+    width: min(420px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.pl-export-toast {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 20px 42px 22px 18px;
+    overflow: hidden;
+
+    background: #ffffff;
+    border: 1px solid #e4eaf4;
+    border-left: 4px solid #2865dc;
+    border-radius: 14px;
+
+    box-shadow:
+        0 16px 48px rgba(16, 30, 67, 0.14),
+        0 4px 12px rgba(16, 30, 67, 0.05);
+
+    pointer-events: auto;
+
+    animation: plToastSlideIn 0.5s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.pl-toast-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #087f5b;
+    background: #e7f8ef;
+    border-radius: 12px;
+}
+
+.pl-toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.pl-toast-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 7px;
+}
+
+.pl-toast-heading strong {
+    color: #101e43;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.pl-toast-id {
+    padding: 3px 7px;
+    border-radius: 5px;
+    background: #edf3ff;
+    color: #2865dc;
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.pl-toast-content p {
+    margin: 0;
+    color: #65738d;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.pl-toast-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 12px;
+
+    color: #2865dc;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.pl-toast-pulse {
+    width: 7px;
+    height: 7px;
+    background: #2865dc;
+    border-radius: 50%;
+    animation: plToastPulse 1.5s infinite;
+}
+
+.pl-toast-close {
+    position: absolute;
+    top: 11px;
+    right: 12px;
+
+    border: none;
+    background: transparent;
+    color: #94a0b5;
+    cursor: pointer;
+
+    font-size: 23px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.pl-toast-close:hover {
+    color: #101e43;
+}
+
+/* Auto-dismiss progress indicator */
+
+.pl-toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+
+    background: linear-gradient(
+        90deg,
+        #2865dc,
+        #60a5fa
+    );
+
+    transform-origin: left;
+    animation: plToastCountdown 6.5s linear forwards;
+}
+
+/* Animations */
+
+@keyframes plToastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(110%) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes plToastCountdown {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+
+@keyframes plToastPulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(40, 101, 220, 0.3);
+    }
+
+    50% {
+        opacity: 0.65;
+        box-shadow: 0 0 0 5px rgba(40, 101, 220, 0);
+    }
+}
+
+@media (max-width: 600px) {
+    .pl-toast-container {
+        top: 76px;
+        right: 16px;
+    }
+
+    .pl-export-toast {
+        padding: 16px 38px 19px 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pl-export-toast,
+    .pl-toast-progress,
+    .pl-toast-pulse {
+        animation: none;
+    }
+}

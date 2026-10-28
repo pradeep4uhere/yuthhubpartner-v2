@@ -8,9 +8,127 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
+use Throwable;
+use App\Services\ExportService;
 
 class PartnerDashboardApiController extends Controller
 {
+
+
+
+    /**
+     * Create an asynchronous export request for the authenticated partner's field agents.
+     */
+    public function exportFieldAgents(
+        Request $request,
+        ExportService $exportService
+    ): JsonResponse {
+        $partner = $request->user('partner');
+
+        if (!$partner) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        $validated = $request->validate([
+            'filters' => ['nullable', 'array'],
+            'filters.search' => ['nullable', 'string', 'max:255'],
+            'filters.state' => ['nullable', 'string', 'max:255'],
+            'filters.district' => ['nullable', 'string', 'max:255'],
+            'filters.center_id' => ['nullable', 'integer', 'min:1'],
+            'filters.status' => ['nullable', 'in:active,inactive'],
+        ]);
+
+        $filters = $validated['filters'] ?? [];
+
+        $export = $exportService->create($partner, [
+            'type' => 'field_agents',
+            'scope_type' => 'partner',
+            'scope_id' => $partner->id,
+            'title' => 'Partner Field Agents Export',
+            'filters' => $filters,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Field agent export request created successfully.',
+            'data' => [
+                'id' => $export->id,
+                'status' => $export->status,
+            ],
+        ], 202);
+    }
+
+
+
+    public function exportLearners(
+        Request $request,
+        ExportService $exportService
+    ): JsonResponse {
+        $partner = $request->user('partner');
+
+        if (!$partner) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'string', 'max:50'],
+            'agent' => ['nullable', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'mobile' => ['nullable', 'string', 'max:30'],
+            'email' => ['nullable', 'string', 'max:255'],
+            'unit' => ['nullable', 'string', 'max:255'],
+            'state' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'digital' => ['nullable', 'string', 'max:255'],
+            'english' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        try {
+            $export = $exportService->create($partner, [
+                'type' => 'learners',
+                'scope_type' => 'partner',
+                'scope_id' => $partner->id,
+                'title' => 'Partner Learners Export',
+                'filters' => $validated,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Learner export has been queued.',
+                'export' => [
+                    'id' => $export->id,
+                    'title' => $export->title,
+                    'status' => $export->status,
+                ],
+            ], 202);
+        } catch (InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to queue learner export.',
+            ], 500);
+        }
+    }
+
+
+
+
+
     public function summary(Request $request): JsonResponse
     {
         $partner = $request->user('partner');

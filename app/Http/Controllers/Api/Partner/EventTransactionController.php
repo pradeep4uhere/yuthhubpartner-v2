@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use App\Services\ExportService;
 
 class EventTransactionController extends Controller
 {
@@ -187,7 +188,60 @@ class EventTransactionController extends Controller
         ]);
     }
 
+    /**
+     * Queue an Excel export containing all partner event transactions
+     * matching the submitted main search and advanced filters.
+     */
+    public function export(Request $request, ExportService $exportService): JsonResponse
+    {
+        $partner = $request->user('partner');
 
+        if (!$partner || $partner->status !== 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized partner.',
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'filters' => ['sometimes', 'array'],
+
+            'filters.search' => ['nullable', 'string', 'max:255'],
+            'filters.beneficiary_name' => ['nullable', 'string', 'max:255'],
+            'filters.beneficiary_phone_number' => ['nullable', 'string', 'max:255'],
+            'filters.event_type_name' => ['nullable', 'string', 'max:255'],
+            'filters.event_category_name' => ['nullable', 'string', 'max:255'],
+            'filters.event_master_type_id' => ['nullable', 'string', 'max:255'],
+            'filters.review_status' => ['nullable', 'string', 'max:255'],
+            'filters.workflow_status' => ['nullable', 'string', 'max:255'],
+            'filters.date_from' => ['nullable', 'date_format:Y-m-d'],
+            'filters.date_to' => [
+                'nullable',
+                'date_format:Y-m-d',
+                'after_or_equal:filters.date_from',
+            ],
+        ]);
+
+        $filters = array_filter(
+            $validated['filters'] ?? [],
+            fn ($value) => $value !== null && $value !== ''
+        );
+
+        $export = $exportService->create($partner, [
+            'type' => 'transactions',
+            'scope_type' => 'partner',
+            'scope_id' => $partner->id,
+            'title' => 'Partner Event Transactions Export',
+            'filters' => $filters,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Excel export request queued. Check Downloads for the file.',
+            'export_id' => $export->id,
+            'status' => $export->status,
+        ], 202);
+    }
 
 
     /*

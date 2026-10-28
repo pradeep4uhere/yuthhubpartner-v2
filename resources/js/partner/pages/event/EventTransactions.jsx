@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
     Search,
     Download,
@@ -96,15 +96,6 @@ const initials = (name = "") =>
         .map((part) => part[0] || "")
         .join("")
         .toUpperCase() || "B";
-
-const escapeCsv = (value) => {
-    const text = String(value ?? "");
-
-    // Prevent spreadsheet formula injection.
-    const safe = /^[\s]*[=+\-@\t\r]/.test(text) ? "'" + text : text;
-
-    return `"${safe.replace(/"/g, '""')}"`;
-};
 
 /* =========================================
    SKELETON COMPONENTS
@@ -232,6 +223,59 @@ const StatusBadge = ({ value, type }) => {
     );
 };
 
+// Displays the export request notification using the shared Learner module design.
+function ExportToast({ toast, onClose }) {
+    useEffect(() => {
+        if (!toast) return;
+
+        const timer = setTimeout(onClose, 6500);
+
+        return () => clearTimeout(timer);
+    }, [toast, onClose]);
+
+    if (!toast) return null;
+
+    return (
+        <div className="pl-toast-container">
+            <div
+                key={toast.key}
+                className={`pl-export-toast pl-export-toast--${toast.type}`}
+                role="status"
+                aria-live="polite"
+            >
+                <div className="pl-toast-icon">
+                    <CheckCircle2 size={22} strokeWidth={2.5} />
+                </div>
+
+                <div className="pl-toast-content">
+                    <div className="pl-toast-heading">
+                        <strong>{toast.title}</strong>
+                        <span className="pl-toast-id">#{toast.exportId}</span>
+                    </div>
+
+                    <p>{toast.message}</p>
+
+                    <span className="pl-toast-status">
+                        <span className="pl-toast-pulse" />
+                        Processing in background
+                    </span>
+                </div>
+
+                <button
+                    type="button"
+                    className="pl-toast-close"
+                    onClick={onClose}
+                    aria-label="Close notification"
+                >
+                    ×
+                </button>
+
+                <div className="pl-toast-progress" />
+            </div>
+        </div>
+    );
+}
+
 /* =========================================
    MAIN COMPONENT
 ========================================= */
@@ -282,6 +326,90 @@ export default function EventTransactions() {
         per_page: PAGE_SIZE,
         total: 0,
     });
+
+    const [toast, setToast] = useState(null);
+    const [exportToast, setExportToast] = useState(null);
+
+    // Displays the export confirmation with the ID returned by the API.
+    const showExportToast = (exportId) => {
+        setExportToast({
+            key: `${exportId}-${Date.now()}`,
+            type: "success",
+            title: "Export Request Submitted",
+            exportId,
+            message:
+                "Your event transactions export is being prepared. You can download it once processing is complete.",
+        });
+    };
+
+    // Closes the export confirmation toast without restarting its timer on rerenders.
+    const closeExportToast = useCallback(() => {
+        setExportToast(null);
+    }, []);
+
+    /**
+     * Displays a success or error toast using the Event Transactions toast UI.
+     */
+    const showToast = (message, type = "success") => {
+        setToast({ message, type });
+    };
+
+    /**
+     * Requests an Excel export using the current search and applied filters.
+     */
+    const exportTransactions = async () => {
+        if (exporting || loading || pagination.total === 0) return;
+
+        setExporting(true);
+        setError("");
+
+        try {
+            const filters = {
+                search: search.trim(),
+                ...Object.fromEntries(
+                    Object.entries(advancedFilters).filter(
+                        ([, value]) => String(value ?? "").trim() !== "",
+                    ),
+                ),
+            };
+
+            const response = await fetch(
+                "/api/partner/event-transactions/export",
+                {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRF-TOKEN":
+                            document
+                                .querySelector('meta[name="csrf-token"]')
+                                ?.getAttribute("content") ?? "",
+                    },
+                    body: JSON.stringify({ filters }),
+                },
+            );
+
+            const result = await response.json();
+
+            if (!response.ok || result.success !== true) {
+                throw new Error(
+                    result.message || "Unable to start the Excel export.",
+                );
+            }
+
+            showExportToast(result.export_id);
+        } catch (error) {
+            setError(error.message || "Unable to start the Excel export.");
+            showToast(
+                error.message || "Unable to start the Excel export.",
+                "error",
+            );
+        } finally {
+            setExporting(false);
+        }
+    };
 
     /* =====================================
        FILTER HANDLERS
@@ -437,58 +565,6 @@ export default function EventTransactions() {
     const visibleTransactions = useMemo(() => transactions, [transactions]);
 
     /* =====================================
-       CSV EXPORT
-    ===================================== */
-
-    const exportCsv = () => {
-        if (!visibleTransactions.length) return;
-
-        setExporting(true);
-
-        try {
-            const columns = [
-                ["ID", "id"],
-                ["Beneficiary", "beneficiary_name"],
-                ["Mobile", "beneficiary_phone_number"],
-                ["Event Type", "event_type_name"],
-                ["Event Category", "event_category_name"],
-                ["Event Value", "event_value"],
-                ["Submitted Date", "event_date_submitted"],
-                ["Review Status", "review_status"],
-                ["Workflow Status", "workflow_status"],
-            ];
-
-            const rows = visibleTransactions.map((transaction) =>
-                columns.map(([, key]) => escapeCsv(transaction[key])).join(","),
-            );
-
-            const csv = [
-                columns.map(([label]) => escapeCsv(label)).join(","),
-                ...rows,
-            ].join("\r\n");
-
-            const url = URL.createObjectURL(
-                new Blob(["\uFEFF" + csv], {
-                    type: "text/csv;charset=utf-8;",
-                }),
-            );
-
-            const link = document.createElement("a");
-
-            link.href = url;
-            link.download = `event-transactions-page-${currentPage}.csv`;
-
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-
-            URL.revokeObjectURL(url);
-        } finally {
-            setExporting(false);
-        }
-    };
-
-    /* =====================================
        SUMMARY CONFIGURATION
     ===================================== */
 
@@ -529,6 +605,24 @@ export default function EventTransactions() {
 
     return (
         <main className="partner-learners event-transactions pl-page-loading-wrapper">
+            <ExportToast toast={exportToast} onClose={closeExportToast} />
+
+            {toast && (
+                <div
+                    role="status"
+                    className={`et-toast et-toast--${toast.type}`}
+                >
+                    <span>{toast.message}</span>
+
+                    <button
+                        type="button"
+                        onClick={() => setToast(null)}
+                        aria-label="Close notification"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
             {/* PAGE HEADER */}
 
             <header className="pl-page-header">
@@ -548,10 +642,8 @@ export default function EventTransactions() {
                 <button
                     type="button"
                     className="pl-button pl-button--primary"
-                    onClick={exportCsv}
-                    disabled={
-                        loading || exporting || !visibleTransactions.length
-                    }
+                    onClick={exportTransactions}
+                    disabled={loading || exporting || pagination.total === 0}
                 >
                     {exporting ? (
                         <RefreshCw size={17} className="pl-spin" />
@@ -559,7 +651,7 @@ export default function EventTransactions() {
                         <Download size={17} />
                     )}
 
-                    {exporting ? "Exporting..." : "Export Current Page"}
+                    {exporting ? "Preparing Request..." : "Export Excel"}
                 </button>
             </header>
 

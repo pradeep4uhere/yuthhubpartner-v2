@@ -1,1 +1,10 @@
-export default function Profile() { return <section className="yp-panel yp-placeholder"><span className="yp-eyebrow">YOUTHHUB PARTNER</span><h2>Profile</h2><p>Manage your partner account details.</p><span className="yp-coming">Page integration coming next</span></section>; }
+export default function Profile() {
+    return (
+        <section className="yp-panel yp-placeholder">
+            <span className="yp-eyebrow">YOUTHHUB PARTNER</span>
+            <h2>Profile</h2>
+            <p>Manage your partner account details.</p>
+            <span className="yp-coming">Page integration coming next</span>
+        </section>
+    );
+}

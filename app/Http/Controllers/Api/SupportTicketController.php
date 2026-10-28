@@ -54,7 +54,8 @@ class SupportTicketController extends Controller
             ],
         ]);
 
-        $user = $request->user();
+
+        $user = $this->supportUser($request);
 
         if (! $user || ! method_exists($user, 'supportTickets')) {
             return response()->json([
@@ -129,7 +130,8 @@ class SupportTicketController extends Controller
  */
 public function index(Request $request): JsonResponse
 {
-    $user = $request->user();
+     $user = $this->supportUser($request);
+
 
     if (! $user || ! method_exists($user, 'supportTickets')) {
         return response()->json([
@@ -186,7 +188,8 @@ public function index(Request $request): JsonResponse
  */
 public function show(Request $request, int $ticketId): JsonResponse
 {
-    $user = $request->user();
+     $user = $this->supportUser($request);
+
 
     if (! $user || ! method_exists($user, 'supportTickets')) {
         return response()->json([
@@ -202,18 +205,22 @@ public function show(Request $request, int $ticketId): JsonResponse
     /*
      * Format ticket-level attachments for the frontend.
      */
-    $formatAttachments = function ($attachments): array {
-        return $attachments->map(function ($attachment): array {
+    $formatAttachments = function ($attachments) use ($request): array {
+
+        return $attachments->map(function ($attachment) use ($request): array {
+
             return [
                 'id' => $attachment->id,
                 'original_name' => $attachment->original_name,
                 'mime_type' => $attachment->mime_type,
                 'size' => (int) $attachment->file_size,
-                'download_url' => route(
-                    'api.field-agent.support-ticket-attachments.download',
-                    ['attachmentId' => $attachment->id]
+
+                'download_url' => $this->attachmentDownloadUrl(
+                    $request,
+                    $attachment->id
                 ),
             ];
+
         })->values()->all();
     };
 
@@ -312,7 +319,8 @@ public function storeReply(Request $request, int $ticketId): JsonResponse
         ],
     ]);
 
-    $user = $request->user();
+     $user = $this->supportUser($request);
+
 
     if (! $user || ! method_exists($user, 'supportTickets')) {
         return response()->json([
@@ -395,7 +403,8 @@ public function storeReply(Request $request, int $ticketId): JsonResponse
  */
 public function categories(Request $request): JsonResponse
 {
-    $user = $request->user();
+    $user = $this->supportUser($request);
+
 
     if (! $user || ! method_exists($user, 'supportTickets')) {
         return response()->json([
@@ -509,7 +518,8 @@ private function storeAttachments(
         Request $request,
         int $attachmentId
     ) {
-        $user = $request->user();
+         $user = $this->supportUser($request);
+
 
         if (! $user || ! method_exists($user, 'supportTickets')) {
             return response()->json([
@@ -616,5 +626,38 @@ private function storeReplyAttachments(
 }
 
 
+
+    /**
+     * Resolve authenticated support requester.
+     */
+    private function supportUser(Request $request)
+    {
+        foreach (['partner', 'field_agent'] as $guard) {
+
+            $user = $request->user($guard);
+
+            if ($user && method_exists($user, 'supportTickets')) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
+
+
+
+    private function attachmentDownloadUrl(
+        Request $request,
+        int $attachmentId
+    ): string {
+
+        $routeName = $request->routeIs('api.partner.*')
+            ? 'api.partner.support-ticket-attachments.download'
+            : 'api.field-agent.support-ticket-attachments.download';
+
+        return route($routeName, [
+            'attachmentId' => $attachmentId,
+        ]);
+    }
 
 }

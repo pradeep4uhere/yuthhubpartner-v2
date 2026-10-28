@@ -10,18 +10,65 @@ use App\Http\Controllers\Api\FieldAgent\DashboardStatsController;
 use App\Http\Controllers\Api\FieldAgent\DashboardChartsController;
 use App\Http\Controllers\Api\FieldAgent\LearnerController;
 use App\Http\Controllers\Api\FieldAgent\ChangePasswordController;
+use App\Http\Controllers\Api\Partner\ChangePasswordController as PartnerChangePasswordController;
 use App\Http\Controllers\Api\FieldAgent\MpinSettingsController;
 use App\Http\Controllers\Api\SupportTicketController;
 use App\Http\Controllers\Api\Partner\PartnerDashboardApiController;
 use App\Http\Controllers\Api\Partner\EventTransactionController as PartnerEventTransactionController ;
 use App\Http\Controllers\Api\Partner\PartnerFieldAgentController;
+use App\Http\Controllers\Api\Partner\MpinSettingsController as PartnerMpinSettingsController;
+use App\Http\Controllers\Api\Partner\PartnerDownloadController;
+
+
 
 Route::middleware(['web', 'auth:partner'])
     ->prefix('partner')
     ->name('api.partner.')
     ->group(function () {
-        Route::post('/support-tickets', [SupportTicketController::class, 'store'])
-            ->name('support-tickets.store');
+
+            Route::post('event-transactions/export',[PartnerEventTransactionController::class, 'export'])->name('event-transactions.export');
+            Route::get('/downloads', [PartnerDownloadController::class, 'index']);
+            Route::get('/downloads/{export}/status', [PartnerDownloadController::class, 'status']);
+            Route::get('/downloads/{export}/download', [PartnerDownloadController::class, 'download']);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Partner Help & Support
+            |--------------------------------------------------------------------------
+            */
+
+            Route::get('/support-ticket-categories', [
+                SupportTicketController::class,
+                'categories',
+            ])->name('support-ticket-categories.index');
+
+            Route::get('/support-tickets', [
+                SupportTicketController::class,
+                'index',
+            ])->name('support-tickets.index');
+
+            Route::post('/support-tickets', [
+                SupportTicketController::class,
+                'store',
+            ])->name('support-tickets.store');
+
+            Route::get('/support-tickets/{ticketId}', [
+                SupportTicketController::class,
+                'show',
+            ])->name('support-tickets.show');
+
+            Route::post('/support-tickets/{ticketId}/replies', [
+                SupportTicketController::class,
+                'storeReply',
+            ])->name('support-tickets.replies.store');
+
+            Route::get('/support-ticket-attachments/{attachmentId}/download', [
+                SupportTicketController::class,
+                'downloadAttachment',
+            ])->name('support-ticket-attachments.download');
+
+
         Route::get('/dashboard/summary',[PartnerDashboardApiController::class, 'summary'])->name('dashboard.summary');
         Route::get('/dashboard/growth-overview',[PartnerDashboardApiController::class, 'growthOverview'])->name('dashboard.growth');
         // Get transaction distribution grouped by event transaction type.
@@ -35,6 +82,16 @@ Route::middleware(['web', 'auth:partner'])
         Route::get('/dashboard/learner-age-distribution',[PartnerDashboardApiController::class, 'learnerAgeDistribution'])->name('dashboard.learner-age-distribution');
         Route::get('/dashboard/event-review-performance',[PartnerDashboardApiController::class, 'eventReviewPerformance'])->name('dashboard.event-transaction-status');
         Route::get('/learners', [PartnerDashboardApiController::class,'indexLearners'])->name('learners.index');
+        Route::post('/learners/export',[PartnerDashboardApiController::class, 'exportLearners'])->name('learners.export');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Partner Field Agent Export
+        |--------------------------------------------------------------------------
+        | Creates a background export request for filtered field agents.
+        */
+
+        Route::post('/field-agents/export', [PartnerDashboardApiController::class,'exportFieldAgents'])->name('field-agents.export');
 
         Route::get('/dashboard/partner-center-earnings',[PartnerDashboardApiController::class, 'partnerCenterEarnings']);
 
@@ -48,6 +105,32 @@ Route::middleware(['web', 'auth:partner'])
         Route::get('/field-agents/filters',[PartnerFieldAgentController::class, 'filters'])->name('field-agents.filters');
 
         Route::get('/field-agents/{id}/transactions',[PartnerFieldAgentController::class, 'fieldAgentDetails'])->whereNumber('id');
+
+
+          /*
+        |--------------------------------------------------------------------------
+        | Change Field Agent Password
+        |--------------------------------------------------------------------------
+        | Allows only the authenticated Field Agent to update their password.
+        */
+        Route::post('/change-password',[PartnerChangePasswordController::class, 'update'])->name('change-password');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Field Agent MPIN Settings
+        |--------------------------------------------------------------------------
+        | Read and update MPIN settings for the authenticated Field Agent.
+        | MPIN login remains disabled until a valid MPIN has been configured.
+        */
+        /*
+        |--------------------------------------------------------------------------
+        | Partner MPIN Settings
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/mpin/settings',[PartnerMpinSettingsController::class, 'show'])->name('mpin.settings.show');
+        Route::put('/mpin/settings',[PartnerMpinSettingsController::class, 'update'])->name('mpin.settings.update');
+
 
     });
 

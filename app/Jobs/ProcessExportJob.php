@@ -7,6 +7,10 @@ use App\Services\Exports\LearnerExporter;
 use App\Services\Exports\FieldAgentExporter;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use App\Services\Exports\PartnerLearnerExporter;
+use App\Services\Exports\PartnerFieldAgentExporter;
+use App\Services\Exports\PartnerEventTransactionExporter;
+use App\Models\Partner;
 use Throwable;
 
 class ProcessExportJob implements ShouldQueue
@@ -26,7 +30,10 @@ class ProcessExportJob implements ShouldQueue
 
     public function handle(
         LearnerExporter $learnerExporter,
-        FieldAgentExporter $fieldAgentExporter
+        FieldAgentExporter $fieldAgentExporter,
+        PartnerLearnerExporter $partnerLearnerExporter,
+        PartnerFieldAgentExporter $partnerFieldAgentExporter,
+        PartnerEventTransactionExporter $partnerEventTransactionExporter
     ): void {
         $export = Export::findOrFail($this->exportId);
 
@@ -40,8 +47,21 @@ class ProcessExportJob implements ShouldQueue
 
             $result = match ($export->type) {
 
-                'learners' => $learnerExporter->export($export),
-                'field_agents' => $fieldAgentExporter->export($export),
+               'learners' => $export->requestedBy instanceof \App\Models\Partner
+                            ? $partnerLearnerExporter->export($export)
+                            : $learnerExporter->export($export),
+
+
+               'field_agents' => $export->requestedBy instanceof \App\Models\Partner
+                            ? $partnerFieldAgentExporter->export($export)
+                            : $fieldAgentExporter->export($export),
+
+
+              'transactions' => $export->requestedBy instanceof Partner
+                            ? $partnerEventTransactionExporter->export($export)
+                            : throw new \RuntimeException(
+                                'Transaction exports are currently supported for partners only.'
+                            ),
 
 
                 default => throw new \RuntimeException(

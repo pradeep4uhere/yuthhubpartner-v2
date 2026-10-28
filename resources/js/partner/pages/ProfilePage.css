@@ -1,0 +1,756 @@
+
+/* --------------------------------------------------------------------------
+ | Profile Page Layout
+ | Responsive two-column layout for account navigation and settings.
+ * -------------------------------------------------------------------------- */
+.fa-profile-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    color: #172033;
+    padding:25px;
+}
+
+.fa-profile-page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fa-profile-page__eyebrow {
+    display: block;
+    margin-bottom: 7px;
+    color: #4f46e5;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.fa-profile-page__header h1 {
+    margin: 0;
+    font-size: clamp(24px, 3vw, 30px);
+    font-weight: 750;
+}
+
+.fa-profile-page__header p {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.fa-profile-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    align-items: start;
+    gap: 22px;
+}
+
+/* --------------------------------------------------------------------------
+ | Profile Sidebar
+ | Supports future navigation items through the section configuration.
+ * -------------------------------------------------------------------------- */
+.fa-profile-sidebar,
+.fa-profile-content {
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e5eaf1;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.025);
+}
+
+.fa-profile-sidebar {
+    padding: 16px 12px;
+}
+
+.fa-profile-sidebar__heading {
+    padding: 6px 10px 14px;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.fa-profile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.fa-profile-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #475569;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 550;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.fa-profile-nav__item:hover {
+    background: #f5f7fb;
+    color: #312e81;
+}
+
+.fa-profile-nav__item.is-active {
+    background: #eef2ff;
+    color: #4338ca;
+    font-weight: 700;
+}
+
+.fa-profile-nav__item svg {
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+ | Profile Content Panel
+ | Provides a consistent content area for all account settings.
+ * -------------------------------------------------------------------------- */
+.fa-profile-content {
+    padding: 26px;
+}
+
+.fa-profile-content__heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.fa-profile-content__icon {
+    display: grid;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 12px;
+    background: #eef2ff;
+    color: #4338ca;
+}
+
+.fa-profile-content__heading h2 {
+    margin: 1px 0 6px;
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.fa-profile-content__heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+ | Personal Information
+ | Displays the authenticated agent's existing account details.
+ * -------------------------------------------------------------------------- */
+.fa-profile-details {
+    padding-top: 22px;
+}
+
+.fa-profile-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 25px;
+    padding: 18px;
+    border: 1px solid #e7eaf2;
+    border-radius: 12px;
+    background: #fafbff;
+}
+
+.fa-profile-avatar {
+    display: grid;
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    place-items: center;
+    border-radius: 50%;
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.fa-profile-identity h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.fa-profile-identity p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.fa-profile-account-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    padding: 6px 9px;
+    border-radius: 20px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.fa-profile-details__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+}
+
+.fa-profile-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 0;
+}
+
+.fa-profile-detail__icon {
+    display: grid;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.fa-profile-detail > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.fa-profile-detail > div > span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.fa-profile-detail strong {
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.fa-profile-note,
+.fa-profile-help {
+    margin: 22px 0 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+ | Profile Forms
+ | Consistent field styling for password and MPIN settings.
+ * -------------------------------------------------------------------------- */
+.fa-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+    max-width: 560px;
+    padding-top: 24px;
+}
+
+.fa-profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fa-profile-field label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.fa-profile-field input {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid #dbe1ea;
+    border-radius: 8px;
+    outline: none;
+    background: #ffffff;
+    color: #172033;
+    font: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.fa-profile-field input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.fa-profile-input-wrap {
+    position: relative;
+}
+
+.fa-profile-input-wrap input {
+    padding-right: 45px;
+}
+
+.fa-profile-input-wrap > button {
+    position: absolute;
+    top: 50%;
+    right: 9px;
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.fa-profile-input-wrap > button:hover {
+    background: #f1f5f9;
+}
+
+.fa-profile-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+.fa-profile-primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 43px;
+    padding: 11px 17px;
+    border: 1px solid #4338ca;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: #ffffff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+
+.fa-profile-primary-button:hover {
+    background: #4338ca;
+}
+
+/* --------------------------------------------------------------------------
+ | Security Information
+ | Highlights MPIN security guidance.
+ * -------------------------------------------------------------------------- */
+.fa-profile-security-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 14px;
+    border: 1px solid #dbeafe;
+    border-radius: 9px;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.fa-profile-security-note svg {
+    flex-shrink: 0;
+}
+
+.fa-profile-security-note p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+ | Email Notification Preferences
+ | Uses accessible native checkbox controls with custom toggle styling.
+ * -------------------------------------------------------------------------- */
+.fa-profile-notifications {
+    padding-top: 10px;
+}
+
+.fa-profile-notification-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 19px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.fa-profile-notification-row > div {
+    min-width: 0;
+}
+
+.fa-profile-notification-row h3 {
+    margin: 0 0 6px;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.fa-profile-notification-row p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.fa-profile-switch {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 42px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.fa-profile-switch input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.fa-profile-switch__track {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: #cbd5e1;
+    transition: background 0.2s ease;
+}
+
+.fa-profile-switch__track::before {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    content: "";
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.fa-profile-switch input:checked + .fa-profile-switch__track {
+    background: #4f46e5;
+}
+
+.fa-profile-switch input:checked + .fa-profile-switch__track::before {
+    transform: translateX(18px);
+}
+
+.fa-profile-switch input:focus-visible + .fa-profile-switch__track {
+    outline: 3px solid rgba(99, 102, 241, 0.3);
+    outline-offset: 3px;
+}
+
+.fa-profile-notifications .fa-profile-form__actions {
+    padding-top: 18px;
+}
+
+/* --------------------------------------------------------------------------
+ | Profile Feedback Messages
+ | Distinguishes validation errors from successful backend responses.
+ * -------------------------------------------------------------------------- */
+.fa-profile-feedback {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.fa-profile-feedback--error {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.fa-profile-feedback--success {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+/* --------------------------------------------------------------------------
+ | Responsive Profile Layout
+ | Moves navigation above content on smaller screens.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .fa-profile-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .fa-profile-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .fa-profile-content {
+        padding: 22px;
+    }
+}
+
+@media (max-width: 576px) {
+    .fa-profile-page {
+        gap: 17px;
+    }
+
+    .fa-profile-nav {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .fa-profile-content {
+        padding: 16px;
+    }
+
+    .fa-profile-details__grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 17px;
+    }
+
+    .fa-profile-identity {
+        flex-wrap: wrap;
+        padding: 14px;
+    }
+
+    .fa-profile-account-badge {
+        margin-left: 0;
+    }
+
+    .fa-profile-content__heading h2 {
+        font-size: 17px;
+    }
+
+    .fa-profile-form__actions {
+        justify-content: stretch;
+    }
+
+    .fa-profile-primary-button {
+        width: 100%;
+    }
+}
+
+
+/* --------------------------------------------------------------------------
+ | Modern Profile Feedback — Success State
+ | Creates a polished success notification with a soft green surface,
+ | subtle glass effect, a refined border, and a smooth entrance animation.
+ * -------------------------------------------------------------------------- */
+
+.fa-profile-feedback--success {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 0 0 24px;
+    padding: 16px 20px;
+    overflow: hidden;
+
+    color: #166534;
+    background: linear-gradient(
+        135deg,
+        rgba(240, 253, 244, 0.96) 0%,
+        rgba(220, 252, 231, 0.82) 100%
+    );
+
+    border: 1px solid rgba(74, 222, 128, 0.35);
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 14px rgba(22, 101, 52, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+
+    animation: profile-success-enter 0.35s ease-out both;
+}
+
+/* Adds a slim success accent along the left edge. */
+.fa-profile-feedback--success::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+
+    background: linear-gradient(
+        180deg,
+        #22c55e,
+        #15803d
+    );
+
+    border-radius: 16px 0 0 16px;
+}
+
+/* Creates a compact success icon using CSS only. */
+.fa-profile-feedback--success::after {
+    content: "✓";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 28px;
+    order: -1;
+
+    width: 28px;
+    height: 28px;
+
+    color: #15803d;
+    background: rgba(187, 247, 208, 0.72);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 50%;
+
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Smoothly reveals the notification without a distracting bounce. */
+@keyframes profile-success-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Keeps the notification comfortable on smaller screens. */
+@media (max-width: 600px) {
+    .fa-profile-feedback--success {
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 14px 15px;
+        border-radius: 13px;
+        font-size: 13px;
+    }
+
+    .fa-profile-feedback--success::after {
+        flex-basis: 25px;
+        width: 25px;
+        height: 25px;
+        font-size: 13px;
+    }
+}
+
+/* Respects accessibility preferences for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+    .fa-profile-feedback--success {
+        animation: none;
+    }
+}
+
+
+
+/* --------------------------------------------------------------------------
+ * Field Agent MPIN Settings
+ * Styles the six-digit PIN fields, enable toggle and helper text.
+ * -------------------------------------------------------------------------- */
+
+.fa-profile-mpin-field {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.fa-profile-mpin-field label {
+    color: #29466f;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.fa-profile-mpin-field input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid #d4e0f0;
+    border-radius: 10px;
+    background: #fff;
+    color: #18375f;
+    font: inherit;
+    letter-spacing: 0.2em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fa-profile-mpin-field input:focus {
+    border-color: #0866d5;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(8, 102, 213, 0.12);
+}
+
+.fa-profile-mpin-field small {
+    color: #627795;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.fa-profile-mpin-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 10px;
+    color: #18375f;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.fa-profile-mpin-toggle input {
+    width: 18px;
+    height: 18px;
+    accent-color: #0866d5;
+}
+
+.fa-profile-mpin-toggle + p {
+    margin: 0 0 20px;
+    color: #627795;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.fa-profile-primary-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+/* Respect reduced-motion preferences for MPIN form controls. */
+@media (prefers-reduced-motion: reduce) {
+    .fa-profile-mpin-field input {
+        transition: none;
+    }
+}
+
+

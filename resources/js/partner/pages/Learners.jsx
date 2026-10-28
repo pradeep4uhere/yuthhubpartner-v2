@@ -11,6 +11,7 @@ import {
     GraduationCap,
     RefreshCw,
     CalendarDays,
+    Check,
     X,
 } from "lucide-react";
 
@@ -153,8 +154,62 @@ const initials = (name = "") =>
 
 const escapeCsv = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
 
+function ExportToast({ toast, onClose }) {
+    useEffect(() => {
+        if (!toast) return;
+
+        const timer = setTimeout(onClose, 6500);
+
+        return () => clearTimeout(timer);
+    }, [toast, onClose]);
+
+    if (!toast) return null;
+
+    return (
+        <div className="pl-toast-container">
+            <div
+                key={toast.key}
+                className={`pl-export-toast pl-export-toast--${toast.type}`}
+                role="status"
+                aria-live="polite"
+            >
+                <div className="pl-toast-icon">
+                    <Check size={22} strokeWidth={2.5} />
+                </div>
+
+                <div className="pl-toast-content">
+                    <div className="pl-toast-heading">
+                        <strong>{toast.title}</strong>
+
+                        <span className="pl-toast-id">#{toast.exportId}</span>
+                    </div>
+
+                    <p>{toast.message}</p>
+
+                    <span className="pl-toast-status">
+                        <span className="pl-toast-pulse" />
+                        Processing in background
+                    </span>
+                </div>
+
+                <button
+                    type="button"
+                    className="pl-toast-close"
+                    onClick={onClose}
+                    aria-label="Close notification"
+                >
+                    ×
+                </button>
+
+                <div className="pl-toast-progress" />
+            </div>
+        </div>
+    );
+}
+
 export default function PartnerLearnerList() {
     // Advanced Search Panel
+    const [exportToast, setExportToast] = useState(null);
     const [showAdvanced, setShowAdvanced] = useState(false);
 
     // Values currently entered by the user
@@ -341,56 +396,74 @@ export default function PartnerLearnerList() {
     };
 
     const exportCsv = async () => {
-        // This exports the currently loaded page.
-        // Use a dedicated backend export endpoint for all matching records.
-        if (!visibleLearners.length) return;
+        if (exporting) return;
 
         setExporting(true);
+        setError("");
 
         try {
-            const columns = [
-                ["Learner", "full_name"],
-                ["Registration Date", "source_created_at"],
-                ["Mobile", "phone_number"],
-                ["Field Agent", "field_agent"],
-                ["Unit", "unit"],
-                ["Registered On", "created_at"],
-                ["Status", "status"],
-            ];
-
-            const rows = visibleLearners.map((learner) => {
-                const fullName = [learner.first_name, learner.last_name]
-                    .filter(Boolean)
-                    .join(" ");
-
-                return columns
-                    .map(([, key]) =>
-                        escapeCsv(
-                            key === "full_name" ? fullName : learner[key],
-                        ),
-                    )
-                    .join(",");
+            const params = new URLSearchParams({
+                search: search.trim(),
+                status,
+                agent,
             });
 
-            const csv = [
-                columns.map(([label]) => escapeCsv(label)).join(","),
-                ...rows,
-            ].join("\r\n");
+            Object.entries(advancedFilters).forEach(([key, value]) => {
+                const normalized = String(value ?? "").trim();
 
-            const blobUrl = URL.createObjectURL(
-                new Blob(["\uFEFF" + csv], {
-                    type: "text/csv;charset=utf-8;",
+                if (normalized !== "") {
+                    params.set(key, normalized);
+                }
+            });
+
+            // Create a NEW backend export using the active filters.
+            const response = await fetch("/api/partner/learners/export", {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN":
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute("content") || "",
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    filters: Object.fromEntries(params.entries()),
                 }),
-            );
+            });
 
-            const link = document.createElement("a");
-            link.href = blobUrl;
-            link.download = `partner-learners-page-${currentPage}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+            const result = await response.json();
 
-            URL.revokeObjectURL(blobUrl);
+            if (!response.ok || result.success === false) {
+                throw new Error(
+                    result.message || "Unable to create learner export.",
+                );
+            }
+
+            const exportId =
+                result.export?.id ??
+                result.data?.export?.id ??
+                result.data?.id ??
+                result.export_id ??
+                result.id;
+
+            if (!exportId) {
+                throw new Error(
+                    "Export request response mein export ID nahi mila. API response check karein.",
+                );
+            }
+
+            setExportToast({
+                type: "success",
+                title: "Export Request Submitted",
+                message:
+                    "Your learner export is being prepared. You can download it once processing is complete.",
+                exportId,
+                key: Date.now(),
+            });
+        } catch (err) {
+            setError(err.message || "Unable to export learners.");
         } finally {
             setExporting(false);
         }
@@ -429,7 +502,9 @@ export default function PartnerLearnerList() {
                     ) : (
                         <Download size={17} />
                     )}
-                    {exporting ? "Exporting..." : "Export Current Page"}
+                    {exporting
+                        ? "Requesting Export..."
+                        : "Export All Matching Learners"}
                 </button>
             </header>
 
@@ -529,7 +604,7 @@ export default function PartnerLearnerList() {
                         type="button"
                         className="pl-button pl-button--secondary"
                         onClick={() => setRefreshKey((key) => key + 1)}
-                        disabled={loading}
+                        disabled={loading || exporting}
                     >
                         <RefreshCw
                             size={15}
@@ -834,6 +909,10 @@ export default function PartnerLearnerList() {
                     </div>
                 </footer>
             </section>
+            <ExportToast
+                toast={exportToast}
+                onClose={() => setExportToast(null)}
+            />
         </main>
     );
 }

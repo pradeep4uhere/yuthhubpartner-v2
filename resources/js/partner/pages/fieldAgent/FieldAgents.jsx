@@ -15,10 +15,13 @@ import {
     Mail,
     Phone,
     RefreshCw,
+    CheckCircle2,
+    LoaderCircle,
 } from "lucide-react";
 import "./FieldAgents.css";
 
 const API_BASE = "/api/partner/field-agents";
+const EXPORT_API = "/api/partner/field-agents/export";
 const PAGE_SIZE = 10;
 const EMPTY_SUMMARY = {
     total_agents: 0,
@@ -185,6 +188,77 @@ function TableSkeleton({ rows }) {
     ));
 }
 
+/* =========================================
+   FIELD AGENT EXPORT NOTIFICATION
+   Displays success/error and auto-dismisses.
+========================================= */
+
+function FieldAgentExportToast({ toast, onClose }) {
+    useEffect(() => {
+        if (!toast) return;
+
+        const timer = setTimeout(onClose, 6500);
+
+        return () => clearTimeout(timer);
+    }, [toast, onClose]);
+
+    if (!toast) return null;
+
+    const success = toast.type === "success";
+
+    return (
+        <div className="fa-export-toast-container">
+            <div
+                key={toast.key}
+                className={`fa-export-toast ${
+                    success ? "is-success" : "is-error"
+                }`}
+                role={success ? "status" : "alert"}
+            >
+                <div className="fa-export-toast-icon">
+                    {success ? (
+                        <CheckCircle2 size={23} />
+                    ) : (
+                        <AlertCircle size={23} />
+                    )}
+                </div>
+
+                <div className="fa-export-toast-content">
+                    <div className="fa-export-toast-heading">
+                        <strong>{toast.title}</strong>
+
+                        {toast.exportId && (
+                            <span className="fa-export-toast-id">
+                                #{toast.exportId}
+                            </span>
+                        )}
+                    </div>
+
+                    <p>{toast.message}</p>
+
+                    {success && (
+                        <span className="fa-export-toast-status">
+                            <span className="fa-export-toast-pulse" />
+                            Export request queued
+                        </span>
+                    )}
+                </div>
+
+                <button
+                    type="button"
+                    className="fa-export-toast-close"
+                    onClick={onClose}
+                    aria-label="Close notification"
+                >
+                    <X size={17} />
+                </button>
+
+                <div className="fa-export-toast-progress" />
+            </div>
+        </div>
+    );
+}
+
 export default function FieldAgents({ onViewDetails }) {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -198,6 +272,14 @@ export default function FieldAgents({ onViewDetails }) {
 
     const [agents, setAgents] = useState([]);
     const [summary, setSummary] = useState(EMPTY_SUMMARY);
+
+    /* =========================================
+    FIELD AGENT EXPORT STATES
+    ========================================= */
+
+    const [exporting, setExporting] = useState(false);
+    const [exportToast, setExportToast] = useState(null);
+
     const [pagination, setPagination] = useState({
         current_page: 1,
         per_page: PAGE_SIZE,
@@ -301,6 +383,82 @@ export default function FieldAgents({ onViewDetails }) {
         setStatus("");
         resetPage();
     };
+
+    /* =========================================
+    REQUEST FIELD AGENT CSV EXPORT
+    Exports all agents matching current filters.
+    Pagination is intentionally excluded.
+    ========================================= */
+
+    const exportAgents = async () => {
+        if (exporting) return;
+
+        setExporting(true);
+
+        try {
+            const filters = {};
+
+            if (search.trim()) filters.search = search.trim();
+            if (state) filters.state = state;
+            if (district) filters.district = district;
+            if (center) filters.center_id = center;
+            if (status) filters.status = status;
+
+            const response = await fetch(EXPORT_API, {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN":
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute("content") || "",
+                },
+                body: JSON.stringify({ filters }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || result.success === false) {
+                throw new Error(
+                    result.message || "Unable to create field agent export.",
+                );
+            }
+
+            const exportId =
+                result.export?.id ??
+                result.data?.export?.id ??
+                result.data?.id ??
+                result.export_id ??
+                result.id;
+
+            if (!exportId) {
+                throw new Error("Export ID missing from API response.");
+            }
+
+            setExportToast({
+                type: "success",
+                title: "Export Request Submitted",
+                message:
+                    "Your field agent report is being prepared. Once completed, you can download it from My Downloads.",
+                exportId,
+                key: Date.now(),
+            });
+        } catch (err) {
+            setExportToast({
+                type: "error",
+                title: "Export Request Failed",
+                message: err.message || "Please try again.",
+                exportId: null,
+                key: Date.now(),
+            });
+        } finally {
+            setExporting(false);
+        }
+    };
+
     const retry = () => setRefreshKey((key) => key + 1);
     const changePage = useCallback(
         (next) => setPage(Math.max(1, Math.min(next, pagination.last_page))),
@@ -358,10 +516,21 @@ export default function FieldAgents({ onViewDetails }) {
                     <button
                         type="button"
                         className="fa-export-btn"
-                        disabled
-                        title="Full filtered CSV export endpoint is not implemented yet"
+                        onClick={exportAgents}
+                        disabled={exporting}
+                        title="Export all matching field agents"
                     >
-                        <Download size={17} /> Export Agents
+                        {exporting ? (
+                            <>
+                                <LoaderCircle size={17} className="fa-spin" />
+                                Requesting Export...
+                            </>
+                        ) : (
+                            <>
+                                <Download size={17} />
+                                Export All Matching Agents
+                            </>
+                        )}
                     </button>
                 </div>
             </div>
@@ -769,6 +938,13 @@ export default function FieldAgents({ onViewDetails }) {
                     </div>
                 </div>
             </div>
+
+            {/* FIELD AGENT EXPORT NOTIFICATION */}
+
+            <FieldAgentExportToast
+                toast={exportToast}
+                onClose={() => setExportToast(null)}
+            />
         </section>
     );
 }

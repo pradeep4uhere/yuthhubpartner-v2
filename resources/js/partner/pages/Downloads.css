@@ -1,0 +1,715 @@
+.yp-dl-page {
+    padding: 25px !important;
+    color: #101e43;
+}
+
+.yp-dl-header,
+.yp-dl-toolbar,
+.yp-dl-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.yp-dl-header {
+    margin-bottom: 22px;
+}
+
+.yp-dl-header h2 {
+    margin: 0 0 5px;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -.6px;
+}
+
+.yp-dl-header p {
+    margin: 0;
+    font-size: 12px;
+    color: #75829a;
+}
+
+.yp-dl-refresh,
+.yp-dl-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 14px;
+    border: 1px solid #dce5f2;
+    border-radius: 9px;
+    background: white;
+    color: #2865dc;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.yp-dl-refresh:hover {
+    background: #edf4ff;
+}
+
+/* ==========================================
+   DOWNLOADS - PREMIUM HORIZONTAL STAT CARDS
+========================================== */
+
+.yp-dl-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.yp-dl-stat {
+    --card-bg: #eaf2ff;
+    --card-border: #bad6ff;
+    --card-accent: #2d86ee;
+    --card-icon-bg: #2d86ee;
+    --card-arrow-bg: #e3efff;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+    min-height: 94px;
+    padding: 14px 15px;
+
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 11px;
+
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.yp-dl-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(16, 30, 67, .07);
+}
+
+.yp-dl-stat:focus-visible {
+    outline: 2px solid var(--card-accent);
+    outline-offset: 3px;
+}
+
+.yp-dl-stat.is-selected {
+    box-shadow: inset 0 0 0 1px var(--card-border);
+}
+
+/* LEFT CIRCULAR ICON */
+
+.yp-dl-stat-icon {
+    width: 41px;
+    height: 41px;
+    flex: 0 0 41px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: var(--card-icon-bg);
+    color: #fff;
+}
+
+/* CENTER CONTENT */
+
+.yp-dl-stat-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.yp-dl-stat-title {
+    color: #101e43 !important;
+    font-size: 11px !important;
+    font-weight: 750 !important;
+    line-height: 1.4;
+}
+
+.yp-dl-stat-content strong {
+    display: block;
+    margin-top: 2px;
+
+    color: #101e43;
+    font-size: 23px;
+    font-weight: 850;
+    line-height: 1.2;
+    letter-spacing: -.7px;
+    font-variant-numeric: tabular-nums;
+}
+
+.yp-dl-stat-content small {
+    margin-top: 7px;
+    color: #7890b6;
+    font-size: 10px;
+    font-weight: 450;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* RIGHT ARROW */
+
+.yp-dl-stat-arrow {
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--card-border);
+    border-radius: 50%;
+
+    background: var(--card-arrow-bg);
+    color: var(--card-accent);
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
+
+.yp-dl-stat:hover .yp-dl-stat-arrow {
+    transform: translateX(3px);
+}
+
+/* ==========================================
+   CARD COLORS
+========================================== */
+
+/* BLUE - TOTAL */
+
+.yp-dl-stat--blue {
+    --card-bg: #eaf2ff;
+    --card-border: #bad6ff;
+    --card-accent: #2d86ee;
+    --card-icon-bg: #2d86ee;
+    --card-arrow-bg: #e3efff;
+}
+
+/* GREEN - COMPLETED */
+
+.yp-dl-stat--green {
+    --card-bg: #e8f8f4;
+    --card-border: #a2e9dc;
+    --card-accent: #04b992;
+    --card-icon-bg: #04b992;
+    --card-arrow-bg: #ddf8f0;
+}
+
+/* PURPLE - PROCESSING */
+
+.yp-dl-stat--purple {
+    --card-bg: #f1ecff;
+    --card-border: #d9c9ff;
+    --card-accent: #8251ed;
+    --card-icon-bg: #8251ed;
+    --card-arrow-bg: #eee5ff;
+}
+
+/* RED - FAILED */
+
+.yp-dl-stat--red {
+    --card-bg: #fff0f0;
+    --card-border: #ffcaca;
+    --card-accent: #ed6262;
+    --card-icon-bg: #ed6262;
+    --card-arrow-bg: #ffe5e5;
+}
+
+/* ==========================================
+   SKELETON
+========================================== */
+
+.yp-dl-sk-stat-value {
+    width: 65px;
+    height: 24px;
+    margin-top: 4px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 1200px) {
+    .yp-dl-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .yp-dl-stats {
+        gap: 10px;
+    }
+
+    .yp-dl-stat {
+        padding: 12px 10px;
+        gap: 9px;
+        min-height: 90px;
+    }
+
+    .yp-dl-stat-icon {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+
+    .yp-dl-stat-content strong {
+        font-size: 20px;
+    }
+
+    .yp-dl-stat-arrow {
+        width: 21px;
+        height: 21px;
+        flex-basis: 21px;
+    }
+
+    .yp-dl-stat-title {
+        font-size: 10px !important;
+    }
+
+    .yp-dl-stat-content small {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 390px) {
+    .yp-dl-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .yp-dl-stat,
+    .yp-dl-stat-arrow {
+        transition: none;
+    }
+}
+
+
+.yp-dl-stat--green .yp-dl-stat-icon {
+    background: #e7f8ef;
+    color: #079669;
+}
+
+.yp-dl-stat--amber .yp-dl-stat-icon {
+    background: #fff5e4;
+    color: #d18a16;
+}
+
+.yp-dl-stat--red .yp-dl-stat-icon {
+    background: #fff0ef;
+    color: #dc5252;
+}
+
+.yp-dl-panel {
+    background: white;
+    border: 1px solid #e5eaf3;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.yp-dl-toolbar {
+    padding: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.yp-dl-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    min-width: 240px;
+    height: 39px;
+    border: 1px solid #e1e7f0;
+    border-radius: 9px;
+    color: #8591a5;
+}
+
+.yp-dl-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    font: inherit;
+    font-size: 12px;
+    color: #101e43;
+}
+
+.yp-dl-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.yp-dl-filters button {
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #748198;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.yp-dl-filters button.active {
+    background: #edf3ff;
+    color: #2865dc;
+}
+
+.yp-dl-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.yp-dl-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.yp-dl-table th {
+    padding: 14px 17px;
+    background: #f8faff;
+    color: #75829a;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.yp-dl-table td {
+    padding: 15px 17px;
+    border-top: 1px solid #edf0f5;
+    font-size: 12px;
+    color: #53617b;
+}
+
+.yp-dl-table tbody tr:hover {
+    background: #fbfcff;
+}
+
+.yp-dl-file {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.yp-dl-file-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: #eaf8ef;
+    color: #14945d;
+}
+
+.yp-dl-file strong,
+.yp-dl-file small {
+    display: block;
+}
+
+.yp-dl-file strong {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    color: #101e43;
+}
+
+.yp-dl-file small {
+    margin-top: 4px;
+    font-size: 10px;
+    color: #96a0b1;
+}
+
+.yp-dl-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border-radius: 6px;
+    background: #edf3ff;
+    color: #2865dc;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.yp-dl-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.yp-dl-status--completed {
+    background: #e7f8ef;
+    color: #079669;
+}
+
+.yp-dl-status--failed {
+    background: #fff0ef;
+    color: #dc5252;
+}
+
+.yp-dl-status--processing,
+.yp-dl-status--queued {
+    background: #fff5e4;
+    color: #c88a20;
+}
+
+.yp-dl-download {
+    padding: 8px 11px;
+    background: #edf3ff;
+    border-color: transparent;
+}
+
+.yp-dl-download:hover {
+    background: #2865dc;
+    color: white;
+}
+
+.yp-dl-wait {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #a47727;
+}
+
+.yp-dl-failed {
+    color: #dc5252;
+    font-size: 11px;
+}
+
+.yp-dl-empty {
+    padding: 45px 15px !important;
+    text-align: center;
+    color: #8591a5 !important;
+}
+
+.yp-dl-error {
+    margin: 12px 16px;
+    padding: 12px;
+    background: #fff0ef;
+    color: #c63d3d;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.yp-dl-footer {
+    padding: 13px 17px;
+    border-top: 1px solid #edf0f5;
+    color: #75829a;
+    font-size: 11px;
+}
+
+.yp-dl-pagination {
+    display: flex;
+    gap: 6px;
+}
+
+.yp-dl-pagination button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border: 1px solid #e1e7f0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.yp-dl-pagination button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.yp-dl-spin {
+    animation: ypDlSpin 1s linear infinite;
+}
+
+@keyframes ypDlSpin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+    .yp-dl-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .yp-dl-header {
+        align-items: flex-start;
+    }
+
+    .yp-dl-header h2 {
+        font-size: 19px;
+    }
+
+    .yp-dl-stat {
+        padding: 13px;
+    }
+
+    .yp-dl-search {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .yp-dl-spin {
+        animation: none;
+    }
+}
+
+
+/* ==========================================
+   DOWNLOADS - PREMIUM SKELETON LOADING
+========================================== */
+
+.yp-dl-skeleton {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    background: #e9eef6;
+    border-radius: 6px;
+}
+
+/* Shimmer animation */
+
+.yp-dl-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.85) 50%,
+        transparent 100%
+    );
+
+    transform: translateX(-100%);
+    animation: ypDlShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes ypDlShimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Table skeleton */
+
+.yp-dl-skeleton-row td {
+    height: 70px;
+}
+
+.yp-dl-skeleton-file {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.yp-dl-sk-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 9px;
+}
+
+.yp-dl-sk-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.yp-dl-sk-title {
+    width: 155px;
+    height: 11px;
+}
+
+.yp-dl-sk-subtitle {
+    width: 95px;
+    height: 8px;
+}
+
+.yp-dl-sk-records {
+    width: 55px;
+    height: 12px;
+}
+
+.yp-dl-sk-date {
+    width: 105px;
+    height: 12px;
+}
+
+.yp-dl-sk-badge {
+    width: 85px;
+    height: 24px;
+    border-radius: 6px;
+}
+
+.yp-dl-sk-button {
+    width: 105px;
+    height: 32px;
+    border-radius: 8px;
+}
+
+/* Summary card skeleton */
+
+.yp-dl-sk-stat-value {
+    width: 65px;
+    height: 26px;
+    border-radius: 5px;
+}
+
+.yp-dl-sk-stat-label {
+    width: 95px;
+    height: 10px;
+}
+
+/* Smooth data appearance */
+
+.yp-dl-table tbody tr:not(.yp-dl-skeleton-row) {
+    animation: ypDlFadeIn 0.3s ease both;
+}
+
+@keyframes ypDlFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .yp-dl-skeleton::after,
+    .yp-dl-table tbody tr {
+        animation: none !important;
+    }
+}
+

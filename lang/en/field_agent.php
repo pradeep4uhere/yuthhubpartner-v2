@@ -37,6 +37,8 @@ return [
     'learners_short'=> 'Learner',
     'profile_short' => 'Profile',
 
+    'personal_information' => 'Personal Information',
+
 
 
     // Translations used by React components

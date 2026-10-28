@@ -8,12 +8,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\SupportTicket;
 
 #[Fillable(['partner_code', 'name', 'contact_number', 'email', 'status', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class Partner extends Authenticatable
 {
     use HasFactory;
+
+
+
+    public function supportTickets(): MorphMany
+    {
+        return $this->morphMany(
+            SupportTicket::class,
+            'requester'
+        );
+    }
 
     public function centers(): HasMany
     {
@@ -24,6 +35,8 @@ class Partner extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'mpin_hash' => 'hashed',
+            'mpin_login_enabled' => 'boolean',
         ];
     }
 
@@ -42,18 +55,6 @@ class Partner extends Authenticatable
 
 
 
-    /**
-     * Get all support tickets raised by this Partner.
-     *
-     * @return MorphMany
-     */
-    public function supportTickets(): MorphMany
-    {
-        return $this->morphMany(
-            SupportTicket::class,
-            'requester'
-        );
-    }
 
 
     public function fieldAgents(): HasMany

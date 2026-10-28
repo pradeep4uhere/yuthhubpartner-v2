@@ -27,7 +27,7 @@ class ExportScopeService
 
             $requester instanceof Partner =>
                 Learner::query()
-                    ->where('partner_id', $requester->id),
+                    ->where('learners.partner_id', $requester->id),
 
             $requester instanceof FieldAgent =>
                 Learner::query()

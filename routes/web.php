@@ -75,6 +75,16 @@ Route::prefix('partner-placement')->name('partner-placement.')->group(function (
 Route::prefix('partner')->name('partner.')->group(function (): void {
     Route::get('/login', [PartnerPortalController::class, 'create'])->middleware('guest:partner')->name('login');
     Route::post('/login', [PartnerPortalController::class, 'store'])->middleware(['guest:partner', 'throttle:5,1'])->name('login.store');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Partner MPIN Verification
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/mpin-verification', [PartnerPortalController::class,'showMpinVerification',])->middleware('throttle:10,1')->name('mpin.verify');
+    Route::post('/mpin-verification', [PartnerPortalController::class,'verifyMpin',])->middleware('throttle:5,1')->name('mpin.verify.submit');
+
     Route::middleware('auth:partner')->group(function (): void {
         Route::get('/dashboard', [PartnerPortalController::class, 'dashboard'])->name('dashboard');
         Route::post('/logout', [PartnerPortalController::class, 'destroy'])->name('logout');

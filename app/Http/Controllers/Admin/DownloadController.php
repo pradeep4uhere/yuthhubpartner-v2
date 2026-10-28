@@ -50,9 +50,7 @@ class DownloadController extends Controller
     {
         $admin = auth('admin')->user();
 
-        $query = Export::query()
-            ->where('requested_by_type', get_class($admin))
-            ->where('requested_by_id', $admin->id);
+        $query = Export::query()->whereNotNull('type');
 
         /*
         |--------------------------------------------------------------------------
@@ -172,8 +170,6 @@ class DownloadController extends Controller
         */
 
         $exportTypes = Export::query()
-            ->where('requested_by_type', get_class($admin))
-            ->where('requested_by_id', $admin->id)
             ->whereNotNull('type')
             ->distinct()
             ->orderBy('type')
