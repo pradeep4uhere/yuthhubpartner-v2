@@ -713,3 +713,26 @@
     }
 }
 
+/* Keep the preparation status and progress count vertically aligned. */
+.yp-dl-preparing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+/* Display the estimated remaining time beside the preparing label. */
+.yp-dl-wait {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+/* Style the processed-record count beneath the status. */
+.yp-dl-progress-text {
+    padding-left: 20px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.4;
+}

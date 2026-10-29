@@ -54,6 +54,25 @@
                     <span>{{ __('field_agent.events') }}</span>
                 </button>
 
+                {{-- Partner Announcements Navigation --}}
+                <button type="button" data-section="announcements">
+
+                    <span class="field-agent-nav__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-megaphone" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"></path><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"></path><path d="M8 6v8"></path></svg>
+                    </span>
+
+                    <span>Announcements</span>
+
+                    {{-- Updated dynamically through the React dashboard --}}
+                    <span
+                        class="fa-ann-nav-count"
+                        data-announcement-count
+                        hidden>
+                        0
+                    </span>
+
+                </button>
+
 
             </nav>
 
@@ -211,6 +230,7 @@
                 <span>{{ __('field_agent.events') }}</span>
             </button>
 
+
             <button type="button" data-section="profile">
                 <span>◎</span>
                 <span>{{ __('field_agent.profile_short') }}</span>
@@ -232,6 +252,7 @@
             const toggle = document.getElementById('field-agent-menu-toggle');
             const drawer = document.getElementById('field-agent-drawer');
             const overlay = document.getElementById('field-agent-drawer-overlay');
+
 
             if (!toggle || !drawer || !overlay) {
                 return;
@@ -311,6 +332,35 @@
                     if (!section) {
                         return;
                     }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Announcement Unread Count Synchronization
+                    |--------------------------------------------------------------------------
+                    | Receives the unread count from the React Field Agent Dashboard
+                    | and updates both desktop and mobile navigation badges.
+                    */
+
+                    // Update every announcement badge in the Field Agent navigation.
+                    function updateAnnouncementBadges(count) {
+
+                        const unread = Math.max(0, Number(count) || 0);
+
+                        app.querySelectorAll('[data-announcement-count]').forEach(badge => {
+
+                            badge.textContent = unread > 99 ? '99+' : String(unread);
+
+                            badge.hidden = unread === 0;
+
+                        });
+                    }
+
+                    // Listen for unread-count updates dispatched by React.
+                    window.addEventListener('field-agent:announcement-count', event => {
+
+                        updateAnnouncementBadges(event.detail?.count ?? 0);
+
+                    });
 
                     setDrawer(false);
                     updateActiveNavigation(section);

@@ -21,6 +21,8 @@ class Export extends Model
         'file_path',
         'status',
         'total_records',
+        'processed_records',
+        'estimated_seconds_remaining',
         'error_message',
         'started_at',
         'completed_at',
@@ -31,6 +33,8 @@ class Export extends Model
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
         'total_records' => 'integer',
+        'processed_records' => 'integer',
+        'estimated_seconds_remaining' => 'integer',
     ];
 
     /**

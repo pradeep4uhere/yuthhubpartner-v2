@@ -18,6 +18,11 @@ const Learners = lazy(() => import("./pages/Learners.jsx"));
 
 const Downloads = lazy(() => import("./pages/Downloads.jsx"));
 
+// Lazy-load the Partner Announcement Management page.
+const Announcements = lazy(
+    () => import("./pages/announcements/Announcements.jsx"),
+);
+
 const Reports = lazy(() => import("./pages/Reports.jsx"));
 
 const EventTransactions = lazy(
@@ -82,6 +87,11 @@ const pages = {
     downloads: {
         titleKey: "downloads",
         component: Downloads,
+    },
+
+    announcements: {
+        titleKey: "announcements",
+        component: Announcements,
     },
 
     profile: {

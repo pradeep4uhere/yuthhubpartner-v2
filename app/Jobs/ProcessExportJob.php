@@ -77,6 +77,8 @@ class ProcessExportJob implements ShouldQueue
                 'total_records' => $result['total_records'],
                 'completed_at' => now(),
                 'error_message' => null,
+                'processed_records' => 0,
+                'estimated_seconds_remaining' => null,
             ]);
 
             logger()->info(
@@ -113,6 +115,8 @@ class ProcessExportJob implements ShouldQueue
     {
         Export::where('id', $this->exportId)
             ->update([
+                'processed_records' => $result['total_records'],
+                'estimated_seconds_remaining' => 0,
                 'status' => 'failed',
                 'error_message' => $exception->getMessage(),
             ]);

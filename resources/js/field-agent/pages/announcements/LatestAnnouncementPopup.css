@@ -1,0 +1,259 @@
+
+/* =========================================
+   LATEST ANNOUNCEMENT POPUP
+========================================= */
+
+.fa-lap-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    padding: 20px 14px;
+    background: rgba(15, 23, 42, 0.68);
+    backdrop-filter: blur(3px);
+
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.fa-lap-modal {
+    width: min(100%, 500px);
+    max-width: 100%;
+    max-height: calc(100dvh - 40px);
+
+    display: flex;
+    flex-direction: column;
+
+    margin: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.28);
+    animation: faLapEnter 0.25s ease-out;
+    box-sizing: border-box;
+}
+
+@keyframes faLapEnter {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+
+.fa-lap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    padding: 20px 22px;
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.fa-lap-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: #172554;
+}
+
+.fa-lap-heading h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.fa-lap-close {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 0;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #475569;
+    cursor: pointer;
+}
+
+.fa-lap-close:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Scrollable content */
+
+.fa-lap-body {
+    padding: 20px 22px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    min-width: 0;
+    overscroll-behavior: contain;
+}
+
+.fa-lap-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.fa-lap-meta > span:last-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.fa-lap-title {
+    margin: 0 0 12px;
+    color: #0f172a;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.fa-lap-message {
+    margin-bottom: 18px;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Attachment image */
+
+.fa-lap-image-link {
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+
+    overflow: hidden;
+    border-radius: 9px;
+    background: #f1f5f9;
+}
+
+.fa-lap-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 520px;
+    object-fit: contain;
+}
+
+.fa-lap-image-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 10px;
+    background: #172554;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.fa-lap-pdf {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
+.fa-lap-pdf span {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Footer */
+
+.fa-lap-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 14px 22px;
+    border-top: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.fa-lap-footer span {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.fa-lap-footer button {
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Mobile */
+
+@media (max-width: 576px) {
+    .fa-lap-overlay {
+        padding: 12px;
+    }
+
+    .fa-lap-modal {
+        max-height: calc(100dvh - 24px);
+    }
+
+    .fa-lap-header,
+    .fa-lap-body {
+        padding: 16px;
+    }
+
+    .fa-lap-footer {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+    }
+
+    .fa-lap-heading h2 {
+        font-size: 17px;
+    }
+
+    .fa-lap-title {
+        font-size: 17px;
+    }
+
+    .fa-lap-image {
+        max-height: 400px;
+    }
+}

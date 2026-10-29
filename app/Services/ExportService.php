@@ -16,7 +16,8 @@ class ExportService
     {
         $this->validate($data);
 
-        $export =  $requester->exports()->create([
+        // Create a queued export with initialized progress and ETA values.
+        $export = $requester->exports()->create([
             'type' => $data['type'],
             'scope_type' => $data['scope_type'] ?? null,
             'scope_id' => $data['scope_id'] ?? null,
@@ -24,6 +25,8 @@ class ExportService
             'filters' => $data['filters'] ?? null,
             'status' => 'queued',
             'total_records' => 0,
+            'processed_records' => 0,
+            'estimated_seconds_remaining' => null,
         ]);
 
         ProcessExportJob::dispatch($export->id);

@@ -24,6 +24,23 @@ const FILTERS = [
     { value: "failed", label: "Failed" },
 ];
 
+// Format the estimated time remaining for an export.
+function getPreparingLabel(seconds) {
+    if (seconds == null || !Number.isFinite(Number(seconds))) {
+        return "Preparing...";
+    }
+
+    const remaining = Math.max(0, Math.ceil(Number(seconds)));
+
+    if (remaining < 60) {
+        return `Preparing... · ${remaining}s left`;
+    }
+
+    const minutes = Math.ceil(remaining / 60);
+
+    return `Preparing... · ~${minutes} min left`;
+}
+
 function StatusBadge({ status }) {
     const value = status || "queued";
 
@@ -386,10 +403,34 @@ export default function Downloads() {
                                                     Failed
                                                 </span>
                                             ) : (
-                                                <span className="yp-dl-wait">
-                                                    <Clock3 size={14} />
-                                                    Preparing...
-                                                </span>
+                                                <div className="yp-dl-preparing">
+                                                    <span className="yp-dl-wait">
+                                                        <Clock3 size={14} />
+                                                        {getPreparingLabel(
+                                                            item.estimated_seconds_remaining,
+                                                        )}
+                                                    </span>
+
+                                                    {Number(
+                                                        item.total_records,
+                                                    ) > 0 && (
+                                                        <small className="yp-dl-progress-text">
+                                                            {Number(
+                                                                item.processed_records ||
+                                                                    0,
+                                                            ).toLocaleString(
+                                                                "en-IN",
+                                                            )}
+                                                            {" / "}
+                                                            {Number(
+                                                                item.total_records,
+                                                            ).toLocaleString(
+                                                                "en-IN",
+                                                            )}
+                                                            {" records"}
+                                                        </small>
+                                                    )}
+                                                </div>
                                             )}
                                         </td>
                                     </tr>

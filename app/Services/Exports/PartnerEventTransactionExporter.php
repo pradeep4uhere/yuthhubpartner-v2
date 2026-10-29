@@ -36,6 +36,17 @@ class PartnerEventTransactionExporter
 
         $this->applyFilters($query, $export->filters ?? []);
 
+        // Calculate the matching record count before generating the XLSX file.
+        $totalToExport = (clone $query)->count();
+
+        $startedAt = microtime(true);
+
+        Export::whereKey($export->id)->update([
+            'total_records' => $totalToExport,
+            'processed_records' => 0,
+            'estimated_seconds_remaining' => null,
+        ]);
+
         $directory = 'exports/partner-event-transactions';
 
         $fileName = 'partner-event-transactions-' .
@@ -96,9 +107,8 @@ class PartnerEventTransactionExporter
             $totalRecords = 0;
 
             /*
-             * Fetch records in chunks to avoid loading the entire result
-             * set into application memory at once.
-             */
+            * Export records in chunks and persist progress after each chunk.
+            */
             $query
                 ->select([
                     'id',
@@ -117,7 +127,10 @@ class PartnerEventTransactionExporter
                 ->chunkById(1000, function ($transactions) use (
                     $sheet,
                     &$row,
-                    &$totalRecords
+                    &$totalRecords,
+                    $export,
+                    $totalToExport,
+                    $startedAt
                 ) {
                     foreach ($transactions as $transaction) {
                         $values = [
@@ -140,27 +153,12 @@ class PartnerEventTransactionExporter
                                 $index + 1
                             ) . $row;
 
-                            /*
-                             * Keep event values numeric in Excel so that
-                             * users can calculate totals and apply formats.
-                             */
                             if ($index === 7 && is_numeric($value)) {
-                                $sheet->setCellValue(
-                                    $cell,
-                                    (float) $value
-                                );
-
+                                $sheet->setCellValue($cell, (float) $value);
                                 continue;
                             }
 
-                            /*
-                             * Store all other values explicitly as text.
-                             * This prevents untrusted text from being
-                             * interpreted as an Excel formula.
-                             */
-                            $text = $value === null
-                                ? ''
-                                : (string) $value;
+                            $text = $value === null ? '' : (string) $value;
 
                             $sheet->setCellValueExplicit(
                                 $cell,
@@ -172,6 +170,23 @@ class PartnerEventTransactionExporter
                         $row++;
                         $totalRecords++;
                     }
+
+                    // Estimate remaining time from the observed processing speed.
+                    $elapsedSeconds = max(0.001, microtime(true) - $startedAt);
+
+                    $remainingRecords = max(0, $totalToExport - $totalRecords);
+
+                    $estimatedSeconds = $totalRecords > 0
+                        ? (int) ceil(
+                            ($elapsedSeconds / $totalRecords) * $remainingRecords
+                        )
+                        : null;
+
+                    // Persist progress so a status endpoint can return live values.
+                    Export::whereKey($export->id)->update([
+                        'processed_records' => $totalRecords,
+                        'estimated_seconds_remaining' => $estimatedSeconds,
+                    ]);
                 }, 'id');
 
             /*

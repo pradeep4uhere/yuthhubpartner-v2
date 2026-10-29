@@ -872,3 +872,56 @@
     }
 }
 
+/* =========================================
+   FIELD AGENT ANNOUNCEMENT BADGES
+========================================= */
+
+.fa-ann-nav-count,
+.fa-ann-mobile-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+
+    border-radius: 20px;
+    background: #ef4444;
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Keep zero-count announcement badges hidden. */
+.fa-ann-nav-count[hidden],
+.fa-ann-mobile-count[hidden] {
+    display: none !important;
+}
+
+/* Push the desktop unread badge to the right. */
+.fa-ann-nav-count {
+    margin-left: auto;
+}
+
+/* Keep mobile announcement count compact. */
+.fa-ann-mobile-count {
+    position: absolute;
+    top: 2px;
+    right: 10px;
+    min-width: 17px;
+    height: 17px;
+    font-size: 9px;
+}
+
+/* Allow the mobile badge to position inside its navigation button. */
+.field-agent-bottom-nav button[data-section="announcements"] {
+    position: relative;
+}
+
+/* Five navigation items after adding Announcements. */
+.field-agent-bottom-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}

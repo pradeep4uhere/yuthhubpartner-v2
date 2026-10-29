@@ -8,6 +8,7 @@ import {
     CircleHelp,
     LogOut,
     Download,
+    Megaphone,
     X,
 } from "lucide-react";
 
@@ -20,7 +21,7 @@ const primary = [
     ["learners", "Learners", GraduationCap],
     ["transactions", "Event Transaction", CalendarDays],
     ["agents", "Field Agents", UsersRound],
-
+    ["announcements", "Announcements", Megaphone],
     ["downloads", "My Downloads", Download],
 ];
 

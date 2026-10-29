@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\Partner\EventTransactionController as PartnerEventT
 use App\Http\Controllers\Api\Partner\PartnerFieldAgentController;
 use App\Http\Controllers\Api\Partner\MpinSettingsController as PartnerMpinSettingsController;
 use App\Http\Controllers\Api\Partner\PartnerDownloadController;
+use App\Http\Controllers\Api\Partner\PartnerAnnouncementController;
+use App\Http\Controllers\Api\FieldAgent\AnnouncementController;
 
 
 
@@ -26,6 +28,69 @@ Route::middleware(['web', 'auth:partner'])
     ->name('api.partner.')
     ->group(function () {
 
+/*
+|--------------------------------------------------------------------------
+| Partner Announcement Management
+|--------------------------------------------------------------------------
+| All endpoints must remain inside the existing authenticated partner group.
+*/
+
+Route::prefix('announcements')
+    ->name('announcements.')
+    ->group(function () {
+
+        // Return announcements and summary statistics.
+        Route::get('/', [
+                PartnerAnnouncementController::class,
+                'index'
+            ])->name('index');
+
+            // Return the authenticated partner's available Field Agents.
+            Route::get('/field-agents', [
+                PartnerAnnouncementController::class,
+                'fieldAgents'
+            ])->name('field-agents');
+
+            // Create a draft or publish a new announcement.
+            Route::post('/', [
+                PartnerAnnouncementController::class,
+                'store'
+            ])->name('store');
+
+            // Return one announcement.
+            Route::get('/{id}', [
+                PartnerAnnouncementController::class,
+                'show'
+            ])->whereNumber('id')->name('show');
+
+            // Update an unpublished draft.
+            Route::put('/{id}', [
+                PartnerAnnouncementController::class,
+                'update'
+            ])->whereNumber('id')->name('update');
+
+            // Publish an existing draft.
+            Route::post('/{id}/publish', [
+                PartnerAnnouncementController::class,
+                'publish'
+            ])->whereNumber('id')->name('publish');
+
+            // Download an attachment securely.
+            Route::get('/{id}/attachment', [
+                PartnerAnnouncementController::class,
+                'attachment'
+            ])->whereNumber('id')->name('attachment');
+
+            // Soft-delete an announcement.
+            Route::delete('/{id}', [
+                PartnerAnnouncementController::class,
+                'destroy'
+            ])->whereNumber('id')->name('destroy');
+        });
+
+
+    // Return progress and status for a partner event transaction export.
+            Route::get('event-transactions/export/{exportId}/status',[PartnerEventTransactionController::class, 'exportStatus'])->name('event-transactions.export.status');
             Route::post('event-transactions/export',[PartnerEventTransactionController::class, 'export'])->name('event-transactions.export');
             Route::get('/downloads', [PartnerDownloadController::class, 'index']);
             Route::get('/downloads/{export}/status', [PartnerDownloadController::class, 'status']);
@@ -154,6 +219,50 @@ Route::middleware(['web', 'auth:field_agent'])
     ->prefix('field-agent')
     ->name('api.field-agent.')
     ->group(function () {
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Field Agent Announcements
+        |--------------------------------------------------------------------------
+        | These routes must be protected by the existing Field Agent auth middleware.
+        */
+
+        Route::prefix('announcements')
+            ->name('announcements.')
+            ->group(function () {
+
+
+            // Preview an attachment after verifying Field Agent access.
+                Route::get(
+                    '/{id}/attachment',
+                    [AnnouncementController::class, 'attachment']
+                )->name('announcements.attachment');
+
+                // List announcements assigned to the authenticated Field Agent.
+                Route::get('/', [
+                    AnnouncementController::class,
+                    'index',
+                ])->name('index');
+
+                // Return the unread announcement count.
+                Route::get('/unread-count', [
+                    AnnouncementController::class,
+                    'unreadCount',
+                ])->name('unread-count');
+
+                // Return one assigned announcement.
+                Route::get('/{id}', [
+                    AnnouncementController::class,
+                    'show',
+                ])->whereNumber('id')->name('show');
+
+                // Mark an assigned announcement as read.
+                Route::post('/{id}/read', [
+                    AnnouncementController::class,
+                    'markAsRead',
+                ])->whereNumber('id')->name('read');
+            });
 
         /*
         |--------------------------------------------------------------------------

@@ -244,6 +244,64 @@ class EventTransactionController extends Controller
     }
 
 
+
+
+        /**
+         * Return progress information for an export requested by the authenticated partner.
+         */
+        public function exportStatus(
+            Request $request,
+            int $exportId
+        ): JsonResponse {
+            $partner = $request->user('partner');
+
+            if (!$partner || $partner->status !== 'active') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized partner.',
+                ], 403);
+            }
+
+            // Restrict access to exports owned by this partner.
+            $export = Export::query()
+                ->whereKey($exportId)
+                ->where('requested_by_type', $partner->getMorphClass())
+                ->where('requested_by_id', $partner->id)
+                ->first();
+
+            if (!$export) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Export not found.',
+                ], 404);
+            }
+
+            $total = (int) ($export->total_records ?? 0);
+            $processed = (int) ($export->processed_records ?? 0);
+
+            // Calculate progress safely, including empty exports.
+            $progress = $export->status === 'completed'
+                ? 100
+                : ($total > 0
+                    ? min(99, (int) floor(($processed / $total) * 100))
+                    : 0);
+
+            return response()->json([
+                'success' => true,
+                'export_id' => $export->id,
+                'status' => $export->status,
+                'total_records' => $total,
+                'processed_records' => $processed,
+                'progress_percent' => $progress,
+                'estimated_seconds_remaining' =>
+                    $export->estimated_seconds_remaining,
+                'error_message' => $export->status === 'failed'
+                    ? $export->error_message
+                    : null,
+            ]);
+        }
+
+
     /*
     |--------------------------------------------------------------------------
     | Event Transaction Details
