@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FieldType extends Model
 {
@@ -19,4 +20,15 @@ class FieldType extends Model
     {
         return $this->hasMany(EventTransaction::class, 'field_type_id', 'id');
     }
+
+    public function placementPartner(): BelongsTo
+    {
+        return $this->belongsTo(
+            PartnerPlacementUser::class,
+            'partner_placement_user_id',
+            'id'
+        );
+    }
+
+
 }

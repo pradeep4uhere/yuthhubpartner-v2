@@ -63,14 +63,6 @@ Route::prefix('field-agent')->name('field-agent.')->group(function (): void {
     });
 });
 
-Route::prefix('partner-placement')->name('partner-placement.')->group(function (): void {
-    Route::get('/login', [PartnerPlacementPortalController::class, 'create'])->middleware('guest:partner_placement')->name('login');
-    Route::post('/login', [PartnerPlacementPortalController::class, 'store'])->middleware(['guest:partner_placement', 'throttle:5,1'])->name('login.store');
-    Route::middleware('auth:partner_placement')->group(function (): void {
-        Route::get('/dashboard', [PartnerPlacementPortalController::class, 'dashboard'])->name('dashboard');
-        Route::post('/logout', [PartnerPlacementPortalController::class, 'destroy'])->name('logout');
-    });
-});
 
 Route::prefix('partner')->name('partner.')->group(function (): void {
     Route::get('/login', [PartnerPortalController::class, 'create'])->middleware('guest:partner')->name('login');
@@ -274,4 +266,28 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
 
     });
 
+});
+
+
+Route::prefix('partner-placement')->name('partner-placement.')->group(function (): void {
+    Route::get('/login', [PartnerPlacementPortalController::class, 'create'])->middleware('guest:partner_placement')->name('login');
+    Route::post('/login', [PartnerPlacementPortalController::class, 'store'])->middleware(['guest:partner_placement', 'throttle:5,1'])->name('login.store');
+    // Display the Placement Partner MPIN verification page.
+    Route::get('/mpin/verify', [
+        PartnerPlacementPortalController::class,
+        'showMpinVerification',
+    ])->middleware('auth:partner_placement')
+    ->name('mpin.verify');
+
+    // Verify the Placement Partner's submitted MPIN.
+    Route::post('/mpin/verify', [
+        PartnerPlacementPortalController::class,
+        'verifyMpin',
+    ])->middleware('auth:partner_placement')
+    ->name('mpin.verify.submit');
+
+    Route::middleware('auth:partner_placement')->group(function (): void {
+        Route::get('/dashboard', [PartnerPlacementPortalController::class, 'dashboard'])->name('dashboard');
+        Route::post('/logout', [PartnerPlacementPortalController::class, 'destroy'])->name('logout');
+    });
 });

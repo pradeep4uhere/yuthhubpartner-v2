@@ -1,0 +1,281 @@
+
+/* =========================================
+   EVENT TRANSACTIONS
+========================================= */
+
+.event-transactions .pl-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.event-transactions .pl-summary-card {
+    min-width: 0;
+}
+
+.event-transactions .pl-summary-content strong {
+    overflow-wrap: anywhere;
+}
+
+/* Table */
+
+.event-transactions .pl-table {
+    min-width: 1120px;
+}
+
+.event-transactions .pl-table th,
+.event-transactions .pl-table td {
+    vertical-align: middle;
+}
+
+.et-beneficiary-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 120px;
+}
+
+.et-beneficiary-info strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.et-beneficiary-info small {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.et-amount {
+    font-weight: 700;
+    color: #0f766e;
+    white-space: nowrap;
+}
+
+/* Advanced Filters */
+
+.event-transactions .pl-advanced-field select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    background: #fff;
+    color: #334155;
+    font: inherit;
+    outline: none;
+}
+
+.event-transactions .pl-advanced-field select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+}
+
+/* Pending Status */
+
+.event-transactions .pl-status--pending {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.event-transactions .pl-status--pending > span {
+    background: #f59e0b;
+}
+
+/* Skeleton */
+
+.event-transactions .pl-skeleton-row td {
+    height: 65px;
+}
+
+/* Responsive */
+
+@media (max-width: 1200px) {
+    .event-transactions .pl-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .event-transactions .pl-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .event-transactions .pl-advanced-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .event-transactions .pl-advanced-action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
+
+
+/* Event Transaction Enhancements */
+
+.partner-learners .pl-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.pl-advanced-field select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    background: #fff;
+    color: #334155;
+    font: inherit;
+    outline: none;
+}
+
+.pl-advanced-field select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+}
+
+.pl-learner small {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.pl-status--pending {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.pl-status--pending > span {
+    background: #f59e0b;
+}
+
+@media (max-width: 1100px) {
+    .partner-learners .pl-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .partner-learners .pl-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Clickable Transaction Rows */
+
+.event-transactions .et-clickable-row {
+    cursor: pointer;
+    transition:
+        background-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.event-transactions .et-clickable-row:hover {
+    background: #f5f7ff;
+    box-shadow: inset 3px 0 0 #6366f1;
+}
+
+.event-transactions .et-clickable-row:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: -2px;
+    background: #eef2ff;
+}
+
+.event-transactions .et-clickable-row:hover .pl-avatar {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.pl-summary-content strong {
+    letter-spacing: -.6px;
+    color: #092d65;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+/* Event Transactions toast: slide in from the right, matching the shared portal notification behavior. */
+.et-toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: min(420px, calc(100vw - 32px));
+    padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #16a34a;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #172033;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    animation: et-toast-slide-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.et-toast--success {
+    border-left-color: #16a34a;
+}
+
+.et-toast--error {
+    border-left-color: #dc2626;
+}
+
+.et-toast > span {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.et-toast button {
+    flex: 0 0 auto;
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #64748b;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.et-toast button:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+@keyframes et-toast-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .et-toast {
+        animation: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .et-toast {
+        top: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+    }
+}
+

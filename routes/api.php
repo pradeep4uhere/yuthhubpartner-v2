@@ -20,6 +20,13 @@ use App\Http\Controllers\Api\Partner\MpinSettingsController as PartnerMpinSettin
 use App\Http\Controllers\Api\Partner\PartnerDownloadController;
 use App\Http\Controllers\Api\Partner\PartnerAnnouncementController;
 use App\Http\Controllers\Api\FieldAgent\AnnouncementController;
+use App\Http\Controllers\Api\PlacementPartner\DashboardApiController;
+use App\Http\Controllers\Api\PlacementPartner\LearnerApiController;
+use App\Http\Controllers\Api\PlacementPartner\EventTransactionApiController;
+use App\Http\Controllers\Api\PlacementPartner\PlacementPartnerFieldAgentController;
+use App\Http\Controllers\Api\PlacementPartner\PlacementPartnerMpinSettingsController;
+use App\Http\Controllers\Api\PlacementPartner\PlacementPartnerChangePasswordController;
+use App\Http\Controllers\Api\PlacementPartner\PlacementSupportTicketController;
 
 
 
@@ -169,10 +176,10 @@ Route::prefix('announcements')
 
         Route::get('/field-agents/filters',[PartnerFieldAgentController::class, 'filters'])->name('field-agents.filters');
 
-        Route::get('/field-agents/{id}/transactions',[PartnerFieldAgentController::class, 'fieldAgentDetails'])->whereNumber('id');
+        Route::get('/field-agents/{id}/transactions',[PartnerFieldAgentController::class, 'fieldAgentDetails'])->whereNumber('id')->name('field-agents.transactions');
 
 
-          /*
+        /*
         |--------------------------------------------------------------------------
         | Change Field Agent Password
         |--------------------------------------------------------------------------
@@ -207,13 +214,193 @@ Route::middleware(['web', 'auth:partner_center'])
             ->name('support-tickets.store');
     });
 
+
+
+
+
+
+
+
 Route::middleware(['web', 'auth:partner_placement'])
     ->prefix('partner-placement')
     ->name('api.partner-placement.')
     ->group(function () {
         Route::post('/support-tickets', [SupportTicketController::class, 'store'])
             ->name('support-tickets.store');
-    });
+
+        Route::get('/dashboard/summary',[DashboardApiController::class, 'summary']);
+        Route::get('/learners', [LearnerApiController::class, 'index'])->name('learners.index');
+        Route::get(
+            '/event-transactions',
+            [EventTransactionApiController::class, 'index']
+        )->name('event-transactions.index');
+
+        Route::post(
+            '/event-transactions/export',
+            [EventTransactionApiController::class, 'export']
+        )->name('event-transactions.export');
+
+        // Register before the {id} route.
+        Route::get(
+            '/event-transactions/exports/{exportId}',
+            [EventTransactionApiController::class, 'exportStatus']
+        )->whereNumber('exportId')
+        ->name('event-transactions.export-status');
+
+        Route::get(
+            '/event-transactions/{id}',
+            [EventTransactionApiController::class, 'show']
+        )->whereNumber('id')
+        ->name('event-transactions.show');
+
+
+        Route::get(
+                '/field-agents/filters',
+                [PlacementPartnerFieldAgentController::class, 'filters']
+            )->name('field-agents.filters');
+
+            Route::get(
+                '/field-agents',
+                [PlacementPartnerFieldAgentController::class, 'index']
+            )->name('field-agents.index');
+
+            Route::get(
+                '/field-agents/{id}',
+                [PlacementPartnerFieldAgentController::class, 'fieldAgentDetails']
+            )->whereNumber('id')->name('field-agents.details');
+
+            Route::post(
+                '/field-agents/export',
+                [PlacementPartnerFieldAgentController::class, 'export']
+            )->name('field-agents.export');
+
+
+            /**
+             * Returns the selected Field Agent's profile and transactions.
+             */
+            Route::get(
+                '/field-agents/{id}/transactions',
+                [PlacementPartnerFieldAgentController::class, 'fieldAgentDetails']
+            )
+                ->whereNumber('id')
+                ->name('field-agents.transactions');
+
+
+                // Export all filtered transactions for a specific Field Agent.
+            Route::get(
+                '/field-agents/{id}/transactions/export',
+                [PlacementPartnerFieldAgentController::class, 'exportFieldAgentTransactions']
+            )
+                ->whereNumber('id')
+                ->name('field-agents.transactions.export');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Placement Partner Change Password
+            |--------------------------------------------------------------------------
+            | Allows the authenticated Placement Partner to update their password.
+            */
+            Route::post(
+                '/change-password',
+                [PlacementPartnerChangePasswordController::class, 'update']
+            )->name('change-password');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Placement Partner MPIN Settings
+            |--------------------------------------------------------------------------
+            | Reads and updates MPIN settings for the authenticated Placement Partner.
+            */
+            Route::get(
+                '/mpin/settings',
+                [PlacementPartnerMpinSettingsController::class, 'show']
+            )->name('mpin.settings.show');
+
+            Route::put(
+                '/mpin/settings',
+                [PlacementPartnerMpinSettingsController::class, 'update']
+            )->name('mpin.settings.update');
+
+
+           /*
+        |--------------------------------------------------------------------------
+        | Support Ticket Categories
+        |--------------------------------------------------------------------------
+        | Return the categories available when creating a support ticket.
+        */
+        Route::get('/support-ticket-categories', [
+            SupportTicketController::class,
+            'categories',
+        ])->name('support-tickets.categories');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Support Ticket List
+        |--------------------------------------------------------------------------
+        | Return support tickets visible to the authenticated Placement Partner.
+        */
+        Route::get('/support-tickets', [
+            SupportTicketController::class,
+            'index',
+        ])->name('support-tickets.index');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Support Ticket
+        |--------------------------------------------------------------------------
+        | Create a ticket owned by the authenticated Placement Partner.
+        */
+        Route::post('/support-tickets', [
+            SupportTicketController::class,
+            'store',
+        ])->name('support-tickets.store');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Support Ticket Details
+        |--------------------------------------------------------------------------
+        | Display a ticket only after verifying Placement Partner ownership.
+        */
+        Route::get('/support-tickets/{ticketId}', [
+            SupportTicketController::class,
+            'show',
+        ])->whereNumber('ticketId')
+          ->name('support-tickets.show');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reply to Support Ticket
+        |--------------------------------------------------------------------------
+        | Add a reply to a ticket after checking ticket ownership.
+        */
+        Route::post('/support-tickets/{ticketId}/replies', [
+            SupportTicketController::class,
+            'storeReply',
+        ])->whereNumber('ticketId')
+          ->name('support-tickets.replies.store');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Download Support Ticket Attachment
+        |--------------------------------------------------------------------------
+        | Verify access to the associated ticket before returning the file.
+        */
+        Route::get('/support-ticket-attachments/{attachmentId}/download', [
+            SupportTicketController::class,
+            'downloadAttachment',
+        ])->whereNumber('attachmentId')
+          ->name('support-ticket-attachments.download');
+
+        /*
+        |--------------------------------------------------------------------------
+        | KEEP YOUR EXISTING ROUTES BELOW
+        |--------------------------------------------------------------------------
+        | Preserve your existing learners, event-transactions, field-agents,
+        | export, filters, details, and field-agent transaction routes here.
+        */
+
+});
 
 Route::middleware(['web', 'auth:field_agent'])
     ->prefix('field-agent')
@@ -343,6 +530,9 @@ Route::middleware(['web', 'auth:field_agent'])
         */
         Route::get('/mpin/settings',[MpinSettingsController::class, 'show'])->name('mpin.settings.show');
         Route::put('/mpin/settings',[MpinSettingsController::class, 'update'])->name('mpin.settings.update');
+
+
+
 
     });
 

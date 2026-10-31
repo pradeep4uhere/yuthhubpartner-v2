@@ -1,0 +1,253 @@
+
+/* Main Coming Soon container. */
+.yp-coming-soon {
+    position: relative;
+    display: flex;
+    min-height: 440px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 42px 24px;
+    border: 1px solid #e5eaf4;
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at 50% 20%, rgba(40, 101, 220, 0.09), transparent 36%),
+        linear-gradient(145deg, #fff 0%, #f8faff 100%);
+    text-align: center;
+}
+
+/* Decorative icon illustration. */
+.yp-coming-soon__visual {
+    position: relative;
+    display: grid;
+    width: 110px;
+    height: 110px;
+    margin-bottom: 25px;
+    place-items: center;
+}
+
+.yp-coming-soon__orb {
+    display: grid;
+    width: 82px;
+    height: 82px;
+    place-items: center;
+    border: 1px solid rgba(40, 101, 220, 0.18);
+    border-radius: 25px;
+    background: linear-gradient(145deg, #fff, #eaf1ff);
+    box-shadow: 0 12px 35px rgba(40, 101, 220, 0.12);
+    transform: rotate(-7deg);
+}
+
+.yp-coming-soon__icon {
+    color: #2865dc;
+    font-size: 42px;
+    line-height: 1;
+    transform: rotate(7deg);
+}
+
+.yp-coming-soon__spark {
+    position: absolute;
+    color: #2865dc;
+    animation: yp-spark-float 3s ease-in-out infinite;
+}
+
+.yp-spark-one {
+    top: 8px;
+    right: 7px;
+    font-size: 23px;
+}
+
+.yp-spark-two {
+    bottom: 11px;
+    left: 2px;
+    font-size: 19px;
+    animation-delay: 0.6s;
+}
+
+.yp-spark-three {
+    top: 27px;
+    left: 4px;
+    color: #8ba9ef;
+    font-size: 15px;
+    animation-delay: 1.2s;
+}
+
+/* Development status badge. */
+.yp-coming-soon__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #dbe7ff;
+    border-radius: 30px;
+    background: #eef4ff;
+    color: #2458b8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.yp-coming-soon__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2865dc;
+    box-shadow: 0 0 0 4px rgba(40, 101, 220, 0.1);
+}
+
+/* Heading and description. */
+.yp-coming-soon__title {
+    margin: 19px 0 10px;
+    color: #101e43;
+    font-size: clamp(25px, 3vw, 34px);
+    font-weight: 800;
+    letter-spacing: -1.1px;
+    line-height: 1.25;
+}
+
+.yp-coming-soon__title span {
+    color: #2865dc;
+}
+
+.yp-coming-soon__description {
+    max-width: 490px;
+    margin: 0;
+    color: #68758d;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* Animated progress indicator. */
+.yp-coming-soon__progress {
+    display: flex;
+    width: min(260px, 100%);
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    margin-top: 25px;
+}
+
+.yp-coming-soon__progress-track {
+    width: 100%;
+    height: 5px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #e8edf7;
+}
+
+.yp-coming-soon__progress-fill {
+    width: 38%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2865dc, #81a7ff);
+    animation: yp-progress-pulse 2.4s ease-in-out infinite alternate;
+}
+
+.yp-coming-soon__progress > span {
+    color: #7b879d;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Supporting footer message. */
+.yp-coming-soon__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 27px;
+    color: #66748b;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.yp-coming-soon__footer-icon {
+    display: grid;
+    width: 18px;
+    height: 18px;
+    place-items: center;
+    border-radius: 50%;
+    background: #e4edff;
+    color: #2458b8;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* Animate decorative elements. */
+@keyframes yp-spark-float {
+    0%, 100% {
+        transform: translateY(0);
+        opacity: 0.65;
+    }
+
+    50% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+}
+
+/* Animate the progress indicator. */
+@keyframes yp-progress-pulse {
+    from {
+        width: 25%;
+    }
+
+    to {
+        width: 58%;
+    }
+}
+
+/* Responsive layout for mobile screens. */
+@media (max-width: 600px) {
+    .yp-coming-soon {
+        min-height: 390px;
+        padding: 30px 18px;
+        border-radius: 14px;
+    }
+
+    .yp-coming-soon__title {
+        font-size: 26px;
+        letter-spacing: -0.7px;
+    }
+
+    .yp-coming-soon__description {
+        font-size: 12px;
+    }
+
+    .yp-coming-soon__footer {
+        font-size: 10px;
+    }
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+    .yp-coming-soon__spark,
+    .yp-coming-soon__progress-fill {
+        animation: none;
+    }
+}
+
+/* Warning-style Under Development badge. */
+.yp-coming-soon__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 13px;
+    border: 1px solid #fed7aa;
+    border-radius: 30px;
+    background: #fff7ed;
+    color: #c2410c;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+/* Amber warning indicator. */
+.yp-coming-soon__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #f97316;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.14);
+}

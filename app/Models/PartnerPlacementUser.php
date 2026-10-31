@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'email', 'partner_placement_name', 'contact_number', 'pp_code', 'status', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -23,6 +24,8 @@ class PartnerPlacementUser extends Authenticatable
     {
         return [
             'password' => 'hashed',
+             'mpin_hash' => 'hashed',
+            'mpin_login_enabled' => 'boolean',
         ];
     }
 
@@ -31,7 +34,7 @@ class PartnerPlacementUser extends Authenticatable
     {
         return $this->hasMany(
             EventTransaction::class,
-            'partner_placement_user_id'
+            'placement_partner_user_id'
         );
     }
 
@@ -40,5 +43,29 @@ class PartnerPlacementUser extends Authenticatable
     {
         return $this->morphMany(Export::class, 'requested_by');
     }
+
+    public function fieldAgents(): HasMany
+    {
+        return $this->hasMany(
+            FieldAgent::class,
+            'placement_partner_user_id',
+            'id'
+        );
+    }
+
+
+    /**
+     * Get all support tickets created by this Placement Partner.
+     */
+    public function supportTickets(): MorphMany
+    {
+        return $this->morphMany(
+            SupportTicket::class,
+            'requester'
+        );
+    }
+
+
+
 
 }

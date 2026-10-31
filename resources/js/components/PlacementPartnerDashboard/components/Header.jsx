@@ -1,0 +1,37 @@
+import { Menu, Bell, ChevronDown } from "lucide-react";
+export default function Header({ partnerName, onMenu }) {
+    const initials = (partnerName || "PP")
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((x) => x[0])
+        .join("")
+        .toUpperCase();
+    return (
+        <header className="yp-header">
+            <div className="yp-header-left">
+                <button
+                    type="button"
+                    className="yp-menu"
+                    onClick={onMenu}
+                    aria-label="Open menu"
+                >
+                    <Menu size={24} />
+                </button>
+                <span className="yp-workspace-pill">PLACEMENT WORKSPACE</span>
+            </div>
+            <div className="yp-account">
+                <span className="yp-bell">
+                    <Bell size={22} />
+                </span>
+                <span className="yp-account-divider" />
+                <span className="yp-avatar">{initials}</span>
+                <span className="yp-account-text">
+                    <strong>{partnerName}</strong>
+                    <small>Placement Partner</small>
+                </span>
+                <ChevronDown size={17} />
+            </div>
+        </header>
+    );
+}

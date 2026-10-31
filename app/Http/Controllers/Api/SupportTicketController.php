@@ -627,37 +627,55 @@ private function storeReplyAttachments(
 
 
 
+
     /**
-     * Resolve authenticated support requester.
+     * Resolve the authenticated dashboard user using the current route guard.
+     *
+     * Supports Placement Partner, Partner, and Field Agent without allowing
+     * an authenticated session from another dashboard to take precedence.
      */
     private function supportUser(Request $request)
     {
-        foreach (['partner', 'field_agent'] as $guard) {
-
-            $user = $request->user($guard);
-
-            if ($user && method_exists($user, 'supportTickets')) {
-                return $user;
-            }
+        if ($request->routeIs('api.partner-placement.*')) {
+            $guard = 'partner_placement';
+        } elseif ($request->routeIs('api.partner.*')) {
+            $guard = 'partner';
+        } elseif ($request->routeIs('api.field-agent.*')) {
+            $guard = 'field_agent';
+        } else {
+            return null;
         }
 
-        return null;
+        $user = $request->user($guard);
+
+        if (! $user || ! method_exists($user, 'supportTickets')) {
+            return null;
+        }
+
+        return $user;
     }
 
 
 
+    /**
+     * Generate an attachment download URL for the active dashboard.
+     */
     private function attachmentDownloadUrl(
         Request $request,
         int $attachmentId
     ): string {
-
-        $routeName = $request->routeIs('api.partner.*')
-            ? 'api.partner.support-ticket-attachments.download'
-            : 'api.field-agent.support-ticket-attachments.download';
+        if ($request->routeIs('api.partner-placement.*')) {
+            $routeName = 'api.partner-placement.support-ticket-attachments.download';
+        } elseif ($request->routeIs('api.partner.*')) {
+            $routeName = 'api.partner.support-ticket-attachments.download';
+        } else {
+            $routeName = 'api.field-agent.support-ticket-attachments.download';
+        }
 
         return route($routeName, [
             'attachmentId' => $attachmentId,
         ]);
     }
+
 
 }
