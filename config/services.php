@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'youthhub' => [
+        'base_url' => env('YOUTHHUB_API_URL'),
+        'username' => env('YOUTHHUB_API_USERNAME'),
+        'password' => env('YOUTHHUB_API_PASSWORD'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
@@ -34,10 +40,4 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
-    'youthhub' => [
-        'username' => env('YOUTHHUB_USERNAME'),
-        'password' => env('YOUTHHUB_PASSWORD'),
-    ]
-
 ];

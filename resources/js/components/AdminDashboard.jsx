@@ -1,35 +1,141 @@
-
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
     BriefcaseBusiness,
-    ClipboardCheck,
     GraduationCap,
+    Handshake,
     UsersRound,
-    CalendarDays,
-    Filter,
-    ChevronDown,
-    Handshake
-} from 'lucide-react';
+} from "lucide-react";
 
-import MetricCard from '../components/AdminDashboard/MetricCard';
-import RecentLearners from '../components/AdminDashboard/RecentLearners';
-import LatestEvents from '../components/AdminDashboard/LatestEvents';
+import MetricCard from "../components/AdminDashboard/MetricCard";
+import Sidebar from "../components/AdminDashboard/Sidebar";
+import DashboardHeader from "../components/AdminDashboard/DashboardHeader";
 
-// In components ko apni respective files se import karein
-import Sidebar from '../components/AdminDashboard/Sidebar';
-import DashboardHeader from '../components/AdminDashboard/DashboardHeader';
-import LearnerOutcomes from '../components/AdminDashboard/LearnerOutcomes';
-import LearningPipeline from '../components/AdminDashboard/LearningPipeline';
-import EventTransactionPieChart from '../components/AdminDashboard/EventTransactionPieChart';
-import LearnerGenderPieChart from '../components/AdminDashboard/LearnerGenderPieChart';
-import LearnerAgePieChart from '../components/AdminDashboard/LearnerAgePieChart';
-import EventTransactionBarChart from '../components/AdminDashboard/EventTransactionBarChart';
-import LearnersByProgrammeChart from '../components/AdminDashboard/LearnersByProgrammeChart';
-import Top10FieldAgentsChart from '../components/AdminDashboard/Top10FieldAgentsChart';
-import EventReviewPerformanceChart from '../components/AdminDashboard/EventReviewPerformanceChart';
+// Load large dashboard sections only when they are needed.
+const RecentLearners = lazy(
+    () => import("../components/AdminDashboard/RecentLearners"),
+);
+const LatestEvents = lazy(
+    () => import("../components/AdminDashboard/LatestEvents"),
+);
+const LearnerOutcomes = lazy(
+    () => import("../components/AdminDashboard/LearnerOutcomes"),
+);
+const EventTransactionPieChart = lazy(
+    () => import("../components/AdminDashboard/EventTransactionPieChart"),
+);
+const LearnerGenderPieChart = lazy(
+    () => import("../components/AdminDashboard/LearnerGenderPieChart"),
+);
+const LearnerAgePieChart = lazy(
+    () => import("../components/AdminDashboard/LearnerAgePieChart"),
+);
+const EventTransactionBarChart = lazy(
+    () => import("../components/AdminDashboard/EventTransactionBarChart"),
+);
+const LearnersByProgrammeChart = lazy(
+    () => import("../components/AdminDashboard/LearnersByProgrammeChart"),
+);
+const Top10FieldAgentsChart = lazy(
+    () => import("../components/AdminDashboard/Top10FieldAgentsChart"),
+);
+const EventReviewPerformanceChart = lazy(
+    () => import("../components/AdminDashboard/EventReviewPerformanceChart"),
+);
 
+/**
+ * Renders a shimmer placeholder while a dashboard chart is loading.
+ */
+function ChartSkeleton({ height = 310 }) {
+    return (
+        <div
+            className="admin-panel admin-chart-skeleton"
+            style={{ minHeight: height }}
+        >
+            <div className="admin-skeleton admin-skeleton--title" />
+            <div className="admin-skeleton admin-skeleton--subtitle" />
+            <div className="admin-chart-skeleton__body">
+                <div className="admin-skeleton admin-skeleton--chart" />
+                <div className="admin-chart-skeleton__legend">
+                    <div className="admin-skeleton admin-skeleton--line" />
+                    <div className="admin-skeleton admin-skeleton--line" />
+                    <div className="admin-skeleton admin-skeleton--line" />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/**
+ * Waits until a dashboard section approaches the viewport before mounting it.
+ * This defers both the component render and its lazy-loaded JavaScript chunk.
+ */
+function LazyChart({ children, height = 310 }) {
+    const containerRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const element = containerRef.current;
+
+        if (!element) {
+            return undefined;
+        }
+
+        if (typeof IntersectionObserver === "undefined") {
+            setIsVisible(true);
+            return undefined;
+        }
+
+        // Observe the section and load it shortly before it enters the viewport.
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: "260px 0px", threshold: 0.01 },
+        );
+
+        observer.observe(element);
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div className="admin-lazy-chart" ref={containerRef}>
+            {isVisible ? (
+                <Suspense fallback={<ChartSkeleton height={height} />}>
+                    {children}
+                </Suspense>
+            ) : (
+                <ChartSkeleton height={height} />
+            )}
+        </div>
+    );
+}
+
+/**
+ * Displays skeleton metric cards until the dashboard summary API responds.
+ */
+function MetricSkeleton() {
+    return (
+        <div className="admin-metric admin-metric-skeleton" aria-hidden="true">
+            <div className="admin-metric__top">
+                <div className="admin-skeleton admin-skeleton--icon" />
+                <div className="admin-skeleton admin-skeleton--tiny" />
+            </div>
+            <div className="admin-skeleton admin-skeleton--metric-label" />
+            <div className="admin-skeleton admin-skeleton--metric-value" />
+            <div className="admin-skeleton admin-skeleton--metric-detail" />
+        </div>
+    );
+}
+
+/**
+ * Displays the admin analytics dashboard and its supporting data sections.
+ */
 export default function AdminDashboard({
-    adminName = 'Admin',
+    adminName = "Admin",
     canManageAdmins = false,
     canViewPartners = false,
     canViewPartnerCenters = false,
@@ -43,89 +149,100 @@ export default function AdminDashboard({
 }) {
     const [dashboardData, setDashboardData] = useState(null);
     const [dashboardLoading, setDashboardLoading] = useState(true);
-    const [dashboardError, setDashboardError] = useState('');
-    const [notice, setNotice] = useState('');
-
-    const showNotice = (message) => {
-        setNotice(message);
-        window.setTimeout(() => setNotice(''), 2600);
-    };
-
-     const getGreeting = () => {
-        const hour = new Date().getHours();
-
-        if (hour < 12) {
-            return "Good Morning";
-        } else if (hour < 17) {
-            return "Good Afternoon";
-        } else {
-            return "Good Evening";
-        }
-    };
-
-    const [region, setRegion] = useState('All regions');
-    const [period, setPeriod] = useState('Last 6 months');
+    const [dashboardError, setDashboardError] = useState("");
+    const [notice, setNotice] = useState("");
     const [monthlyGenderData, setMonthlyGenderData] = useState([]);
     const [genderLoading, setGenderLoading] = useState(true);
 
-    useEffect(() => {
-        fetch('/admin/dashboard/monthly-gender?period=last_60_months', {
-            headers: {
-                Accept: 'application/json',
-            },
-            credentials: 'same-origin',
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to load monthly gender statistics.');
-                }
+    /**
+     * Shows a temporary success or information message in the dashboard.
+     */
+    const showNotice = (message) => {
+        setNotice(message);
+        window.setTimeout(() => setNotice(""), 2600);
+    };
 
-                return response.json();
-            })
-            .then((result) => {
-                setMonthlyGenderData(result.data ?? []);
-            })
-            .catch((error) => {
-                console.error(error);
-                setMonthlyGenderData([]);
-            })
-            .finally(() => {
-                setGenderLoading(false);
-            });
-    }, []);
+    /**
+     * Returns a greeting based on the visitor's local time.
+     */
+    const getGreeting = () => {
+        const hour = new Date().getHours();
 
+        if (hour < 12) return "Good Morning";
+        if (hour < 17) return "Good Afternoon";
+        return "Good Evening";
+    };
 
     useEffect(() => {
         let isMounted = true;
 
+        /**
+         * Fetches the monthly gender statistics used by the outcomes chart.
+         */
+        const fetchMonthlyGenderData = async () => {
+            try {
+                const response = await fetch(
+                    "/admin/dashboard/monthly-gender?period=last_60_months",
+                    {
+                        headers: { Accept: "application/json" },
+                        credentials: "same-origin",
+                    },
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Failed to load monthly gender statistics.",
+                    );
+                }
+
+                const result = await response.json();
+
+                if (isMounted) {
+                    setMonthlyGenderData(result.data ?? []);
+                }
+            } catch (error) {
+                console.error(error);
+                if (isMounted) setMonthlyGenderData([]);
+            } finally {
+                if (isMounted) setGenderLoading(false);
+            }
+        };
+
+        fetchMonthlyGenderData();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        /**
+         * Fetches the dashboard summary and refreshes it every five minutes.
+         */
         const fetchDashboardData = async () => {
             try {
-                const response = await fetch('/admin/dashboard-data', {
-                    method: 'GET',
-                    headers: {
-                        Accept: 'application/json',
-                    },
-                    credentials: 'same-origin',
+                const response = await fetch("/admin/dashboard-data", {
+                    method: "GET",
+                    headers: { Accept: "application/json" },
+                    credentials: "same-origin",
                 });
 
                 if (!response.ok) {
-                    throw new Error('Unable to load dashboard data.');
+                    throw new Error("Unable to load dashboard data.");
                 }
 
                 const result = await response.json();
 
                 if (isMounted && result.success) {
                     setDashboardData(result);
-                    setDashboardError('');
+                    setDashboardError("");
                 }
             } catch (error) {
-                if (isMounted) {
-                    setDashboardError(error.message);
-                }
+                if (isMounted) setDashboardError(error.message);
             } finally {
-                if (isMounted) {
-                    setDashboardLoading(false);
-                }
+                if (isMounted) setDashboardLoading(false);
             }
         };
 
@@ -133,7 +250,7 @@ export default function AdminDashboard({
 
         const intervalId = window.setInterval(
             fetchDashboardData,
-            5 * 60 * 1000
+            5 * 60 * 1000,
         );
 
         return () => {
@@ -162,96 +279,164 @@ export default function AdminDashboard({
 
             <main className="admin-main">
                 <DashboardHeader adminName={adminName} />
-              
 
                 <div className="admin-content">
                     {dashboardError && (
-                        <p role="alert">{dashboardError}</p>
+                        <p className="admin-dashboard-error" role="alert">
+                            {dashboardError}
+                        </p>
                     )}
 
+                    <section className="admin-page-heading">
+                        <div>
+                            <p className="admin-eyebrow">
+                                ADMIN OVERVIEW <span>·</span>{" "}
+                                {new Date()
+                                    .toLocaleDateString("en-IN", {
+                                        weekday: "long",
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                    })
+                                    .toUpperCase()}
+                            </p>
 
-<section className="admin-page-heading">
-    <div>
-        <p className="admin-eyebrow">
-            PARTNER OVERVIEW <span>·</span> SATURDAY, 26 SEPTEMBER 2026
-        </p>
+                            <h1>
+                                {getGreeting()}, {adminName} <span>✳</span>
+                            </h1>
 
-        <h1>
-            {getGreeting()}, {adminName} <span>✳</span>
-        </h1>
+                            <p className="admin-page-heading__sub">
+                                Here’s what’s happening across your programmes.
+                            </p>
+                        </div>
+                    </section>
 
-        <p className="admin-page-heading__sub">
-            Here’s what’s happening across your programmes.
-        </p>
-    </div>
-
-    
-</section>
                     <section className="admin-metrics">
+                        {dashboardLoading ? (
+                            <>
+                                <MetricSkeleton />
+                                <MetricSkeleton />
+                                <MetricSkeleton />
+                                <MetricSkeleton />
+                            </>
+                        ) : (
+                            <>
+                                <MetricCard
+                                    label="Learners Registered"
+                                    value={
+                                        metrics.learners?.toLocaleString(
+                                            "en-IN",
+                                        ) ?? "—"
+                                    }
+                                    icon={UsersRound}
+                                    tone="green"
+                                    detail="Total registered learners"
+                                />
 
-                        
+                                <MetricCard
+                                    label="Field Agents"
+                                    value={
+                                        metrics.field_agents != null
+                                            ? Number(
+                                                  metrics.field_agents,
+                                              ).toLocaleString("en-IN")
+                                            : "—"
+                                    }
+                                    icon={GraduationCap}
+                                    tone="blue"
+                                    detail="Total registered field agents"
+                                />
 
-                        <MetricCard
-                            label="Learners Registered"
-                            value={metrics.learners?.toLocaleString('en-IN') ?? '—'}
-                            icon={UsersRound}
-                            tone="green"
-                            detail="Total registered learners"
-                        />
+                                <MetricCard
+                                    label="Partners"
+                                    value={
+                                        metrics.partners != null
+                                            ? Number(
+                                                  metrics.partners,
+                                              ).toLocaleString("en-IN")
+                                            : "—"
+                                    }
+                                    icon={Handshake}
+                                    tone="yellow"
+                                    detail="Total registered partners"
+                                />
 
-                        <MetricCard
-                            label="Field Agents"
-                            value={metrics.field_agents != null
-                                ? Number(metrics.field_agents).toLocaleString('en-IN')
-                                : dashboardLoading ? 'Loading...' : '—'}
-                            icon={GraduationCap}
-                            tone="blue"
-                            detail="Total registered field agents"
-                        />
-
-                        <MetricCard
-                            label="Partners"
-                            value={metrics.partners != null
-                                ? Number(metrics.partners).toLocaleString('en-IN')
-                                : dashboardLoading ? 'Loading...' : '—'}
-                            icon={Handshake}
-                            tone="yellow"
-                            detail="Total registered partners"
-                        />
-
-                        <MetricCard
-                            label="Event Transactions"
-                            value={metrics.event_transactions != null
-                                ? Number(metrics.event_transactions).toLocaleString('en-IN')
-                                : dashboardLoading ? 'Loading...' : '—'}
-                            icon={BriefcaseBusiness}
-                            tone="coral"
-                            detail="Total event transactions"
-                        />
+                                <MetricCard
+                                    label="Event Transactions"
+                                    value={
+                                        metrics.event_transactions != null
+                                            ? Number(
+                                                  metrics.event_transactions,
+                                              ).toLocaleString("en-IN")
+                                            : "—"
+                                    }
+                                    icon={BriefcaseBusiness}
+                                    tone="coral"
+                                    detail="Total event transactions"
+                                />
+                            </>
+                        )}
                     </section>
 
                     <section className="admin-insights">
-                         <Top10FieldAgentsChart/>
-                        <LearnerGenderPieChart />
-                        <LearnerOutcomes monthlyGenderData={monthlyGenderData} loading={genderLoading}/>
-                        <LearnerAgePieChart />
-                        <EventReviewPerformanceChart/>
-                        <LearnersByProgrammeChart/>
-                        <EventTransactionBarChart />
-                        <EventTransactionPieChart />
-                       
+                        <LazyChart height={340}>
+                            <Top10FieldAgentsChart />
+                        </LazyChart>
+
+                        <LazyChart height={340}>
+                            <LearnerGenderPieChart />
+                        </LazyChart>
+
+                        <LazyChart height={340}>
+                            <LearnerOutcomes
+                                monthlyGenderData={monthlyGenderData}
+                                loading={genderLoading}
+                            />
+                        </LazyChart>
+
+                        <LazyChart height={340}>
+                            <LearnerAgePieChart />
+                        </LazyChart>
+
+                        <LazyChart height={340}>
+                            <EventReviewPerformanceChart />
+                        </LazyChart>
+
+                        <LazyChart height={340}>
+                            <LearnersByProgrammeChart />
+                        </LazyChart>
+
+                        <LazyChart height={340}>
+                            <EventTransactionBarChart />
+                        </LazyChart>
+
+                        <LazyChart height={340}>
+                            <EventTransactionPieChart />
+                        </LazyChart>
                     </section>
 
                     <section className="admin-lower-grid">
-                        <RecentLearners
-                            learners={dashboardData?.recent_learners ?? []}
-                            showNotice={showNotice}
-                        />
+                        <div className="admin-lazy-lower">
+                            <Suspense fallback={<ChartSkeleton height={300} />}>
+                                <RecentLearners
+                                    learners={
+                                        dashboardData?.recent_learners ?? []
+                                    }
+                                    showNotice={showNotice}
+                                />
+                            </Suspense>
+                        </div>
 
-                        <LatestEvents
-                            events={dashboardData?.upcoming_events ?? []}
-                            loading={dashboardLoading}
-                        />
+                        <div className="admin-lazy-lower">
+                            <Suspense fallback={<ChartSkeleton height={300} />}>
+                                <LatestEvents
+                                    events={
+                                        dashboardData?.upcoming_events ?? []
+                                    }
+                                    loading={dashboardLoading}
+                                />
+                            </Suspense>
+                        </div>
                     </section>
 
                     <footer className="admin-footer">
@@ -264,7 +449,10 @@ export default function AdminDashboard({
             {notice && (
                 <div className="admin-toast" role="status">
                     {notice}
-                    <button onClick={() => setNotice('')} aria-label="Dismiss notification">
+                    <button
+                        onClick={() => setNotice("")}
+                        aria-label="Dismiss notification"
+                    >
                         ×
                     </button>
                 </div>

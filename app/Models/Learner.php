@@ -55,6 +55,8 @@ class Learner extends Model
         'partner_wise_course_counts',
         'partner_wise_job_counts',
 
+        'source_created_at',
+
         // Add only if you want these manually assignable
         // 'source_created_at',
         // 'updated_at',
@@ -67,6 +69,7 @@ class Learner extends Model
         'no_of_pathway_enrolled' => 'integer',
         'no_of_applied_jobs' => 'integer',
         'no_of_applied_courses' => 'integer',
+        'source_created_at' => 'datetime',
     ];
 
 
