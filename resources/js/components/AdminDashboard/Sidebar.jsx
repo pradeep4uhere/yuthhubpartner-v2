@@ -19,12 +19,18 @@ import {
     ShieldCheck,
     UsersRound,
     RefreshCw,
+    FileSpreadsheet,
 } from "lucide-react";
 
 const navigation = [
     { label: "Dashboard", icon: LayoutDashboard, href: "#overview" },
     { label: "Learners", icon: UsersRound, href: "/admin/learners" },
     { label: "Learner Sync", icon: RefreshCw, href: "/admin/learner-sync" },
+    {
+        label: "Course Import",
+        icon: FileSpreadsheet,
+        href: "/admin/learner-course-import",
+    },
     {
         label: "Event Transactions",
         icon: FileCheck2,
@@ -116,6 +122,11 @@ export default function Sidebar({
             label: "All Error Logs",
             href: "/admin/log-history",
             icon: FileWarning,
+        },
+        {
+            label: "Course Import",
+            icon: FileSpreadsheet,
+            href: "/admin/learner-course-import",
         },
     ];
 

@@ -20,8 +20,45 @@ use App\Http\Controllers\Admin\DownloadController;
 use App\Http\Controllers\Admin\LogHistoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LearnerSyncController;
+use App\Http\Controllers\Admin\LearnerCourseImportController;
 
 Route::prefix('admin')->name('admin.')->group(function (): void {
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Learner Course CSV Import
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('learner-course-import')
+        ->name('learner-course-import.')
+        ->middleware(['auth:admin', 'can:learners.import'])
+        ->controller(LearnerCourseImportController::class)
+        ->group(function (): void {
+
+            // Display the CSV import dashboard.
+            Route::get('/', 'index')->name('index');
+
+            // Upload and start CSV import.
+            Route::post('/upload', 'upload')->name('upload');
+
+            // Retrieve import history and summary.
+            Route::get('/data', 'data')->name('data');
+
+            // Download skipped email and invalid mobile contact records.
+            Route::get(
+                '/{batchId}/invalid-contacts/download',
+                'downloadInvalidContacts'
+            )->name('invalid-contacts.download');
+
+            // Retrieve a specific import batch status.
+            Route::get('/{batchId}/status', 'status')->name('status');
+
+            // Retrieve imported records for a batch.
+            Route::get('/{batchId}/records', 'records')->name('records');
+        });
+
+
 
     /*
     |--------------------------------------------------------------------------

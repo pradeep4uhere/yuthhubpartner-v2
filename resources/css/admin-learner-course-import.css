@@ -1,0 +1,942 @@
+
+/* =========================================================
+   LEARNER COURSE IMPORT
+========================================================= */
+
+.lci-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+.lci-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.lci-heading h1 {
+    margin: 7px 0 5px;
+    color: #14213d;
+    font-size: clamp(24px, 2.2vw, 30px);
+    font-weight: 750;
+    letter-spacing: -0.8px;
+}
+
+.lci-heading .admin-page-heading__sub {
+    margin: 0;
+    color: #718096;
+    font-size: 13px;
+}
+
+.lci-refresh-btn,
+.lci-btn,
+.lci-filter-btn,
+.lci-view-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.lci-refresh-btn {
+    min-height: 39px;
+    padding: 0 14px;
+    color: #263c60;
+    background: #fff;
+    border-color: #e2e8f0;
+}
+
+.lci-refresh-btn:hover {
+    border-color: #a9bce0;
+    background: #f8faff;
+}
+
+.lci-refresh-btn:disabled,
+.lci-btn:disabled,
+.lci-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   ALERTS
+========================================================= */
+
+.lci-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.lci-alert span {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.lci-alert button {
+    display: grid;
+    place-items: center;
+    padding: 2px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.65;
+}
+
+.lci-alert--error {
+    color: #a52d37;
+    background: #fff6f6;
+    border-color: #f5d2d5;
+}
+
+.lci-alert--success {
+    color: #19734a;
+    background: #f1fbf5;
+    border-color: #ccebd8;
+}
+
+/* =========================================================
+   SECTION PANELS
+========================================================= */
+
+.lci-upload-panel,
+.lci-progress-panel,
+.lci-history-panel,
+.lci-records-panel {
+    min-width: 0;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e8edf4;
+    border-radius: 14px;
+    box-shadow: 0 3px 14px rgba(22, 40, 75, 0.035);
+}
+
+.lci-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.lci-section-heading h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: #182844;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.lci-section-heading h2 svg {
+    color: #2865dc;
+}
+
+.lci-section-heading p {
+    margin: 5px 0 0;
+    color: #8792a5;
+    font-size: 11px;
+}
+
+/* =========================================================
+   CSV UPLOAD
+========================================================= */
+
+.lci-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 175px;
+    padding: 25px;
+    background: #f8faff;
+    border: 1.5px dashed #b9cbea;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.2s ease;
+}
+
+.lci-dropzone:hover,
+.lci-dropzone--active {
+    background: #f0f5ff;
+    border-color: #2865dc;
+}
+
+.lci-dropzone input {
+    display: none;
+}
+
+.lci-upload-icon {
+    display: grid;
+    place-items: center;
+    width: 53px;
+    height: 53px;
+    color: #2865dc;
+    background: #e9f0ff;
+    border-radius: 15px;
+}
+
+.lci-dropzone strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: #253a5d;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.lci-dropzone > span:last-child {
+    color: #929eb0;
+    font-size: 11px;
+}
+
+.lci-upload-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 15px;
+}
+
+.lci-upload-actions > span {
+    color: #8792a5;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.lci-btn {
+    min-height: 39px;
+    padding: 0 16px;
+}
+
+.lci-btn--primary,
+.lci-filter-btn {
+    color: #fff;
+    background: #2865dc;
+    box-shadow: 0 4px 10px rgba(40, 101, 220, 0.15);
+}
+
+.lci-btn--primary:hover,
+.lci-filter-btn:hover {
+    background: #1e55c1;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   METRIC CARDS
+========================================================= */
+
+.lci-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.lci-metric {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    padding: 19px;
+    border: 1px solid transparent;
+    border-radius: 15px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.lci-metric::after {
+    position: absolute;
+    right: -30px;
+    bottom: -43px;
+    width: 110px;
+    height: 110px;
+    background: currentColor;
+    border-radius: 50%;
+    content: "";
+    opacity: 0.055;
+    pointer-events: none;
+}
+
+.lci-metric:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+}
+
+.lci-metric__top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: inherit;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.lci-metric__icon {
+    display: grid;
+    place-items: center;
+    width: 39px;
+    height: 39px;
+    flex: 0 0 39px;
+    background: #fff;
+    border-radius: 11px;
+}
+
+.lci-metric > strong {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-top: 15px;
+    font-size: clamp(22px, 2vw, 29px);
+    font-weight: 760;
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.lci-metric--blue {
+    color: #2563eb;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-color: #bfdbfe;
+}
+
+.lci-metric--green {
+    color: #059669;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-color: #a7f3d0;
+}
+
+.lci-metric--amber {
+    color: #d97706;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border-color: #fde68a;
+}
+
+.lci-metric--purple {
+    color: #7c3aed;
+    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+    border-color: #ddd6fe;
+}
+
+.lci-metric--slate {
+    color: #475569;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-color: #cbd5e1;
+}
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.lci-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+.lci-status__dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+}
+
+.lci-status--processing {
+    color: #a66a12;
+    background: #fff6e6;
+}
+
+.lci-status--processing .lci-status__dot {
+    background: #e2a02b;
+    animation: lci-pulse 1.6s infinite;
+}
+
+.lci-status--queued {
+    color: #526d9b;
+    background: #edf3fc;
+}
+
+.lci-status--queued .lci-status__dot {
+    background: #6487c0;
+}
+
+.lci-status--completed,
+.lci-status--matched {
+    color: #16804f;
+    background: #eaf8f0;
+}
+
+.lci-status--completed .lci-status__dot,
+.lci-status--matched .lci-status__dot {
+    background: #20a66a;
+}
+
+.lci-status--failed {
+    color: #bd3d48;
+    background: #fff0f0;
+}
+
+.lci-status--failed .lci-status__dot {
+    background: #d84b55;
+}
+
+.lci-status--pending {
+    color: #a66a12;
+    background: #fff6e6;
+}
+
+.lci-status--pending .lci-status__dot {
+    background: #e2a02b;
+}
+
+.lci-status--unknown {
+    color: #68778d;
+    background: #eef2f7;
+}
+
+.lci-status--unknown .lci-status__dot {
+    background: #8a98ab;
+}
+
+@keyframes lci-pulse {
+    50% {
+        box-shadow: 0 0 0 6px rgba(230, 161, 45, 0);
+    }
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.lci-progress-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: #718096;
+    font-size: 11px;
+}
+
+.lci-progress-meta span {
+    overflow-wrap: anywhere;
+}
+
+.lci-progress-meta strong {
+    flex-shrink: 0;
+    color: #2865dc;
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.lci-progress-track {
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    background: #edf1f7;
+    border-radius: 20px;
+}
+
+.lci-progress-track span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #2865dc, #5d91ef);
+    border-radius: inherit;
+    transition: width 0.45s ease;
+}
+
+.lci-progress-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 9px 18px;
+    margin-top: 14px;
+    color: #8792a5;
+    font-size: 10px;
+}
+
+.lci-run-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 12px;
+    color: #b33d46;
+    background: #fff4f4;
+    border-radius: 8px;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.lci-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 25px 12px;
+    color: #8a96a8;
+    text-align: center;
+}
+
+.lci-empty-state svg {
+    color: #9aabc5;
+}
+
+.lci-empty-state strong {
+    color: #465875;
+    font-size: 12px;
+}
+
+.lci-empty-state span {
+    font-size: 11px;
+}
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+.lci-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.lci-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.lci-table thead th {
+    padding: 12px;
+    color: #8793a5;
+    background: #f7f9fc;
+    border-bottom: 1px solid #e9edf3;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.lci-table tbody td {
+    padding: 12px;
+    color: #53627a;
+    border-bottom: 1px solid #eef1f5;
+    font-size: 10px;
+    vertical-align: middle;
+}
+
+.lci-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.lci-table tbody tr:hover {
+    background: #fafcff;
+}
+
+.lci-table .lci-table-empty {
+    padding: 27px 12px;
+    color: #98a3b2;
+    text-align: center;
+    font-size: 11px;
+}
+
+.lci-row-selected {
+    background: #f1f6ff !important;
+}
+
+.lci-view-btn {
+    min-height: 28px;
+    padding: 0 10px;
+    color: #2865dc;
+    background: #edf3ff;
+}
+
+.lci-view-btn:hover {
+    background: #dfeaff;
+}
+
+.lci-record-table {
+    min-width: 850px;
+}
+
+/* =========================================================
+   SEARCH AND FILTERS
+========================================================= */
+
+.lci-record-filters {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 15px;
+}
+
+.lci-record-filters select,
+.lci-search-box {
+    height: 37px;
+    background: #fff;
+    border: 1px solid #e3e9f1;
+    border-radius: 8px;
+}
+
+.lci-record-filters select {
+    min-width: 150px;
+    padding: 0 10px;
+    color: #52627a;
+    font-size: 11px;
+    outline: none;
+}
+
+.lci-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    max-width: 380px;
+    padding: 0 10px;
+    color: #94a0b1;
+}
+
+.lci-search-box input {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    color: #34445e;
+    background: transparent;
+    border: 0;
+    outline: none;
+    font-size: 11px;
+}
+
+.lci-search-box input::placeholder {
+    color: #a3adbb;
+}
+
+.lci-filter-btn {
+    height: 37px;
+    padding: 0 15px;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.lci-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    color: #8792a5;
+    font-size: 11px;
+}
+
+.lci-pagination > div {
+    display: flex;
+    gap: 7px;
+}
+
+.lci-pagination button {
+    min-height: 32px;
+    padding: 0 12px;
+    color: #36557f;
+    background: #f5f8fd;
+    border: 1px solid #e1e9f5;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.lci-pagination button:not(:disabled):hover {
+    background: #eaf1fc;
+}
+
+/* =========================================================
+   SKELETON
+========================================================= */
+
+.lci-skeleton-card {
+    min-height: 110px;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #edf0f5;
+    border-radius: 13px;
+}
+
+.lci-skeleton-card span,
+.lci-skeleton-card strong {
+    display: block;
+    height: 10px;
+    background: linear-gradient(
+        90deg,
+        #f0f2f6 25%,
+        #e7ebf2 50%,
+        #f0f2f6 75%
+    );
+    background-size: 200% 100%;
+    border-radius: 5px;
+    animation: lci-shimmer 1.4s infinite;
+}
+
+.lci-skeleton-card span {
+    width: 55%;
+}
+
+.lci-skeleton-card strong {
+    width: 40%;
+    height: 25px;
+    margin-top: 19px;
+}
+
+@keyframes lci-shimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+.lci-spin {
+    animation: lci-spin 1s linear infinite;
+}
+
+@keyframes lci-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1250px) {
+    .lci-metrics-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .lci-content {
+        gap: 15px;
+    }
+
+    .lci-heading {
+        align-items: flex-start;
+    }
+
+    .lci-upload-panel,
+    .lci-progress-panel,
+    .lci-history-panel,
+    .lci-records-panel {
+        padding: 15px;
+    }
+
+    .lci-metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .lci-metric {
+        padding: 14px;
+    }
+
+    .lci-metric__top {
+        align-items: flex-start;
+    }
+
+    .lci-metric > strong {
+        font-size: 23px;
+    }
+
+    .lci-upload-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .lci-upload-actions .lci-btn {
+        width: 100%;
+    }
+
+    .lci-section-heading {
+        align-items: flex-start;
+    }
+
+    .lci-progress-footer {
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .lci-record-filters {
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .lci-record-filters select {
+        flex: 1;
+    }
+
+    .lci-search-box {
+        order: 3;
+        max-width: none;
+        flex-basis: 100%;
+    }
+
+    .lci-filter-btn {
+        flex: 1;
+    }
+}
+
+@media (max-width: 430px) {
+    .lci-heading {
+        flex-direction: column;
+    }
+
+    .lci-refresh-btn {
+        align-self: flex-start;
+    }
+
+    .lci-metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lci-metric {
+        padding: 12px;
+    }
+
+    .lci-metric__top > span:first-child {
+        max-width: 85px;
+        line-height: 1.4;
+    }
+
+    .lci-metric__icon {
+        width: 33px;
+        height: 33px;
+        flex-basis: 33px;
+    }
+
+    .lci-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+
+/* Display actual imported, total, and remaining record counts. */
+.lci-progress-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+}
+
+/* Style each progress statistic. */
+.lci-progress-stats > div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 15px 17px;
+    background: #f8fafc;
+    border: 1px solid #e8edf4;
+    border-radius: 10px;
+}
+
+/* Style progress statistic labels. */
+.lci-progress-stats span {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Style progress statistic values. */
+.lci-progress-stats strong {
+    color: #14213d;
+    font-size: 22px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+    .lci-progress-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/* Display imported and skipped progress segments in one progress track. */
+.lci-progress-track--split {
+    display: flex;
+    overflow: hidden;
+}
+
+/* Style successfully imported CSV rows. */
+.lci-progress-track--split .lci-progress-fill--imported {
+    display: block;
+    height: 100%;
+    background: #2865dc;
+    transition: width 0.35s ease;
+}
+
+/* Style skipped invalid contact rows. */
+.lci-progress-track--split .lci-progress-fill--skipped {
+    display: block;
+    height: 100%;
+    background: #f59e0b;
+    transition: width 0.35s ease;
+}
+
+/* Align history actions horizontally. */
+.lci-history-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Style the invalid contacts CSV download link. */
+.lci-download-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid #d9e2f0;
+    border-radius: 7px;
+    background: #f8faff;
+    color: #2865dc;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+/* Highlight the download link on hover. */
+.lci-download-btn:hover {
+    background: #edf3ff;
+    border-color: #2865dc;
+}
