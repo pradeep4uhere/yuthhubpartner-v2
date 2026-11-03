@@ -837,46 +837,6 @@ export default function AdminEventTransactions({
                                                 >
                                                     <Eye size={16} />
                                                 </a>
-
-                                                {transaction.permissions
-                                                    .update && (
-                                                    <a
-                                                        href={
-                                                            transaction.urls
-                                                                .edit
-                                                        }
-                                                        title="Edit transaction"
-                                                    >
-                                                        <Pencil size={16} />
-                                                    </a>
-                                                )}
-
-                                                {transaction.permissions
-                                                    .delete && (
-                                                    <button
-                                                        type="button"
-                                                        title="Delete transaction"
-                                                        disabled={
-                                                            deletingId ===
-                                                            transaction.id
-                                                        }
-                                                        onClick={() =>
-                                                            deleteTransaction(
-                                                                transaction,
-                                                            )
-                                                        }
-                                                    >
-                                                        {deletingId ===
-                                                        transaction.id ? (
-                                                            <LoaderCircle
-                                                                size={16}
-                                                                className="aet-spin"
-                                                            />
-                                                        ) : (
-                                                            <Trash2 size={16} />
-                                                        )}
-                                                    </button>
-                                                )}
                                             </div>
                                         </td>
                                     </tr>
