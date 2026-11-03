@@ -21,6 +21,7 @@ use App\Models\EventMasterType;
 use App\Models\EventCategoryMaster;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class EventTransactionController extends Controller
@@ -712,6 +713,150 @@ class EventTransactionController extends Controller
             'data' => $data,
         ]);
     }
+
+
+
+
+
+
+    /**
+     * Return the complete read-only quick-view details for an Admin event transaction.
+     */
+    public function quickView(int $eventTransaction): JsonResponse
+    {
+        $transaction = EventTransaction::query()
+            ->active()
+            ->with([
+                'partner:id,name',
+                'partnerCenter:id,name',
+                'partnerPlacementUser:id,name',
+                'fieldAgent:id,name,sakhi_id',
+            ])
+            ->findOrFail($eventTransaction);
+
+        // Resolve a stored document path into a browser-accessible URL.
+        $resolveDocumentUrl = function ($path) {
+            if (!$path) {
+                return null;
+            }
+
+            if (filter_var($path, FILTER_VALIDATE_URL)) {
+                return $path;
+            }
+
+            return Storage::url($path);
+        };
+
+        $documents = [];
+
+        foreach ([
+            'uploaded_doc_1' => 'Document 1',
+            'uploaded_doc_2' => 'Document 2',
+            'uploaded_doc_3' => 'Document 3',
+        ] as $column => $label) {
+            $path = $transaction->getAttribute($column);
+
+            if ($path) {
+                $documents[] = [
+                    'key' => $column,
+                    'name' => $label,
+                    'url' => $resolveDocumentUrl($path),
+                ];
+            }
+        }
+
+        // Build the available transaction timeline from its record timestamps.
+        $timeline = [];
+
+        if ($transaction->created_at) {
+            $timeline[] = [
+                'id' => 'created',
+                'type' => 'created',
+                'title' => 'Transaction Created',
+                'description' => 'The event transaction record was created.',
+                'date' => $transaction->created_at,
+            ];
+        }
+
+        if (
+            $transaction->event_date_submitted &&
+            $transaction->event_date_submitted != $transaction->created_at
+        ) {
+            $timeline[] = [
+                'id' => 'submitted',
+                'type' => 'submitted',
+                'title' => 'Transaction Submitted',
+                'description' => 'The transaction was submitted for review.',
+                'date' => $transaction->event_date_submitted,
+            ];
+        }
+
+        if (
+            $transaction->updated_at &&
+            $transaction->updated_at != $transaction->created_at
+        ) {
+            $timeline[] = [
+                'id' => 'updated',
+                'type' => 'current',
+                'title' => 'Last Updated',
+                'description' => 'The transaction record was last updated.',
+                'date' => $transaction->updated_at,
+            ];
+        }
+
+        $fieldAgent = $transaction->fieldAgent;
+        $partner = $transaction->partner;
+        $partnerCenter = $transaction->partnerCenter;
+        $placementUser = $transaction->partnerPlacementUser;
+
+        $data = [
+            'id' => $transaction->id,
+
+            'beneficiary_name' => $transaction->getAttribute('beneficiary_name'),
+            'beneficiary_phone_number' => $transaction->getAttribute('beneficiary_phone_number'),
+
+            'event_type_name' => $transaction->getAttribute('event_type_name'),
+            'event_category_name' => $transaction->getAttribute('event_category_name'),
+            'event_value' => $transaction->event_value,
+
+            'event_create_date' => $transaction->getAttribute('event_create_date'),
+            'event_date_submitted' => $transaction->event_date_submitted,
+
+            'learner_id' => $transaction->learner_id,
+
+            'partner_name' => $partner?->name,
+            'partner_center_name' => $partnerCenter?->name,
+            'partner_placement_user_id' => $transaction->partner_placement_user_id,
+
+            'field_agent_name' => $fieldAgent?->name,
+            'field_agent_sakhi_id' => $fieldAgent?->sakhi_id,
+
+            'field_type_name' => $transaction->getAttribute('field_type_name'),
+            'industry_type_name' => $transaction->getAttribute('industry_type_name'),
+
+            'workflow_status' => $transaction->workflow_status,
+            'review_status' => $transaction->review_status,
+            'status' => $transaction->status,
+
+            'last_comment' => null,
+
+            'created_at' => $transaction->created_at,
+            'updated_at' => $transaction->updated_at,
+
+            'documents' => $documents,
+
+            // Populate these from the actual comment/activity tables when their schema is available.
+            'comments' => [],
+            'timeline' => $timeline,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Event transaction details loaded successfully.',
+            'data' => $data,
+        ]);
+    }
+
 
 
 

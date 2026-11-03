@@ -337,6 +337,11 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         |--------------------------------------------------------------------------
         */
 
+        Route::get(
+            '/event-transactions/{eventTransaction}/quick-view',
+            [EventTransactionController::class, 'quickView']
+        )->name('admin.event-transactions.quick-view');
+
         Route::get('/transaction-activity',
             [EventTransactionController::class, 'transactionActivity']
         )->name('admin.dashboard.transaction-activity');

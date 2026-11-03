@@ -17,6 +17,7 @@ import {
     Filter,
     CheckCircle2,
     Clock3,
+    Layers3,
     XCircle,
 } from "lucide-react";
 
@@ -25,6 +26,7 @@ import EventReviewPerformanceChart from "../EventReviewPerformanceChart.jsx";
 import EventTransactionPieChart from "../EventTransactionPieChart.jsx";
 import EventTransactionBarChart from "../EventTransactionBarChart.jsx";
 import TransactionActivityChart from "./TransactionActivityChart";
+import AdminEventTransactionDrawer from "./EventTransactionDrawer.jsx";
 
 const INITIAL_FILTERS = {
     search: "",
@@ -111,6 +113,7 @@ export default function AdminEventTransactions({
     const [appliedFilters, setAppliedFilters] = useState(INITIAL_FILTERS);
     const [filterOptions, setFilterOptions] = useState({});
     const [transactions, setTransactions] = useState([]);
+    const [selectedTransactionId, setSelectedTransactionId] = useState(null);
     const [meta, setMeta] = useState({
         current_page: 1,
         last_page: 1,
@@ -833,10 +836,26 @@ export default function AdminEventTransactions({
                                             <div className="aet-actions">
                                                 <a
                                                     href={transaction.urls.show}
-                                                    title="View transaction"
+                                                    className="aet-action-button aet-action-view"
+                                                    title="View Transaction"
+                                                    aria-label="View Transaction"
                                                 >
                                                     <Eye size={16} />
                                                 </a>
+
+                                                <button
+                                                    type="button"
+                                                    className="aet-action-button aet-action-quick"
+                                                    onClick={() =>
+                                                        setSelectedTransactionId(
+                                                            transaction.id,
+                                                        )
+                                                    }
+                                                    title="Quick View"
+                                                    aria-label="Quick View"
+                                                >
+                                                    <Layers3 size={16} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -887,6 +906,10 @@ export default function AdminEventTransactions({
                     </div>
                 </footer>
             </div>
+            <AdminEventTransactionDrawer
+                transactionId={selectedTransactionId}
+                onClose={() => setSelectedTransactionId(null)}
+            />
         </section>
     );
 }
