@@ -337,6 +337,22 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         |--------------------------------------------------------------------------
         */
 
+        Route::get('/transaction-activity',
+            [EventTransactionController::class, 'transactionActivity']
+        )->name('admin.dashboard.transaction-activity');
+
+
+        // React transaction listing data with advanced filters.
+        Route::get('/event-transactions/data', [EventTransactionController::class, 'data'])
+            ->name('event-transactions.data');
+
+        // Dropdown options for the React advanced search panel.
+        Route::get('/event-transactions/filter-options', [EventTransactionController::class, 'filterOptions'])
+            ->name('event-transactions.filter-options');
+
+        Route::resource('event-transactions', EventTransactionController::class)
+            ->except(['create', 'store']);
+
         Route::resource('event-transactions', EventTransactionController::class)
             ->except(['create', 'store']);
 

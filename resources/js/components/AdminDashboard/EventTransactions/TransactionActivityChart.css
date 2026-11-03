@@ -1,0 +1,134 @@
+.aet-activity-card {
+    min-width: 0;
+    width: 100%;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e8edf5;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(16, 30, 67, 0.045);
+}
+
+.aet-activity-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.aet-activity-heading > div:first-child > span {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+}
+
+.aet-activity-heading h2 {
+    margin: 0;
+    color: #101e43;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.aet-activity-total {
+    padding: 8px 13px;
+    color: #2458c5;
+    background: #edf3ff;
+    border-radius: 9px;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.aet-activity-chart {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    height: 205px;
+    padding-top: 5px;
+}
+
+.aet-activity-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+.aet-activity-value {
+    min-height: 20px;
+    margin-bottom: 7px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.aet-activity-track {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    flex: 1;
+    width: 100%;
+    max-width: 34px;
+    overflow: hidden;
+    background: #f1f5fb;
+    border-radius: 7px 7px 3px 3px;
+}
+
+.aet-activity-bar {
+    width: 100%;
+    min-height: 4px;
+    background: linear-gradient(180deg, #4b83ef 0%, #2458c5 100%);
+    border-radius: 7px 7px 3px 3px;
+    transition: height 0.4s ease;
+}
+
+.aet-activity-column > span {
+    margin-top: 9px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.aet-activity-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 205px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.aet-activity-error {
+    color: #dc2626;
+}
+
+.aet-activity-error button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    color: #2458c5;
+    background: #edf3ff;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+@media (max-width: 520px) {
+    .aet-activity-card {
+        padding: 16px;
+    }
+
+    .aet-activity-chart {
+        gap: 6px;
+    }
+
+    .aet-activity-column > span {
+        font-size: 9px;
+    }
+}

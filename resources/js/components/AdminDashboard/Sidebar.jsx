@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
     Bell,
@@ -54,6 +54,24 @@ export default function Sidebar({
 }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("Dashboard");
+
+    // Keep the active sidebar item synchronized with the current page URL.
+    useEffect(() => {
+        const currentPath = window.location.pathname.replace(/\/$/, "");
+
+        const currentLink = [
+            ...navigation,
+            ...extraLinks.filter((link) => link.show),
+        ].find(({ href }) => {
+            if (href === "#overview") {
+                return currentPath === "/admin/dashboard";
+            }
+
+            return href.replace(/\/$/, "") === currentPath;
+        });
+
+        setActiveSection(currentLink?.label || "Dashboard");
+    }, []);
 
     const adminInitials = adminName
         .split(/\s+/)

@@ -11,6 +11,7 @@ import LearnerSync from './components/AdminDashboard/LearnerSync.jsx';
 // NEW: Placement Partner Dashboard
 import PlacementPartnerDashboard from './components/PlacementPartnerDashboard/PlacementPartnerDashboard.jsx';
 import LearnerCourseImport from './components/AdminDashboard/LearnerCourseImport.jsx';
+import AdminEventTransactions from './components/AdminDashboard/EventTransactions/AdminEventTransactions.jsx';
 const components = {
     'partner-workspace': PartnerWorkspace,
     'admin-dashboard': AdminDashboard,
@@ -19,6 +20,7 @@ const components = {
     'admin-learners': AdminLearners,
     'admin-learner-sync': LearnerSync,
     'admin-learner-course-import': LearnerCourseImport,
+    'admin-event-transactions': AdminEventTransactions,
 
     // NEW MODULE
     'placement-partner-dashboard': PlacementPartnerDashboard,
