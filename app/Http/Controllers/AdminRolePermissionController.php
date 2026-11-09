@@ -48,6 +48,14 @@ class AdminRolePermissionController extends Controller
             'partner_placement_users.update' => 'Edit placement users',
             'partner_placement_users.delete' => 'Delete placement users',
         ],
+        'Support & Tickets' => [
+            'support-tickets.view' => 'View support tickets',
+            'support-tickets.reply' => 'Reply to support tickets',
+            'support-tickets.internal-notes' => 'Add private internal notes',
+            'support-tickets.manage' => 'Manage ticket status and priority',
+            'support-tickets.assign' => 'Assign tickets to admins',
+            'support-tickets.categories.manage' => 'Manage support categories',
+        ],
 
 
         'Field agents' => [

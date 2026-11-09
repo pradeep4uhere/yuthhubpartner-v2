@@ -67,16 +67,15 @@ class SupportTicket extends Model
     }
 
     /**
-     * Get all replies associated with this ticket, ordered oldest first.
-     *
-     * @return HasMany
+     * Get all replies associated with this support ticket.
      */
     public function replies(): HasMany
     {
         return $this->hasMany(
             SupportTicketReply::class,
-            'support_ticket_id'
-        )->orderBy('created_at');
+            'support_ticket_id',
+            'id'
+        )->orderBy('created_at', 'asc');
     }
 
     /**

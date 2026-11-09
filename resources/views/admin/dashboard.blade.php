@@ -13,6 +13,6 @@
         data-can-view-event-categories="{{ auth('admin')->user()->can('event_categories.view') ? 'true' : 'false' }}"
         data-can-view-event-masters="{{ auth('admin')->user()->can('event_masters.view') ? 'true' : 'false' }}"
         data-can-view-downloads="{{ auth('admin')->user()->can('downloads.view') ? 'true' : 'false' }}"
-
+        data-can-view-support-tickets="{{ auth('admin')->user()->can('support-tickets.view') ? 'true' : 'false' }}"
     ></div>
 @endsection

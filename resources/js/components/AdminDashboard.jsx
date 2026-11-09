@@ -146,6 +146,7 @@ export default function AdminDashboard({
     canViewEventMasters = false,
     canViewDownloads = false,
     canViewErrorLogs = false,
+    canViewSupportTickets = false,
 }) {
     const [dashboardData, setDashboardData] = useState(null);
     const [dashboardLoading, setDashboardLoading] = useState(true);
@@ -275,6 +276,7 @@ export default function AdminDashboard({
                 canViewEventMasters={canViewEventMasters}
                 canViewDownloads={canViewDownloads}
                 canViewErrorLogs={canViewErrorLogs}
+                canViewSupportTickets={canViewSupportTickets}
             />
 
             <main className="admin-main">

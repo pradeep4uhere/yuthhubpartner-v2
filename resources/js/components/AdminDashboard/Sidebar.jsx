@@ -51,6 +51,7 @@ export default function Sidebar({
     canViewEventMasters = false,
     canViewDownloads = false,
     canViewErrorLogs = false,
+    canViewSupportTickets = false,
 }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("Dashboard");
@@ -141,10 +142,12 @@ export default function Sidebar({
             href: "/admin/log-history",
             icon: FileWarning,
         },
+
         {
-            label: "Course Import",
-            icon: FileSpreadsheet,
-            href: "/admin/learner-course-import",
+            show: canViewSupportTickets,
+            label: "Support & Tickets",
+            href: "/admin/support",
+            icon: CircleHelp,
         },
     ];
 

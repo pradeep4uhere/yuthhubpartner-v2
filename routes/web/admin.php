@@ -401,5 +401,17 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
 
         Route::post('/logs/clear', [LogHistoryController::class, 'clear'])
             ->name('logs.clear');
-    });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Admin Support & Tickets
+        |--------------------------------------------------------------------------
+        */
+
+        // Display the Admin Support & Tickets dashboard.
+        Route::view('/support', 'admin.support.index')
+            ->middleware('can:support-tickets.view')
+            ->name('support.index');
+        });
 });
