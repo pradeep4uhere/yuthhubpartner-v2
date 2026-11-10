@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Partner\MpinSettingsController as PartnerMpinSettin
 use App\Http\Controllers\Api\Partner\PartnerDownloadController;
 use App\Http\Controllers\Api\Partner\PartnerAnnouncementController;
 use App\Http\Controllers\Api\SupportTicketController;
+use App\Http\Controllers\Api\Partner\AdminAnnouncementController as PartnerAdminAnnouncementController;
 
 Route::middleware(['web', 'auth:partner'])
     ->prefix('partner')
@@ -52,6 +53,35 @@ Route::middleware(['web', 'auth:partner'])
             // Delete announcement.
             Route::delete('/{id}', [PartnerAnnouncementController::class, 'destroy'])
                 ->whereNumber('id')->name('destroy');
+        });
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Admin Announcements
+        |--------------------------------------------------------------------------
+        */
+
+        Route::prefix('admin-announcements')->name('admin-announcements.')->group(function (): void {
+
+            // List Admin announcements assigned to the authenticated Partner.
+            Route::get('/', [PartnerAdminAnnouncementController::class, 'index'])
+                ->name('index');
+
+            // Get the unread Admin announcement count.
+            Route::get('/unread-count', [PartnerAdminAnnouncementController::class, 'unreadCount'])
+                ->name('unread-count');
+
+            // Mark an assigned Admin announcement as read.
+            Route::post('/{id}/read', [PartnerAdminAnnouncementController::class, 'markAsRead'])
+                ->whereNumber('id')
+                ->name('read');
+
+            // Preview an assigned Admin announcement attachment.
+            Route::get('/{id}/attachment', [PartnerAdminAnnouncementController::class, 'attachment'])
+                ->whereNumber('id')
+                ->name('attachment');
         });
 
 

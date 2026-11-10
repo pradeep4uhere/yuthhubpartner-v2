@@ -34,6 +34,10 @@ const FieldAgents = lazy(() => import("./pages/fieldAgent/FieldAgents.jsx"));
 const FieldAgentDetails = lazy(
     () => import("./pages/fieldAgent/FieldAgentDetails.jsx"),
 );
+// Lazy-load Admin announcements received from the Admin module.
+const AdminAnnouncements = lazy(
+    () => import("./pages/adminAnnouncements/AdminAnnouncements.jsx"),
+);
 
 const Profile = lazy(() => import("./pages/ProfilePage.jsx"));
 
@@ -93,6 +97,10 @@ const pages = {
         titleKey: "announcements",
         component: Announcements,
     },
+    adminAnnouncements: {
+        titleKey: "admin_announcements",
+        component: AdminAnnouncements,
+    },
 
     profile: {
         titleKey: "profile",
@@ -131,6 +139,8 @@ export default function PartnerDashboard({ partner = {}, centers = [] }) {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const [selectedAgentId, setSelectedAgentId] = useState(null);
+
+    const [adminUnreadCount, setAdminUnreadCount] = useState(0);
 
     /* =====================================
        ACTIVE PAGE
@@ -187,6 +197,8 @@ export default function PartnerDashboard({ partner = {}, centers = [] }) {
                 onNavigate={navigate}
                 mobileOpen={mobileOpen}
                 onClose={() => setMobileOpen(false)}
+                unreadCount={adminUnreadCount}
+                onUnreadCountChange={setAdminUnreadCount}
                 t={t}
             />
 
@@ -214,6 +226,7 @@ export default function PartnerDashboard({ partner = {}, centers = [] }) {
                         onViewDetails={openAgentDetails}
                         agentId={selectedAgentId}
                         onBack={backToAgents}
+                        onUnreadCountChange={setAdminUnreadCount}
                     />
                 </Suspense>
             </main>

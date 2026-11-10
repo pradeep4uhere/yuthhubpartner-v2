@@ -3,14 +3,15 @@ import {
     GraduationCap,
     CalendarDays,
     UsersRound,
-    ChartNoAxesColumnIncreasing,
     CircleUserRound,
     CircleHelp,
     LogOut,
     Download,
     Megaphone,
+    Bell,
     X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 /* =========================================
    PRIMARY NAVIGATION
@@ -22,6 +23,7 @@ const primary = [
     ["transactions", "Event Transaction", CalendarDays],
     ["agents", "Field Agents", UsersRound],
     ["announcements", "Announcements", Megaphone],
+    ["adminAnnouncements", "Admin Announcements", Bell],
     ["downloads", "My Downloads", Download],
 ];
 
@@ -43,8 +45,61 @@ export default function Sidebar({
     onNavigate,
     mobileOpen,
     onClose,
+    unreadCount,
+    onUnreadCountChange,
 }) {
-    const item = ([key, label, Icon]) => (
+    const [localUnreadCount, setLocalUnreadCount] = useState(0);
+
+    /* Fetch the unread Admin announcement count. */
+    useEffect(() => {
+        let cancelled = false;
+
+        // Load the current unread count for the authenticated Partner.
+        async function loadUnreadCount() {
+            try {
+                const response = await fetch(
+                    "/api/partner/admin-announcements/unread-count",
+                    {
+                        method: "GET",
+                        credentials: "same-origin",
+                        headers: {
+                            Accept: "application/json",
+                        },
+                    },
+                );
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+                const count = Number(data.unread_count || 0);
+
+                if (!cancelled) {
+                    setLocalUnreadCount(count);
+                    onUnreadCountChange?.(count);
+                }
+            } catch (error) {
+                console.error(
+                    "Unable to load Admin announcement unread count:",
+                    error,
+                );
+            }
+        }
+
+        loadUnreadCount();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [activePage, onUnreadCountChange]);
+
+    /* Use the parent count when it is supplied. */
+    const displayedUnreadCount =
+        unreadCount !== undefined && unreadCount !== null
+            ? Number(unreadCount)
+            : localUnreadCount;
+
+    /* Render an individual sidebar navigation item. */
+    const renderItem = ([key, label, Icon]) => (
         <button
             key={key}
             type="button"
@@ -52,8 +107,14 @@ export default function Sidebar({
             onClick={() => onNavigate(key)}
             aria-current={activePage === key ? "page" : undefined}
         >
-            <Icon size={22} />
+            <Icon size={20} />
             <span>{label}</span>
+
+            {key === "adminAnnouncements" && displayedUnreadCount > 0 && (
+                <span className="yp-admin-announcement-count">
+                    {displayedUnreadCount > 99 ? "99+" : displayedUnreadCount}
+                </span>
+            )}
         </button>
     );
 
@@ -75,8 +136,8 @@ export default function Sidebar({
                     <img
                         src="/icon.png"
                         alt=""
-                        onError={(e) => {
-                            e.currentTarget.style.display = "none";
+                        onError={(event) => {
+                            event.currentTarget.style.display = "none";
                         }}
                     />
 
@@ -96,12 +157,12 @@ export default function Sidebar({
 
                 {/* PRIMARY MENU */}
 
-                <nav className="yp-nav">{primary.map(item)}</nav>
+                <nav className="yp-nav">{primary.map(renderItem)}</nav>
 
                 {/* BOTTOM MENU */}
 
                 <div className="yp-sidebar-bottom">
-                    <nav className="yp-nav">{secondary.map(item)}</nav>
+                    <nav className="yp-nav">{secondary.map(renderItem)}</nav>
 
                     {/* LOGOUT */}
 
@@ -117,7 +178,7 @@ export default function Sidebar({
                         />
 
                         <button className="yp-nav-item yp-logout" type="submit">
-                            <LogOut size={22} />
+                            <LogOut size={20} />
                             <span>Sign Out</span>
                         </button>
                     </form>

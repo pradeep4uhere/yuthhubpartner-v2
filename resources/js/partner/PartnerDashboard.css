@@ -1056,3 +1056,21 @@
   .yp-hero-art { display: none; }
 }
 @media (max-width: 390px) { .yp-stats { grid-template-columns: 1fr; } .yp-stat:last-child { grid-column: auto; } }
+
+
+/* Admin announcement unread count in Partner sidebar. */
+.yp-admin-announcement-count {
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: #f04452;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+}

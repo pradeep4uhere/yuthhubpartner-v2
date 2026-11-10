@@ -66,5 +66,17 @@ class Partner extends Authenticatable
     }
 
 
+    /**
+     * Get Admin announcements assigned to this Partner.
+     */
+    public function adminAnnouncementRecipients(): MorphMany
+    {
+        return $this->morphMany(
+            AdminAnnouncementRecipient::class,
+            'recipient'
+        );
+    }
+
+
 
 }
