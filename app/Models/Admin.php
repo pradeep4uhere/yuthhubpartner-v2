@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'email', 'password', 'is_active', 'last_login_at'])]
 #[Hidden(['password', 'remember_token'])]
@@ -40,5 +41,13 @@ class Admin extends Authenticatable
         return $this->morphMany(Export::class, 'requested_by');
     }
 
+
+    /**
+     * Get announcements created by this Admin.
+     */
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(AdminAnnouncement::class);
+    }
 
 }

@@ -67,5 +67,18 @@ class PartnerPlacementUser extends Authenticatable
 
 
 
+    /**
+     * Get announcement recipient records assigned to this Placement Partner.
+     */
+    public function adminAnnouncementRecipients(): MorphMany
+    {
+        return $this->morphMany(
+            AdminAnnouncementRecipient::class,
+            'recipient'
+        );
+    }
+
+
+
 
 }

@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\LogHistoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LearnerSyncController;
 use App\Http\Controllers\Admin\LearnerCourseImportController;
+use App\Http\Controllers\Admin\AdminAnnouncementPageController;
 
 Route::prefix('admin')->name('admin.')->group(function (): void {
 
@@ -414,4 +415,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
             ->middleware('can:support-tickets.view')
             ->name('support.index');
         });
+
+
+        // Admin Announcement Management page.
+        Route::middleware(['auth:admin', 'can:announcements.view'])
+            ->get('/announcements', [AdminAnnouncementPageController::class, 'index'])
+            ->name('admin.announcements.index');
 });

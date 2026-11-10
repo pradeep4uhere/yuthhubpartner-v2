@@ -15,6 +15,7 @@ import {
     Handshake,
     LayoutDashboard,
     LocateFixed,
+    Megaphone,
     MoreHorizontal,
     ShieldCheck,
     UsersRound,
@@ -52,6 +53,7 @@ export default function Sidebar({
     canViewDownloads = false,
     canViewErrorLogs = false,
     canViewSupportTickets = false,
+    canViewAnnouncements = false,
 }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("Dashboard");
@@ -137,12 +139,17 @@ export default function Sidebar({
             icon: Download,
         },
         {
+            show: canViewAnnouncements,
+            label: "Announcements",
+            href: "/admin/announcements",
+            icon: Megaphone,
+        },
+        {
             show: canViewErrorLogs,
             label: "All Error Logs",
             href: "/admin/log-history",
             icon: FileWarning,
         },
-
         {
             show: canViewSupportTickets,
             label: "Support & Tickets",
@@ -208,19 +215,6 @@ export default function Sidebar({
                 </nav>
 
                 <div className="admin-sidebar__spacer" />
-
-                <div className="admin-support">
-                    <span className="admin-support__icon">
-                        <CircleHelp size={18} />
-                    </span>
-
-                    <div>
-                        <b>Need a hand?</b>
-                        <span>Visit the partner help centre</span>
-                    </div>
-
-                    <ChevronRight size={16} />
-                </div>
 
                 <button
                     className="admin-profile"

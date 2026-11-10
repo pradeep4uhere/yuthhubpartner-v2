@@ -52,6 +52,12 @@ class AdminRoleSeeder extends Seeder
             'support-tickets.manage',
             'support-tickets.assign',
             'support-tickets.categories.manage',
+
+            'announcements.view',
+            'announcements.create',
+            'announcements.update',
+            'announcements.publish',
+            'announcements.delete',
         ];
 
         foreach ($permissions as $permission) {
@@ -91,6 +97,12 @@ class AdminRoleSeeder extends Seeder
             'support-tickets.manage',
             'support-tickets.assign',
             'support-tickets.categories.manage',
+            'announcements.view',
+            'announcements.create',
+            'announcements.update',
+            'announcements.publish',
+            'announcements.delete',
+
         ]);
         $subAdminRole->syncPermissions([
             'admin.access',
@@ -99,6 +111,7 @@ class AdminRoleSeeder extends Seeder
             'support-tickets.reply',
             'support-tickets.internal-notes',
             'support-tickets.manage',
+            'announcements.view',
         ]);
 
         $initialAdmin = config('admin.initial_admin');

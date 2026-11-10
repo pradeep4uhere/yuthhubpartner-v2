@@ -1,0 +1,77 @@
+/* =========================================================
+   FIELD AGENT ANNOUNCEMENT HUB
+   Isolated styles for Admin and Partner tabs.
+========================================================= */
+
+.fa-announcement-hub {
+    width: 100%;
+    min-width: 0;
+}
+
+.fa-announcement-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    margin-bottom: 20px;
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+    background: #eef2f8;
+    border: 1px solid #e4eaf3;
+    border-radius: 12px;
+}
+
+.fa-announcement-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fa-announcement-tab:hover {
+    color: #172b4d;
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.fa-announcement-tab.active {
+    color: #1d4ed8;
+    background: #ffffff;
+    box-shadow: 0 2px 7px rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 600px) {
+    .fa-announcement-tabs {
+        width: 100%;
+    }
+
+    .fa-announcement-tab {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}
+
+.fa-announcement-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    color: #fff;
+    background: #e34d59;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+}

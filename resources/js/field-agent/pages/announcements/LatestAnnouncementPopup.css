@@ -1,7 +1,8 @@
 
-/* =========================================
-   LATEST ANNOUNCEMENT POPUP
-========================================= */
+/* =========================================================
+   FIELD AGENT — PREMIUM ANNOUNCEMENT POPUP
+   Modern notification modal with slide-down animation
+========================================================= */
 
 .fa-lap-overlay {
     position: fixed;
@@ -12,39 +13,73 @@
     align-items: flex-start;
     justify-content: center;
 
-    padding: 20px 14px;
-    background: rgba(15, 23, 42, 0.68);
-    backdrop-filter: blur(3px);
+    padding: 42px 16px 20px;
+
+    background: rgba(10, 20, 43, 0.58);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
 
     overflow-y: auto;
     box-sizing: border-box;
+
+    animation: faLapBackdrop 0.35s ease both;
 }
 
+/* Premium modal container */
+
 .fa-lap-modal {
-    width: min(100%, 500px);
+    position: relative;
+
+    width: min(100%, 540px);
     max-width: 100%;
-    max-height: calc(100dvh - 40px);
+    max-height: calc(100dvh - 62px);
 
     display: flex;
     flex-direction: column;
 
-    margin: auto;
+    margin: 0 auto;
+
     background: #ffffff;
-    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 18px;
     overflow: hidden;
 
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.28);
-    animation: faLapEnter 0.25s ease-out;
+    box-shadow:
+        0 32px 90px rgba(8, 20, 48, 0.28),
+        0 8px 24px rgba(8, 20, 48, 0.10);
+
+    transform-origin: top center;
+    animation: faLapSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+
     box-sizing: border-box;
 }
 
-@keyframes faLapEnter {
+/* Backdrop entrance */
+
+@keyframes faLapBackdrop {
     from {
         opacity: 0;
-        transform: translateY(15px) scale(0.97);
     }
 
     to {
+        opacity: 1;
+    }
+}
+
+/* Smooth top-to-bottom modal entrance */
+
+@keyframes faLapSlideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-65px) scale(0.96);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translateY(5px) scale(1.005);
+    }
+
+    100% {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
@@ -53,91 +88,177 @@
 /* Header */
 
 .fa-lap-header {
+    position: relative;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
 
-    padding: 20px 22px;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 22px 24px;
+
+    background: linear-gradient(
+        120deg,
+        #101e43 0%,
+        #17376f 55%,
+        #2458a8 100%
+    );
+
+    border-bottom: 0;
     flex-shrink: 0;
 }
 
+.fa-lap-header::after {
+    content: "";
+    position: absolute;
+    right: -45px;
+    top: -85px;
+
+    width: 190px;
+    height: 190px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 25px rgba(255, 255, 255, 0.035),
+        0 0 0 50px rgba(255, 255, 255, 0.025);
+
+    pointer-events: none;
+}
+
 .fa-lap-heading {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+
     min-width: 0;
-    color: #172554;
+    color: #ffffff;
+}
+
+.fa-lap-heading > svg {
+    width: 42px;
+    height: 42px;
+
+    padding: 10px;
+
+    flex-shrink: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
 }
 
 .fa-lap-heading h2 {
     margin: 0;
-    font-size: 20px;
+
+    color: #ffffff;
+    font-size: 18px;
     font-weight: 800;
+    letter-spacing: 0.2px;
+    line-height: 1.3;
 }
 
 .fa-lap-close {
-    width: 32px;
-    height: 32px;
+    position: relative;
+    z-index: 2;
+
+    width: 34px;
+    height: 34px;
+
     flex-shrink: 0;
 
     display: grid;
     place-items: center;
 
-    border: 0;
-    border-radius: 8px;
-    background: #f1f5f9;
-    color: #475569;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+
     cursor: pointer;
 }
 
 .fa-lap-close:hover {
-    background: #fee2e2;
-    color: #dc2626;
+    background: rgba(255, 255, 255, 0.20);
 }
 
 /* Scrollable content */
 
 .fa-lap-body {
-    padding: 20px 22px;
+    padding: 25px 26px;
+
     overflow-y: auto;
     overflow-x: hidden;
+
     min-height: 0;
     min-width: 0;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(37, 99, 235, 0.045),
+            transparent 38%
+        ),
+        #ffffff;
+
     overscroll-behavior: contain;
+}
+
+.fa-lap-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.fa-lap-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
 }
 
 .fa-lap-meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 11px;
+
+    margin-bottom: 19px;
 }
 
 .fa-lap-meta > span:last-child {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+
     color: #64748b;
     font-size: 11px;
+    font-weight: 600;
 }
 
 .fa-lap-title {
-    margin: 0 0 12px;
-    color: #0f172a;
-    font-size: 19px;
+    margin: 0 0 13px;
+
+    color: #14213d;
+    font-size: 21px;
     font-weight: 800;
     line-height: 1.4;
+    letter-spacing: -0.35px;
+
     overflow-wrap: anywhere;
 }
 
 .fa-lap-message {
-    margin-bottom: 18px;
-    color: #475569;
+    margin-bottom: 21px;
+
+    color: #526178;
     font-size: 13px;
-    line-height: 1.8;
+    font-weight: 400;
+    line-height: 1.85;
+
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
@@ -145,21 +266,38 @@
 /* Attachment image */
 
 .fa-lap-image-link {
-    display: block;
     position: relative;
+
+    display: block;
+
     width: 100%;
     max-width: 100%;
 
     overflow: hidden;
-    border-radius: 9px;
-    background: #f1f5f9;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+
+    background: #f8fafc;
+    text-decoration: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.fa-lap-image-link:hover {
+    border-color: #93b4f5;
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.10);
 }
 
 .fa-lap-image {
     display: block;
+
     width: 100%;
     height: auto;
-    max-height: 520px;
+    max-height: 440px;
+
     object-fit: contain;
 }
 
@@ -169,29 +307,71 @@
     justify-content: center;
     gap: 7px;
 
-    padding: 10px;
-    background: #172554;
-    color: #ffffff;
+    padding: 11px;
+
+    background: #f1f5f9;
+    border-top: 1px solid #e2e8f0;
+
+    color: #2458a8;
     font-size: 12px;
     font-weight: 700;
 }
 
+/* PDF attachment */
+
 .fa-lap-pdf {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 
-    padding: 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 9px;
-    color: #1d4ed8;
+    padding: 14px 16px;
+
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+
+    background: #f5f8ff;
+    color: #2458a8;
+
     text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.fa-lap-pdf:hover {
+    background: #eff6ff;
+    border-color: #93b4f5;
+    transform: translateY(-1px);
 }
 
 .fa-lap-pdf span {
     flex: 1;
     min-width: 0;
+
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+
     overflow-wrap: anywhere;
+}
+
+/* Read error */
+
+.fa-lap-error {
+    margin: 16px 0 0;
+    padding: 11px 13px;
+
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+
+    background: #fff1f2;
+    color: #b91c1c;
+
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
 }
 
 /* Footer */
@@ -200,60 +380,184 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 14px;
 
-    padding: 14px 22px;
-    border-top: 1px solid #e2e8f0;
+    padding: 17px 24px;
+
+    border-top: 1px solid #edf0f5;
+    background: #ffffff;
+
     flex-shrink: 0;
 }
 
-.fa-lap-footer span {
+.fa-lap-footer > span {
     color: #94a3b8;
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Footer action group */
+
+.fa-lap-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 9px;
 }
 
 .fa-lap-footer button {
-    border: 0;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
+    min-height: 39px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
 
     padding: 10px 14px;
-    font-size: 12px;
+
+    border: 0;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 700;
+
     cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
-/* Mobile */
+.fa-lap-footer button:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.fa-lap-footer button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* View all button */
+
+.fa-lap-view-all {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.fa-lap-view-all:hover:not(:disabled) {
+    background: #e2e8f0;
+}
+
+/* Mark as read — primary action */
+
+.fa-lap-footer .fa-lap-mark-read {
+    background: linear-gradient(135deg, #2563eb, #1746b8);
+    color: #ffffff;
+
+    box-shadow: 0 5px 13px rgba(37, 99, 235, 0.23);
+}
+
+.fa-lap-footer .fa-lap-mark-read:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1d4ed8, #123b9d);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.30);
+}
+
+/* Loading spinner */
+
+.fa-lap-spinner {
+    animation: faLapSpin 0.8s linear infinite;
+}
+
+@keyframes faLapSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive layout */
 
 @media (max-width: 576px) {
     .fa-lap-overlay {
-        padding: 12px;
+        padding: 18px 12px;
     }
 
     .fa-lap-modal {
-        max-height: calc(100dvh - 24px);
+        width: 100%;
+        max-height: calc(100dvh - 36px);
+        border-radius: 15px;
     }
 
-    .fa-lap-header,
-    .fa-lap-body {
-        padding: 16px;
+    .fa-lap-header {
+        padding: 18px;
     }
 
-    .fa-lap-footer {
-        padding: 12px 16px;
-        flex-wrap: wrap;
+    .fa-lap-heading > svg {
+        width: 38px;
+        height: 38px;
+        padding: 9px;
     }
 
     .fa-lap-heading h2 {
-        font-size: 17px;
+        font-size: 16px;
+    }
+
+    .fa-lap-body {
+        padding: 19px 18px;
     }
 
     .fa-lap-title {
-        font-size: 17px;
+        font-size: 18px;
+    }
+
+    .fa-lap-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 15px 18px;
+    }
+
+    .fa-lap-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .fa-lap-footer button {
+        flex: 1;
     }
 
     .fa-lap-image {
-        max-height: 400px;
+        max-height: 350px;
+    }
+}
+
+/* Small mobile screens */
+
+@media (max-width: 380px) {
+    .fa-lap-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fa-lap-footer button {
+        width: 100%;
+    }
+}
+
+/* Respect reduced-motion accessibility preference */
+
+@media (prefers-reduced-motion: reduce) {
+    .fa-lap-overlay,
+    .fa-lap-modal {
+        animation: none !important;
+    }
+
+    .fa-lap-footer button,
+    .fa-lap-pdf,
+    .fa-lap-image-link {
+        transition: none !important;
     }
 }

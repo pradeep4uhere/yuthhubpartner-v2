@@ -43,9 +43,9 @@ import LearnersPage from "./pages/LearnersPage";
 import ProfilePage from "./pages/ProfilePage";
 import SupportTicketsPage from "./pages/SupportTicketsPage";
 import OverviewPage from "./pages/OverviewPage";
-import AnnouncementsPage from "./pages/announcements/AnnouncementsPage.jsx";
 import LatestAnnouncements from "./pages/announcements/LatestAnnouncements.jsx";
 import LatestAnnouncementPopup from "./pages/announcements/LatestAnnouncementPopup.jsx";
+import AnnouncementsHubPage from "./pages/announcements/AnnouncementsHubPage.jsx";
 
 const getFieldAgentTranslations = () => {
     const element = document.getElementById("field-agent-translations");
@@ -63,7 +63,7 @@ const getFieldAgentTranslations = () => {
 const pages = {
     activities: EventActivitiesPage,
     learners: LearnersPage,
-    announcements: AnnouncementsPage,
+    announcements: AnnouncementsHubPage,
     profile: ProfilePage,
     support: SupportTicketsPage,
 };
@@ -142,6 +142,8 @@ export default function FieldAgentDashboard({ agent = {} }) {
     const [activeSection, setActiveSection] = useState("overview");
     const [announcementUnread, setAnnouncementUnread] = useState(0);
     const [announcementRefreshKey, setAnnouncementRefreshKey] = useState(0);
+    // Maintain the Admin announcement unread count independently.
+    const [adminAnnouncementUnread, setAdminAnnouncementUnread] = useState(0);
 
     const [dashboardStats, setDashboardStats] = useState({
         my_learners: null,
@@ -204,9 +206,49 @@ export default function FieldAgentDashboard({ agent = {} }) {
         }
     };
 
-    // Load the unread count when the Field Agent dashboard mounts.
+    /**
+     * Fetch the unread count of Admin announcements assigned to this agent.
+     */
+    const refreshAdminAnnouncementCount = async () => {
+        try {
+            const response = await fetch(
+                "/api/field-agent/admin-announcements/unread-count",
+                {
+                    credentials: "same-origin",
+                    headers: {
+                        Accept: "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                },
+            );
+
+            if (!response.ok) return;
+
+            const result = await response.json();
+
+            if (!result.success) return;
+
+            const unreadCount = Number(result.unread_count ?? 0);
+
+            setAdminAnnouncementUnread(unreadCount);
+
+            // Notify the Blade sidebar independently of Partner announcements.
+            window.dispatchEvent(
+                new CustomEvent("field-agent:admin-announcement-count", {
+                    detail: {
+                        count: unreadCount,
+                    },
+                }),
+            );
+        } catch (error) {
+            console.error("Admin announcement unread count error:", error);
+        }
+    };
+
+    // Load both independent announcement counts when the dashboard mounts.
     useEffect(() => {
         refreshAnnouncementCount();
+        refreshAdminAnnouncementCount();
     }, []);
 
     useEffect(() => {
@@ -355,6 +397,7 @@ export default function FieldAgentDashboard({ agent = {} }) {
         <div className="fa-react-dashboard">
             {/* Show the latest unread Partner announcement on dashboard entry. */}
             <LatestAnnouncementPopup
+                onMarkedRead={refreshAnnouncementCount}
                 onViewAll={() => {
                     setEditingActivityId(null);
                     setActiveSection("announcements");
@@ -795,10 +838,12 @@ export default function FieldAgentDashboard({ agent = {} }) {
                 ) : pages[activeSection] ? (
                     React.createElement(pages[activeSection], {
                         agent,
+                        adminUnreadCount: adminAnnouncementUnread,
                         onNavigate: setActiveSection,
                         t,
                         ...(activeSection === "announcements" && {
                             onUnreadChange: refreshAnnouncementCount,
+                            onAdminUnreadChange: refreshAdminAnnouncementCount,
                         }),
                         ...(activeSection === "activities" && {
                             onEditActivity: (activity) => {

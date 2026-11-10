@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Admin\LearnerApiController;
 use App\Http\Controllers\Api\Admin\AdminSupportController;
+use App\Http\Controllers\Api\Admin\AdminAnnouncementController;
 
 Route::prefix('admin')
     ->name('api.admin.')
@@ -139,4 +140,94 @@ Route::prefix('admin')
         Route::get('/learners/filter-options', [LearnerApiController::class, 'filterOptions'])
             ->middleware('can:learners.view')
             ->name('learners.filter-options');
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Admin Announcement Management
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('announcements')
+                ->name('announcements.')
+                ->group(function () {
+
+                    // Return announcement listing and statistics.
+                    Route::get('/', [AdminAnnouncementController::class, 'index'])
+                        ->middleware('can:announcements.view')
+                        ->name('index');
+
+                    // Return searchable recipient options.
+                    Route::get('/recipients', [
+                        AdminAnnouncementController::class,
+                        'recipientOptions',
+                    ])->middleware('can:announcements.create')
+                        ->name('recipients');
+
+                    // Create a draft or publish an announcement.
+                    Route::post('/', [AdminAnnouncementController::class, 'store'])
+                        ->middleware('can:announcements.create')
+                        ->name('store');
+
+                    // Return announcement details.
+                    Route::get('/{id}', [AdminAnnouncementController::class, 'show'])
+                        ->whereNumber('id')
+                        ->middleware('can:announcements.view')
+                        ->name('show');
+
+                    // Update an unpublished draft.
+                    Route::put('/{id}', [AdminAnnouncementController::class, 'update'])
+                        ->whereNumber('id')
+                        ->middleware('can:announcements.update')
+                        ->name('update');
+
+                    // Publish a saved draft.
+                    Route::post('/{id}/publish', [
+                        AdminAnnouncementController::class,
+                        'publish',
+                    ])->whereNumber('id')
+                        ->middleware('can:announcements.publish')
+                        ->name('publish');
+
+
+                        // Disable an announcement.
+                    Route::post('/{id}/disable', [
+                        AdminAnnouncementController::class,
+                        'disable',
+                    ])
+                        ->middleware('can:announcements.publish')
+                        ->name('disable');
+
+                    // Enable a disabled announcement.
+                    Route::post('/{id}/enable', [
+                        AdminAnnouncementController::class,
+                        'enable',
+                    ])
+                        ->middleware('can:announcements.publish')
+                        ->name('enable');
+
+                    // Download a private announcement attachment.
+                    Route::get('/{id}/attachment', [
+                        AdminAnnouncementController::class,
+                        'attachment',
+                    ])->whereNumber('id')
+                        ->middleware('can:announcements.view')
+                        ->name('attachment');
+
+                    // Soft-delete an announcement.
+                    Route::delete('/{id}', [
+                        AdminAnnouncementController::class,
+                        'destroy',
+                    ])->whereNumber('id')
+                        ->middleware('can:announcements.delete')
+                        ->name('destroy');
+                });
+
+
+
+
+
+
+
     });

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\FieldAgent\LearnerController;
 use App\Http\Controllers\Api\FieldAgent\ChangePasswordController;
 use App\Http\Controllers\Api\FieldAgent\MpinSettingsController;
 use App\Http\Controllers\Api\FieldAgent\AnnouncementController;
+use App\Http\Controllers\Api\FieldAgent\AdminAnnouncementController;
 
 Route::middleware(['web', 'auth:field_agent'])
     ->prefix('field-agent')
@@ -71,6 +72,43 @@ Route::middleware(['web', 'auth:field_agent'])
 
         Route::get('/support-ticket-attachments/{attachmentId}/download', [SupportTicketController::class, 'downloadAttachment'])
             ->whereNumber('attachmentId')->name('support-ticket-attachments.download');
+
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Admin Announcements
+        |--------------------------------------------------------------------------
+        */
+
+        Route::prefix('admin-announcements')
+            ->name('admin-announcements.')
+            ->group(function (): void {
+
+                // List Admin announcements assigned to the authenticated agent.
+                Route::get('/', [AdminAnnouncementController::class, 'index'])
+                    ->name('index');
+
+                // Get unread Admin announcement count.
+                Route::get('/unread-count', [AdminAnnouncementController::class, 'unreadCount'])
+                    ->name('unread-count');
+
+                // Download or preview an assigned Admin announcement attachment.
+                Route::get('/{id}/attachment', [AdminAnnouncementController::class, 'attachment'])
+                    ->whereNumber('id')
+                    ->name('attachment');
+
+                // Show Admin announcement details.
+                Route::get('/{id}', [AdminAnnouncementController::class, 'show'])
+                    ->whereNumber('id')
+                    ->name('show');
+
+                // Mark an Admin announcement as read.
+                Route::post('/{id}/read', [AdminAnnouncementController::class, 'markAsRead'])
+                    ->whereNumber('id')
+                    ->name('read');
+            });
 
 
         /*

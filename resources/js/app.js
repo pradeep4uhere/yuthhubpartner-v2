@@ -13,6 +13,7 @@ import AdminEventTransactions from './components/AdminDashboard/EventTransaction
 
 // Admin Support & Tickets
 import AdminSupport from './components/AdminDashboard/Support/AdminSupport.jsx';
+import AdminAnnouncements from './components/AdminDashboard/Announcements/AdminAnnouncements.jsx';
 
 const components = {
     'partner-workspace': PartnerWorkspace,
@@ -29,6 +30,7 @@ const components = {
 
     // Admin Support & Tickets
     'admin-support': AdminSupport,
+    'admin-announcements': AdminAnnouncements,
 };
 
 document.querySelectorAll('[data-react-app]').forEach((element) => {
@@ -135,6 +137,9 @@ document.querySelectorAll('[data-react-app]').forEach((element) => {
 
             canViewSupportTickets:
             element.dataset.canViewSupportTickets === 'true',
+            // Admin Announcement permissions.
+            canViewAnnouncements:
+                element.dataset.canViewAnnouncements === 'true',
         }),
     );
 });
