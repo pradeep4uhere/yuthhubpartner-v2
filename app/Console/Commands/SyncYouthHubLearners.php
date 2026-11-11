@@ -526,7 +526,7 @@ class SyncYouthHubLearners extends Command
                 'employment_experience_years' => $this->cleanValue($profile['employment_experience_years'] ?? null),
                 'residential_area_type' => $this->cleanValue($profile['residential_area_type'] ?? null),
 
-                'interested_in_job' => $this->booleanValue($profile['interested_in_job'] ?? null),
+                'interested_in_job' => $this->booleanValue($profile['interested_in_job'] ?? null) ?? 0,
                 'has_work_experience' => $this->cleanValue($profile['has_work_experience'] ?? null),
 
                 // Preserve existing counters when the API omits them.
