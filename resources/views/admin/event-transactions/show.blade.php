@@ -2596,4 +2596,156 @@ i.fas.fa-download {
 })();
 </script>
 
+<style>
+
+/* =========================================================
+   MODERN EVENT TRANSACTION PAGE HEADER
+   Corrected selector + isolated styling
+========================================================= */
+
+.event-transaction-show-page > .admin-users-header {
+    width: 100% !important;
+    max-width: 1380px !important;
+    min-height: 58px !important;
+    margin: 0 auto 28px !important;
+    padding: 0 0 16px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+
+    border-bottom: 1px solid #e2e8f0 !important;
+    background: transparent !important;
+    box-sizing: border-box !important;
+}
+
+.event-transaction-show-page > .admin-users-header > a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 9px !important;
+
+    min-height: 39px !important;
+    padding: 0 15px !important;
+
+    color: #334155 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 9px !important;
+
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+
+    transition: all .2s ease !important;
+}
+
+.event-transaction-show-page > .admin-users-header > a:hover {
+    color: #1d4ed8 !important;
+    background: #eff6ff !important;
+    border-color: #bfdbfe !important;
+    transform: translateY(-1px) !important;
+}
+
+.event-transaction-show-page > .admin-users-header > form {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+}
+
+.event-transaction-show-page > .admin-users-header > form > button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    min-height: 39px !important;
+    padding: 0 17px !important;
+
+    color: #475569 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 9px !important;
+
+    font-family: inherit !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer !important;
+    transition: all .2s ease !important;
+}
+
+.event-transaction-show-page > .admin-users-header > form > button:hover {
+    color: #dc2626 !important;
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+}
+
+/* =========================================================
+   MODERN PAGE TITLE SECTION
+========================================================= */
+
+.event-transaction-show-content > .admin-partners-heading {
+    align-items: center !important;
+    padding: 0 0 22px !important;
+    margin-bottom: 22px !important;
+    border-bottom: 1px solid #e8edf4 !important;
+}
+
+.event-transaction-show-content > .admin-partners-heading h1 {
+    margin-top: 5px !important;
+    color: #10213e !important;
+    font-size: clamp(25px, 3vw, 32px) !important;
+    font-weight: 800 !important;
+    letter-spacing: -1px !important;
+}
+
+.event-transaction-show-content .admin-auth-eyebrow {
+    color: #2563eb !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: .13em !important;
+}
+
+.event-transaction-show-content .admin-users-intro {
+    max-width: 650px !important;
+    color: #718096 !important;
+    font-size: 13px !important;
+    line-height: 1.65 !important;
+}
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+@media (max-width: 600px) {
+    .event-transaction-show-page {
+        padding: 20px 14px 35px !important;
+    }
+
+    .event-transaction-show-page > .admin-users-header {
+        min-height: 48px !important;
+        margin-bottom: 22px !important;
+        padding-bottom: 13px !important;
+    }
+
+    .event-transaction-show-page > .admin-users-header > a,
+    .event-transaction-show-page > .admin-users-header > form > button {
+        min-height: 36px !important;
+        padding: 0 11px !important;
+        font-size: 11px !important;
+    }
+
+    .event-transaction-show-content > .admin-partners-heading {
+        gap: 14px !important;
+        padding-bottom: 18px !important;
+    }
+
+    .event-transaction-show-content > .admin-partners-heading h1 {
+        font-size: 25px !important;
+    }
+}
+
+</style>
+
 @endsection

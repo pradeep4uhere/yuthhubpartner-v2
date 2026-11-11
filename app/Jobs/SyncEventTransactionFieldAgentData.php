@@ -20,13 +20,13 @@ class SyncEventTransactionFieldAgentData implements ShouldQueue
 
     public function handle(): void
     {
-        // Use the configured connection for the youthhubpartner database.
+        // Use the configured connection for the uat_yuthhub_workspace database.
         $connection = DB::connection('mysql');
 
         $before = $connection->selectOne("
             SELECT COUNT(*) AS total
-            FROM youthhubpartner.event_transactions et
-            INNER JOIN youthhubpartner.field_agents fa
+            FROM uat_yuthhub_workspace.event_transactions et
+            INNER JOIN uat_yuthhub_workspace.field_agents fa
                 ON et.field_agent_id = fa.id
             WHERE NOT (et.partner_id <=> fa.partner_id)
                OR NOT (et.partner_center_id <=> fa.partner_center_id)
@@ -40,8 +40,8 @@ class SyncEventTransactionFieldAgentData implements ShouldQueue
         ]);
 
         $updated = $connection->affectingStatement("
-            UPDATE youthhubpartner.event_transactions AS et
-            INNER JOIN youthhubpartner.field_agents AS fa
+            UPDATE uat_yuthhub_workspace.event_transactions AS et
+            INNER JOIN uat_yuthhub_workspace.field_agents AS fa
                 ON et.field_agent_id = fa.id
             SET
                 et.partner_id = fa.partner_id,
@@ -52,8 +52,8 @@ class SyncEventTransactionFieldAgentData implements ShouldQueue
 
         $remaining = $connection->selectOne("
             SELECT COUNT(*) AS total
-            FROM youthhubpartner.event_transactions et
-            INNER JOIN youthhubpartner.field_agents fa
+            FROM uat_yuthhub_workspace.event_transactions et
+            INNER JOIN uat_yuthhub_workspace.field_agents fa
                 ON et.field_agent_id = fa.id
             WHERE NOT (et.partner_id <=> fa.partner_id)
                OR NOT (et.partner_center_id <=> fa.partner_center_id)
