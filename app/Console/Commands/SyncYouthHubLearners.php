@@ -481,7 +481,6 @@ class SyncYouthHubLearners extends Command
         $education = $profile['education_level'] ?? null;
 
         return [
-                'normalized_mobile' => $mobile,
                 'phone_number' => $this->cleanValue($profile['user_phone_number'] ?? null),
                 'first_name' => $this->cleanValue($profile['first_name'] ?? null),
                 'last_name' => $this->cleanValue($profile['last_name'] ?? null),

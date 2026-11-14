@@ -1518,7 +1518,7 @@ i.fas.fa-download {
     <div>
         <small>Event Master ID</small>
         <strong>
-           {{ $eventTransaction->eventMaster?->event_name ?? '—' }}
+           {{ $eventTransaction->eventMaster?->event_name ?? $eventTransaction->event_type_name ?? '—' }}
         </strong>
     </div>
 

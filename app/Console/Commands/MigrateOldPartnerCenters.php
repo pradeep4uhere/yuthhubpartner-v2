@@ -9,11 +9,14 @@ use Throwable;
 class MigrateOldPartnerCenters extends Command
 {
     protected $signature = 'partner-centers:migrate
-                            {--dry-run : Show what will happen without modifying the database}
-                            {--limit= : Migrate only a limited number of records}';
+                            {--dry-run : Show migration without changing data}
+                            {--limit= : Migrate only limited records}';
 
-    protected $description = 'Migrate Partner Centers from old database to new database';
+    protected $description = 'Migrate partner centers from old database to new database while preserving original IDs';
 
+    /**
+     * Execute the Partner Center migration.
+     */
     public function handle(): int
     {
         $this->info('Starting Partner Center Migration...');
@@ -22,428 +25,299 @@ class MigrateOldPartnerCenters extends Command
         $oldDb = DB::connection('old_mysql');
         $newDb = DB::connection('mysql');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Options
-        |--------------------------------------------------------------------------
-        */
-
-        $dryRun = (bool) $this->option('dry-run');
         $limit = $this->option('limit');
 
-        if ($limit !== null && (!is_numeric($limit) || (int) $limit <= 0)) {
-            $this->error('--limit must be a positive number.');
+        if ($limit !== null && (!is_numeric($limit) || (int) $limit < 1)) {
+            $this->error('Limit must be a positive integer.');
 
             return self::FAILURE;
         }
-
-        $limit = $limit !== null ? (int) $limit : null;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Get old records count
-        |--------------------------------------------------------------------------
-        */
-
-        $totalOldRecords = $oldDb
-            ->table('partner_centers')
-            ->count();
-
-        if ($limit !== null) {
-            $totalToProcess = min($totalOldRecords, $limit);
-        } else {
-            $totalToProcess = $totalOldRecords;
-        }
-
-        $this->info("Old DB Records: {$totalOldRecords}");
-        $this->info("Records To Process: {$totalToProcess}");
-
-        if ($dryRun) {
-            $this->warn('DRY RUN MODE: No database changes will be made.');
-        }
-
-        $this->newLine();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Counters
-        |--------------------------------------------------------------------------
-        */
-
-        $inserted = 0;
-        $updated = 0;
-        $skipped = 0;
-        $failed = 0;
-
-        $processed = 0;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Process old partner centers
-        |--------------------------------------------------------------------------
-        */
 
         $query = $oldDb
             ->table('partner_centers')
             ->orderBy('id');
 
         if ($limit !== null) {
-            $query->limit($limit);
+            $query->limit((int) $limit);
+        }
+
+        $total = (clone $query)->count();
+
+        $this->info("Old DB Records: {$total}");
+
+        if ($total === 0) {
+            $this->warn('No Partner Centers found.');
+
+            return self::SUCCESS;
+        }
+
+        $inserted = 0;
+        $updated = 0;
+        $skipped = 0;
+        $conflicts = 0;
+        $failed = 0;
+
+        $dryRun = (bool) $this->option('dry-run');
+
+        if ($dryRun) {
+            $this->warn('DRY RUN MODE - No database changes will be made.');
+            $this->newLine();
         }
 
         $query->chunkById(500, function ($oldCenters) use (
-            $oldDb,
             $newDb,
             $dryRun,
             &$inserted,
             &$updated,
             &$skipped,
-            &$failed,
-            &$processed,
-            $totalToProcess
+            &$conflicts,
+            &$failed
         ) {
             foreach ($oldCenters as $oldCenter) {
-
-                $processed++;
-
                 try {
+                    $centerId = (int) $oldCenter->id;
+                    $partnerId = trim((string) $oldCenter->partner_id);
+                    $email = trim((string) ($oldCenter->email ?? ''));
+                    $centerName = trim((string) ($oldCenter->center_name ?? ''));
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | 1. Validate old partner ID
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (empty($oldCenter->partner_id)) {
-
-                        $this->warn(
-                            "SKIPPED: Old Partner ID is empty - " .
-                            "Center: {$oldCenter->center_name}"
-                        );
-
+                     * Validate original Partner Center ID.
+                     */
+                    if ($centerId <= 0) {
                         $skipped++;
+                        $this->warn('SKIPPED: Invalid Partner Center ID.');
 
                         continue;
                     }
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | 2. Resolve OLD partner
-                    |
-                    | old partner_centers.partner_id
-                    |             ↓
-                    | old partners.id
-                    |--------------------------------------------------------------------------
-                    */
+                     * Validate parent Partner ID.
+                     */
+                    if ($partnerId === '' || !ctype_digit($partnerId)) {
+                        $skipped++;
 
-                    $oldPartner = $oldDb
+                        $this->warn(
+                            "SKIPPED: Invalid Partner ID for Center ID {$centerId}."
+                        );
+
+                        continue;
+                    }
+
+                    $partnerId = (int) $partnerId;
+
+                    /*
+                     * Validate mandatory Center Name.
+                     */
+                    if ($centerName === '') {
+                        $skipped++;
+
+                        $this->warn(
+                            "SKIPPED: Center Name missing for ID {$centerId}."
+                        );
+
+                        continue;
+                    }
+
+                    /*
+                     * Find the parent Partner using its preserved original ID.
+                     */
+                    $partner = $newDb
                         ->table('partners')
-                        ->where('id', $oldCenter->partner_id)
+                        ->where('id', $partnerId)
                         ->first();
 
-                    if (!$oldPartner) {
+                    if (!$partner) {
+                        $conflicts++;
 
-                        $this->warn(
-                            "SKIPPED: Old Partner not found - " .
-                            "Old Partner ID: {$oldCenter->partner_id}, " .
-                            "Center: {$oldCenter->center_name}"
+                        $this->error(
+                            "CONFLICT: Partner ID {$partnerId} missing for Center ID {$centerId}."
                         );
-
-                        $skipped++;
 
                         continue;
                     }
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | 3. Get OLD business Partner Code
-                    |
-                    | old partners.partner_id
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $partnerCode = trim((string) $oldPartner->partner_id);
+                     * Get Partner Code from the new Partner record.
+                     */
+                    $partnerCode = trim((string) $partner->partner_code);
 
                     if ($partnerCode === '') {
+                        $conflicts++;
 
-                        $this->warn(
-                            "SKIPPED: Old Partner has no Partner Code - " .
-                            "Old Partner ID: {$oldPartner->id}, " .
-                            "Partner Name: {$oldPartner->name}, " .
-                            "Center: {$oldCenter->center_name}"
+                        $this->error(
+                            "CONFLICT: Partner Code missing for Partner ID {$partnerId}."
                         );
-
-                        $skipped++;
 
                         continue;
                     }
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | 4. Resolve NEW partner using business key
-                    |
-                    | OLD partner_code
-                    |        ↓
-                    | NEW partners.partner_code
-                    |        ↓
-                    | NEW partners.id
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $newPartner = $newDb
-                        ->table('partners')
-                        ->where('partner_code', $partnerCode)
-                        ->first();
-
-                    if (!$newPartner) {
-
-                        $this->warn(
-                            "SKIPPED: Partner not found in NEW DB - " .
-                            "Partner Code: {$partnerCode}, " .
-                            "Old Partner ID: {$oldPartner->id}, " .
-                            "Center: {$oldCenter->center_name}"
-                        );
-
-                        $skipped++;
-
-                        continue;
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 5. Convert status
-                    |--------------------------------------------------------------------------
-                    */
-
+                     * Convert old numeric status into new status format.
+                     */
                     $status = ((int) $oldCenter->status === 1)
                         ? 'active'
                         : 'inactive';
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | 6. Prepare data
-                    |--------------------------------------------------------------------------
-                    */
-
+                     * Prepare data according to the new table schema.
+                     */
                     $data = [
-                        'id' => $oldCenter->id,
-
-                        'partner_id' => $newPartner->id,
-
-                        // Business partner code
+                        'id' => $centerId,
+                        'partner_id' => $partnerId,
                         'partner_code' => $partnerCode,
-
-                        'name' => $oldCenter->center_name,
-
+                        'name' => $centerName,
                         'contact_number' => $oldCenter->contact_number,
-
-                        'email' => $oldCenter->email,
-
+                        'email' => $email !== '' ? $email : null,
                         'status' => $status,
-
                         'password' => $oldCenter->password,
-
                         'remember_token' => null,
-
                         'created_at' => $oldCenter->created_at,
-
                         'updated_at' => $oldCenter->updated_at,
                     ];
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | 7. Find existing center
-                    |
-                    | Priority:
-                    |
-                    | A. partner_centers_id if available
-                    | B. email
-                    | C. partner_id + name
-                    |--------------------------------------------------------------------------
-                    */
-
-                    $existingCenter = null;
+                     * Find existing record using original Center ID.
+                     */
+                    $existingById = $newDb
+                        ->table('partner_centers')
+                        ->where('id', $centerId)
+                        ->first();
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | A. Match using old partner_centers_id
-                    |--------------------------------------------------------------------------
-                    |
-                    | NOTE:
-                    | New table currently does NOT contain partner_centers_id.
-                    | Therefore this can only be used if you add that column.
-                    |
-                    | For now we skip this and use email / partner + name.
-                    |--------------------------------------------------------------------------
-                    */
+                     * Check unique email conflicts.
+                     */
+                    $existingByEmail = null;
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | B. Match by email
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (!empty($oldCenter->email)) {
-
-                        $existingCenter = $newDb
+                    if ($email !== '') {
+                        $existingByEmail = $newDb
                             ->table('partner_centers')
-                            ->where('email', $oldCenter->email)
+                            ->where('email', $email)
                             ->first();
                     }
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | C. Match by partner + center name
-                    |--------------------------------------------------------------------------
-                    */
+                     * Never overwrite another Center's ID or identity.
+                     */
+                    if (
+                        $existingByEmail &&
+                        (int) $existingByEmail->id !== $centerId
+                    ) {
+                        $conflicts++;
 
-                    if (!$existingCenter && !empty($oldCenter->center_name)) {
-
-                        $existingCenter = $newDb
-                            ->table('partner_centers')
-                            ->where('partner_id', $newPartner->id)
-                            ->where('name', $oldCenter->center_name)
-                            ->first();
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 8. DRY RUN
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if ($dryRun) {
-
-                        if ($existingCenter) {
-
-                            $this->line(
-                                "DRY RUN: UPDATE | " .
-                                "Old ID: {$oldCenter->id} | " .
-                                "Partner: {$partnerCode} | " .
-                                "Center: {$oldCenter->center_name} | " .
-                                "New ID: {$existingCenter->id}"
-                            );
-
-                            $updated++;
-
-                        } else {
-
-                            $this->line(
-                                "DRY RUN: INSERT | " .
-                                "Old ID: {$oldCenter->id} | " .
-                                "Partner: {$partnerCode} | " .
-                                "Center: {$oldCenter->center_name}"
-                            );
-
-                            $inserted++;
-                        }
+                        $this->error(
+                            "CONFLICT: Email {$email} already belongs to Center ID {$existingByEmail->id}; old ID {$centerId}."
+                        );
 
                         continue;
                     }
 
                     /*
-                    |--------------------------------------------------------------------------
-                    | 9. UPDATE existing center
-                    |--------------------------------------------------------------------------
-                    */
+                     * Do not silently change the parent of an existing Center.
+                     */
+                    if (
+                        $existingById &&
+                        (int) $existingById->partner_id !== $partnerId
+                    ) {
+                        $conflicts++;
 
-                    if ($existingCenter) {
+                        $this->error(
+                            "CONFLICT: Center ID {$centerId} has a different Partner ID in the new database."
+                        );
 
-                        $newDb
-                            ->table('partner_centers')
-                            ->where('id', $existingCenter->id)
-                            ->update($data);
+                        continue;
+                    }
+
+                    /*
+                     * Update existing Center without modifying its primary key.
+                     */
+                    if ($existingById) {
+                        if ($dryRun) {
+                            $updated++;
+
+                            $this->line(
+                                "UPDATE: Center ID {$centerId} - {$centerName}"
+                            );
+
+                            continue;
+                        }
+
+                        $updateData = $data;
+
+                        unset($updateData['id']);
+
+                        $newDb->table('partner_centers')
+                            ->where('id', $centerId)
+                            ->update($updateData);
 
                         $updated++;
 
                         $this->line(
-                            "UPDATED: " .
-                            "Old ID: {$oldCenter->id} → " .
-                            "New ID: {$existingCenter->id} | " .
-                            "Partner: {$partnerCode} | " .
-                            "Center: {$oldCenter->center_name}"
+                            "UPDATED: Center ID {$centerId} - {$centerName}"
                         );
+                    }
 
-                    } else {
+                    /*
+                     * Insert new Center while preserving its original ID.
+                     */
+                    else {
+                        if ($dryRun) {
+                            $inserted++;
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | 10. INSERT new center
-                        |--------------------------------------------------------------------------
-                        */
+                            $this->line(
+                                "INSERT: Center ID {$centerId} - {$centerName}"
+                            );
 
-                        $newId = $newDb
-                            ->table('partner_centers')
-                            ->insertGetId($data);
+                            continue;
+                        }
+
+                        $newDb->table('partner_centers')
+                            ->insert($data);
 
                         $inserted++;
 
                         $this->line(
-                            "INSERTED: " .
-                            "Old ID: {$oldCenter->id} → " .
-                            "New ID: {$newId} | " .
-                            "Partner: {$partnerCode} | " .
-                            "Center: {$oldCenter->center_name}"
+                            "INSERTED: Center ID {$centerId} - {$centerName}"
                         );
                     }
-
                 } catch (Throwable $e) {
-
                     $failed++;
 
                     $this->error(
-                        "FAILED: Old Center ID: {$oldCenter->id} | " .
-                        "Center: {$oldCenter->center_name} | " .
-                        $e->getMessage()
+                        "FAILED: Center ID {$oldCenter->id}"
                     );
-                }
 
-                /*
-                |--------------------------------------------------------------------------
-                | Progress
-                |--------------------------------------------------------------------------
-                */
-
-                if ($processed % 10 === 0 || $processed === $totalToProcess) {
-
-                    $this->line(
-                        "Progress: {$processed}/{$totalToProcess}"
-                    );
+                    $this->error($e->getMessage());
                 }
             }
         }, 'id');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Final Summary
-        |--------------------------------------------------------------------------
-        */
-
         $this->newLine();
-        $this->line(str_repeat('=', 45));
+
+        $this->info('====================================');
         $this->info('Partner Center Migration Completed');
-        $this->line(str_repeat('=', 45));
+        $this->info('====================================');
 
         $this->table(
             ['Type', 'Count'],
             [
-                ['Total Old Records', $totalOldRecords],
-                ['Processed', $processed],
+                ['Total Old Records', $total],
                 ['Inserted', $inserted],
                 ['Updated', $updated],
                 ['Skipped', $skipped],
+                ['Conflicts', $conflicts],
                 ['Failed', $failed],
             ]
         );
 
         if ($dryRun) {
             $this->newLine();
+
             $this->warn(
-                'DRY RUN completed. No records were inserted or updated.'
+                'DRY RUN completed. No database records were changed.'
             );
         }
 
-        return $failed > 0
+        return ($failed > 0 || $conflicts > 0)
             ? self::FAILURE
             : self::SUCCESS;
     }
