@@ -238,9 +238,15 @@ class SyncYouthHubLearners extends Command
 
                 if (!empty($mobileNumbers)) {
                     $existingRecords = DB::table('learners')
-                        ->whereIn('normalized_mobile', $mobileNumbers)
+                        ->where(function ($query) use ($mobileNumbers) {
+                            $query->whereIn('normalized_mobile', $mobileNumbers)
+                                ->orWhereIn('phone_number', $mobileNumbers);
+                        })
                         ->get()
-                        ->groupBy('normalized_mobile')
+                        ->groupBy(fn ($record) => $this->normalizeMobile(
+                            $record->normalized_mobile ?: $record->phone_number
+                        ))
+                        ->filter(fn ($records, $mobile) => $mobile !== null)
                         ->map(fn ($records) => $records->all())
                         ->all();
                 }
