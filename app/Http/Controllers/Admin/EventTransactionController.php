@@ -327,6 +327,7 @@ class EventTransactionController extends Controller
                         $builder->where('beneficiary_name', 'like', "%{$search}%")
                             ->orWhere('beneficiary_phone_number', 'like', "%{$search}%")
                             ->orWhere('event_type_name', 'like', "%{$search}%")
+                            ->orWhere('id', 'like', "%{$search}%")
                             ->orWhere('event_category_name', 'like', "%{$search}%");
                     });
                 }
@@ -381,6 +382,7 @@ class EventTransactionController extends Controller
                 if (!empty($filters['date_to'])) {
                     $query->whereDate('event_create_date', '<=', $filters['date_to']);
                 }
+
             }
 
             /**
