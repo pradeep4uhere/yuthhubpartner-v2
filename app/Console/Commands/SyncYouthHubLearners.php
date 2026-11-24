@@ -664,7 +664,7 @@ class SyncYouthHubLearners extends Command
         }
 
         return hash('sha256', implode('|', [
-            preg_replace('/\D+/', '', (string) $get('normalized_mobile')),
+            $this->normalizeMobile($get('normalized_mobile') ?: $get('phone_number')) ?? '',
             $normalizeText($get('first_name')),
             $normalizeText($get('last_name')),
             (string) ($dob ?? ''),
