@@ -102,4 +102,32 @@ class Learner extends Model
     }
 
 
+
+    /**
+     * Automatically normalize the phone number whenever it is assigned.
+     */
+    public function setPhoneNumberAttribute($value)
+    {
+        $this->attributes['phone_number'] = $value;
+
+        $this->attributes['normalized_mobile'] = $this->normalizeMobileNumber($value);
+    }
+
+    /**
+     * Normalize a phone number to its last 10 digits when valid.
+     */
+    protected function normalizeMobileNumber($value)
+    {
+        if ($value === null || trim((string) $value) === '') {
+            return null;
+        }
+
+        $digits = preg_replace('/\D+/', '', (string) $value);
+
+        return strlen($digits) >= 10
+            ? substr($digits, -10)
+            : null;
+    }
+
+
 }
